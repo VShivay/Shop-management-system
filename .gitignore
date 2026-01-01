@@ -1,0 +1,12 @@
+# Node
+node_modules/
+npm-debug.log*
+
+# Backend
+backend/node_modules/
+backend/.env
+
+# React
+shop/node_modules/
+shop/build/
+shop/.env
