@@ -10,22 +10,28 @@ const Dashboard = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
+  // Access the URL from .env
+  const API_URL = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:5000/api/me', {
+        
+        // Updated Axios Call
+        const response = await axios.get(`${API_URL}/me`, {
           headers: { Authorization: `Bearer ${token}` }
         });
+        
         setUser(response.data);
       } catch (err) {
         setError('Session expired or unauthorized');
         localStorage.removeItem('token');
-        setTimeout(() => navigate('/'), 2000); // Redirect after 2s
+        setTimeout(() => navigate('/'), 2000);
       }
     };
     fetchUser();
-  }, [navigate]);
+  }, [navigate, API_URL]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -36,6 +42,7 @@ const Dashboard = () => {
   if (!user) return <div className="dash-loading"><div className="loader"></div></div>;
 
   return (
+    // ... (Rest of the JSX remains exactly the same as previous response)
     <div className="dashboard-container">
       <nav className="navbar">
         <h1>DevPortal</h1>

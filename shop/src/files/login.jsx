@@ -11,15 +11,16 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // Access the URL from .env
+  const API_URL = process.env.REACT_APP_API_URL;
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    setError(''); // Clear error on typing
+    setError('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // 1. Client-side Validation
     if (!formData.email || !formData.password) {
       setError('Please fill in all fields');
       return;
@@ -28,15 +29,13 @@ const Login = () => {
     setLoading(true);
 
     try {
-      // 2. API Call
-      const response = await axios.post('http://localhost:5000/api/login', formData);
+      // Updated Axios Call
+      const response = await axios.post(`${API_URL}/login`, formData);
       
-      // 3. Success: Save Token & Redirect
       localStorage.setItem('token', response.data.token);
       navigate('/dashboard');
       
     } catch (err) {
-      // 4. Error Handling
       const msg = err.response?.data?.error || 'Server error. Please try again.';
       setError(msg);
     } finally {
@@ -45,6 +44,7 @@ const Login = () => {
   };
 
   return (
+    // ... (Rest of the JSX remains exactly the same as previous response)
     <div className="login-container">
       <div className="glass-card">
         <div className="header">
@@ -87,8 +87,6 @@ const Login = () => {
           </button>
         </form>
       </div>
-      
-      {/* Background Shapes */}
       <div className="shape shape-1"></div>
       <div className="shape shape-2"></div>
     </div>
