@@ -5,6 +5,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 const loginRoutes = require('./route/login_route');
+const productRoutes = require('./route/manage_product_route');
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(express.json()); // Parse JSON bodies
 
 // Routes
 app.use('/api', loginRoutes);
+app.use('/api', productRoutes); // Add this line
 
 // Global Error Handler (Optional but recommended)
 app.use((err, req, res, next) => {

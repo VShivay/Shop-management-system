@@ -1,33 +1,45 @@
 // src/files/dashboard.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { UserCircleIcon, PhoneIcon, EnvelopeIcon, ArrowLeftOnRectangleIcon, BriefcaseIcon } from '@heroicons/react/24/outline';
+import { useNavigate, Outlet, NavLink, useLocation } from 'react-router-dom';
+import { 
+  ArrowLeftOnRectangleIcon, 
+  HomeIcon, 
+  CubeIcon, 
+  Bars3Icon,
+  XMarkIcon 
+} from '@heroicons/react/24/outline';
 import './dashboard.css';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
   const [error, setError] = useState('');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true); 
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // Access the URL from .env
   const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const fetchUser = async () => {
+      const token = localStorage.getItem('token');
+
+      // 1. IMMEDIATE CHECK: If no token, redirect immediately (replace history)
+      if (!token) {
+        navigate('/', { replace: true });
+        return;
+      }
+
       try {
-        const token = localStorage.getItem('token');
-        
-        // Updated Axios Call
         const response = await axios.get(`${API_URL}/me`, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        
         setUser(response.data);
       } catch (err) {
-        setError('Session expired or unauthorized');
+        setError('Session expired. Please log in again.');
         localStorage.removeItem('token');
-        setTimeout(() => navigate('/'), 2000);
+        // 2. ERROR HANDLING: Use replace: true here too
+        setTimeout(() => navigate('/', { replace: true }), 2000);
       }
     };
     fetchUser();
@@ -35,70 +47,87 @@ const Dashboard = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    navigate('/');
+    
+    // 3. LOGOUT LOGIC: Replace current history entry
+    // This prevents the "Back" button from returning to the Dashboard
+    navigate('/', { replace: true });
   };
 
-  if (error) return <div className="dash-error">{error}</div>;
-  if (!user) return <div className="dash-loading"><div className="loader"></div></div>;
+  // Close sidebar on mobile when route changes
+  useEffect(() => {
+    if (window.innerWidth < 768) {
+        setIsSidebarOpen(false);
+    }
+  }, [location]);
+
+  if (error) return <div className="dash-layout-error">{error}</div>;
+  if (!user) return <div className="dash-layout-loading"><div className="loader"></div></div>;
 
   return (
-    // ... (Rest of the JSX remains exactly the same as previous response)
-    <div className="dashboard-container">
-      <nav className="navbar">
-        <h1>DevPortal</h1>
-        <button onClick={handleLogout} className="logout-btn">
-          <span>Logout</span>
-          <ArrowLeftOnRectangleIcon className="icon-sm" />
-        </button>
-      </nav>
-
-      <main className="main-content">
-        <div className="welcome-section">
-          <h2>Hello, <span className="highlight">{user.name}</span>!</h2>
-          <p>Here is your profile overview.</p>
+    <div className={`dashboard-layout ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      
+      {/* --- Sidebar --- */}
+      <aside className="sidebar">
+        <div className="sidebar-header">
+          <div className="logo-area">
+            <span className="logo-icon">DP</span>
+            {isSidebarOpen && <h1 className="logo-text">DevPortal</h1>}
+          </div>
+          <button className="toggle-btn" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+            {isSidebarOpen ? <XMarkIcon className="icon-sm" /> : <Bars3Icon className="icon-sm" />}
+          </button>
         </div>
 
-        <div className="profile-card">
-          <div className="card-header">
-            <div className="avatar">
-                <span className="initial">{user.name.charAt(0)}</span>
-            </div>
-            <div className="role-badge">
-                <BriefcaseIcon className="icon-xs" /> {user.role_name}
-            </div>
-          </div>
-          
-          <div className="card-body">
-            <div className="info-item">
-              <UserCircleIcon className="icon-md" />
-              <div>
-                <label>Full Name</label>
-                <p>{user.name}</p>
-              </div>
-            </div>
+        <nav className="sidebar-nav">
+          <NavLink 
+            to="/dashboard" 
+            end 
+            className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+          >
+            <HomeIcon className="icon-md" />
+            {isSidebarOpen && <span>Dashboard</span>}
+          </NavLink>
 
-            <div className="info-item">
-              <EnvelopeIcon className="icon-md" />
-              <div>
-                <label>Email Address</label>
-                <p>{user.email}</p>
-              </div>
-            </div>
+          <NavLink 
+            to="/dashboard/products" 
+            className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+          >
+            <CubeIcon className="icon-md" />
+            {isSidebarOpen && <span>Manage Products</span>}
+          </NavLink>
+        </nav>
 
-            <div className="info-item">
-              <PhoneIcon className="icon-md" />
-              <div>
-                <label>Mobile Number</label>
-                <p>{user.mobile || 'N/A'}</p>
-              </div>
-            </div>
-            
-            <div className="info-footer">
-                <small>Member since: {new Date(user.created_at).toLocaleDateString()}</small>
-            </div>
-          </div>
+        <div className="sidebar-footer">
+           {isSidebarOpen && <small>v1.0.0</small>}
         </div>
-      </main>
+      </aside>
+
+      {/* --- Main Content Area --- */}
+      <div className="main-wrapper">
+        {/* Navbar */}
+        <header className="top-navbar">
+          <div className="nav-left">
+            <h2 className="page-title">
+               {location.pathname === '/dashboard' ? 'Overview' : 
+                location.pathname.includes('products') ? 'Product Management' : 'Dashboard'}
+            </h2>
+          </div>
+          <div className="nav-right">
+             <div className="user-mini-profile">
+                <span className="user-name">{user.name}</span>
+                <div className="user-avatar-sm">{user.name.charAt(0)}</div>
+             </div>
+             <button onClick={handleLogout} className="logout-btn" title="Logout">
+              <ArrowLeftOnRectangleIcon className="icon-sm" />
+             </button>
+          </div>
+        </header>
+
+        {/* Content Rendered Here */}
+        <main className="content-area">
+          <Outlet context={{ user }} />
+        </main>
+      </div>
     </div>
   );
 };
