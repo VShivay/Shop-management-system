@@ -95,6 +95,20 @@ const Dashboard = () => {
             <CubeIcon className="icon-md" />
             {isSidebarOpen && <span>Manage Products</span>}
           </NavLink>
+          <NavLink 
+            to="/dashboard/suppliers" 
+            className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+          >
+            <CubeIcon className="icon-md" />
+            {isSidebarOpen && <span>Manage Suppliers</span>}
+          </NavLink>
+          <NavLink 
+            to="/dashboard/customers" 
+            className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+          >
+            <CubeIcon className="icon-md" />
+            {isSidebarOpen && <span>Manage Customers</span>}
+          </NavLink>
         </nav>
 
         <div className="sidebar-footer">

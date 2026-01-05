@@ -13,7 +13,7 @@ import {
   PencilSquareIcon,
   FunnelIcon
 } from '@heroicons/react/24/outline';
-import './css/manage_products.css';
+import './manage_products.css';
 
 const ManageProducts = () => {
   const navigate = useNavigate();
@@ -62,7 +62,7 @@ const ManageProducts = () => {
     const fetchDropdowns = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get(`${API_URL}/products/options`, { 
+        const res = await axios.get(`${API_URL}/products/dropdowns`, { 
           headers: { Authorization: `Bearer ${token}` }
         });
         setDropdowns(res.data);

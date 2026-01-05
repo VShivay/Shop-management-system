@@ -1,0 +1,394 @@
+/* Scoped Wrapper to prevent bleeding */
+.ms-wrapper {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #334155;
+    background-color: #f8fafc; /* Very light subtle background */
+}
+
+/* Reset for internal elements */
+.ms-wrapper * {
+    box-sizing: border-box;
+}
+
+/* --- Container & Layout --- */
+.ms-container {
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 100%;
+    overflow-y: auto;
+}
+
+/* --- Header Section --- */
+.ms-header {
+    background: white;
+    padding: 10px 14px;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.ms-header-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.ms-title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #1e293b, #334155);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.ms-subtitle {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+/* --- Actions & Inputs --- */
+.ms-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.ms-filters {
+    display: flex;
+    gap: 6px;
+}
+
+.ms-input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.ms-icon-input {
+    position: absolute;
+    left: 8px;
+    width: 14px;
+    height: 14px;
+    color: #94a3b8;
+    pointer-events: none;
+}
+
+.ms-input-group input {
+    padding: 6px 8px 6px 28px; /* Left padding for icon */
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    outline: none;
+    transition: all 0.2s ease;
+    width: 160px;
+    color: #475569;
+}
+
+.ms-input-group input:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+    width: 180px; /* Slight expansion on focus */
+}
+
+/* --- Gradient Add Button --- */
+.ms-btn-add {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 14px;
+    border: none;
+    border-radius: 4px;
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    color: white;
+    font-weight: 500;
+    font-size: 0.85rem;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(99, 102, 241, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ms-btn-add:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.4);
+    filter: brightness(1.1);
+}
+
+.ms-btn-add:active {
+    transform: translateY(0);
+}
+
+/* --- Grid Layout --- */
+.ms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 10px;
+    padding-bottom: 20px;
+}
+
+/* --- Cards --- */
+.ms-card {
+    background: white;
+    border-radius: 6px;
+    padding: 12px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    border: 1px solid rgba(255,255,255,0.5);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.ms-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    border-color: rgba(99, 102, 241, 0.2);
+}
+
+/* Hover Gradient Border Effect */
+.ms-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #6366f1, #a855f7);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+}
+
+.ms-card:hover::before {
+    transform: scaleX(1);
+}
+
+.ms-card-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+/* Vibrant Avatar */
+.ms-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+    color: #4f46e5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    box-shadow: inset 0 2px 4px rgba(255,255,255,0.5);
+}
+
+.ms-info h3 {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+}
+
+.ms-contact {
+    margin: 2px 0 0;
+    font-size: 0.75rem;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.ms-card-divider {
+    height: 1px;
+    background: #f1f5f9;
+    margin: 6px 0 8px 0;
+}
+
+.ms-card-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+}
+
+.ms-detail-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    color: #475569;
+}
+
+/* --- Status Badges --- */
+.ms-status {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.ms-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+.ms-status.active {
+    background: #dcfce7;
+    color: #166534;
+}
+.ms-status.active .ms-dot { background: #166534; }
+
+.ms-status.inactive {
+    background: #fee2e2;
+    color: #991b1b;
+}
+.ms-status.inactive .ms-dot { background: #991b1b; }
+
+/* --- Pagination --- */
+.ms-pagination {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    margin-top: auto;
+    padding: 4px 0;
+}
+
+.ms-page-btn {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    padding: 4px 8px;
+    cursor: pointer;
+    color: #64748b;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ms-page-btn:hover:not(:disabled) {
+    border-color: #6366f1;
+    color: #6366f1;
+    background: #eef2ff;
+}
+
+.ms-page-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.ms-page-info {
+    font-size: 0.8rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+/* --- Utilities & Animation --- */
+.ms-icon-sm { width: 16px; height: 16px; }
+.ms-icon-xs { width: 12px; height: 12px; }
+.ms-icon-btn { width: 14px; height: 14px; stroke-width: 2.5; }
+
+.ms-error {
+    background: #fef2f2;
+    color: #ef4444;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid #fee2e2;
+}
+
+.ms-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+    color: #94a3b8;
+    font-size: 0.9rem;
+    background: rgba(255,255,255,0.5);
+    border-radius: 6px;
+    border: 1px dashed #cbd5e1;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+/* --- Skeleton Loading Styles --- */
+.ms-skeleton {
+    pointer-events: none;
+    border: 1px solid #f1f5f9;
+}
+
+.ms-avatar-skeleton {
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    background: #e2e8f0;
+}
+
+.ms-info-skeleton {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.ms-line-skeleton {
+    height: 10px;
+    border-radius: 4px;
+    background: #e2e8f0;
+}
+
+/* Shimmer Animation */
+.shimmer {
+    background: #f6f7f8;
+    background-image: linear-gradient(
+        to right,
+        #f6f7f8 0%,
+        #edeef1 20%,
+        #f6f7f8 40%,
+        #f6f7f8 100%
+    );
+    background-repeat: no-repeat;
+    background-size: 800px 104px;
+    animation-duration: 1.5s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    animation-name: shimmer;
+    animation-timing-function: linear;
+}
+
+@keyframes shimmer {
+    0% { background-position: -468px 0; }
+    100% { background-position: 468px 0; }
+}

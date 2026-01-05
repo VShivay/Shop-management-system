@@ -7,7 +7,7 @@ import {
     PlusCircleIcon, 
     TrashIcon 
 } from '@heroicons/react/24/outline';
-import './css/add_product.css';
+import './add_product.css';
 
 const API_URL = process.env.REACT_APP_API_URL;
 

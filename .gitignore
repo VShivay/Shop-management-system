@@ -5,8 +5,10 @@ npm-debug.log*
 # Backend
 backend/node_modules/
 backend/.env
+backend/start-server.bat
 
 # React
 shop/node_modules/
 shop/build/
 shop/.env
+shop/start-react.bat

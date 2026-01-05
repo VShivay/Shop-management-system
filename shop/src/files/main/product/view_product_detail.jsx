@@ -10,7 +10,7 @@ import {
   TagIcon,
   GlobeAltIcon
 } from '@heroicons/react/24/outline';
-import './css/view_product_detail.css';
+import './view_product_detail.css';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000/api';
 
