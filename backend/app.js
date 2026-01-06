@@ -9,6 +9,9 @@ const loginRoutes = require('./route/login_route');
 const productRoutes = require('./route/manage_product_route');
 const supplierRoutes = require('./route/manage_supplier_route');
 const customerRoutes = require('./route/manage_customer_route');
+const retailBillRoutes = require('./route/create_retail_bill_route');
+const ViewBillRoutes = require('./route/view_retail_bill_route');
+
 
 const app = express();
 
@@ -46,6 +49,8 @@ app.use('/api', loginRoutes);
 app.use('/api', productRoutes);
 app.use('/api/suppliers', supplierRoutes);
 app.use('/api/customers', customerRoutes);
+app.use('/api', retailBillRoutes); 
+app.use('/api/view-retail-bill', ViewBillRoutes);
 
 // Global Error Handler
 app.use((err, req, res, next) => {

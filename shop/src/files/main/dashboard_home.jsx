@@ -1,81 +1,148 @@
 // src/files/main/dashboard_home.jsx
 import React from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { useOutletContext, useNavigate } from 'react-router-dom';
 import { 
-  UserCircleIcon, 
-  PhoneIcon, 
-  EnvelopeIcon, 
-  BriefcaseIcon,
-  CalendarDaysIcon
-} from '@heroicons/react/24/outline';
+  User, 
+  Phone, 
+  Mail, 
+  Briefcase, 
+  Calendar, 
+  ShieldCheck, 
+  Clock,
+  Activity,
+  MapPin
+} from 'lucide-react';
 import './css/dashboard_home.css';
 
 const DashboardHome = () => {
-  // Retrieve user data passed from the parent Dashboard layout
   const { user } = useOutletContext();
+  const navigate = useNavigate();
 
   if (!user) return null;
 
+  const currentDate = new Date().toLocaleDateString('en-US', { 
+    weekday: 'long', 
+    month: 'long', 
+    day: 'numeric' 
+  });
+
   return (
-    <div className="home-container fade-in">
-      <div className="welcome-banner">
-        <div>
-          <h2 className="welcome-title">Welcome back, {user.name}!</h2>
-          <p className="welcome-subtitle">Here's what's happening with your account today.</p>
+    <div className="dh-container dh-fade-in">
+      
+      {/* === 1. Welcome Banner === */}
+      <div className="dh-banner">
+        <div className="dh-banner-content">
+          <h2 className="dh-welcome-title">Welcome back, {user.name}!</h2>
+          <p className="dh-welcome-text">
+            System is running smoothly. You have full access to the developer portal.
+          </p>
         </div>
-        <div className="date-badge">
-           <CalendarDaysIcon className="icon-xs" />
-           {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+        <div className="dh-banner-date">
+           <Calendar size={16} className="dh-icon-white" />
+           <span>{currentDate}</span>
         </div>
       </div>
 
-      <div className="profile-card-wrapper">
-        <div className="profile-card">
-          <div className="card-header-gradient">
-            <div className="profile-avatar-lg">
-              {user.name.charAt(0)}
+      <div className="dh-grid">
+        
+        {/* === 2. Profile Card === */}
+        <div className="dh-card dh-profile-card">
+          <div className="dh-card-header-gradient">
+            <div className="dh-avatar-lg">
+              {user.name.charAt(0).toUpperCase()}
             </div>
           </div>
           
-          <div className="card-content">
-            <div className="user-identity">
-              <h3>{user.name}</h3>
-              <span className="role-tag">
-                <BriefcaseIcon className="icon-xs-inline" /> {user.role_name || 'Developer'}
-              </span>
+          <div className="dh-card-body">
+            <div className="dh-identity">
+              <h3 className="dh-user-name">{user.name}</h3>
+              <div className="dh-role-badge">
+                <ShieldCheck size={14} />
+                <span>{user.role_name || 'Administrator'}</span>
+              </div>
             </div>
 
-            <div className="info-grid">
-              <div className="info-box">
-                <div className="info-icon-bg"><UserCircleIcon className="icon-blue" /></div>
-                <div className="info-text">
-                  <label>Full Name</label>
-                  <p>{user.name}</p>
+            <div className="dh-info-list">
+              <div className="dh-info-item">
+                <div className="dh-icon-box dh-blue">
+                  <Mail size={16} />
                 </div>
-              </div>
-
-              <div className="info-box">
-                <div className="info-icon-bg"><EnvelopeIcon className="icon-purple" /></div>
-                <div className="info-text">
-                  <label>Email</label>
+                <div>
+                  <label>Email Address</label>
                   <p>{user.email}</p>
                 </div>
               </div>
 
-              <div className="info-box">
-                <div className="info-icon-bg"><PhoneIcon className="icon-green" /></div>
-                <div className="info-text">
-                  <label>Mobile</label>
+              <div className="dh-info-item">
+                <div className="dh-icon-box dh-green">
+                  <Phone size={16} />
+                </div>
+                <div>
+                  <label>Phone Number</label>
                   <p>{user.mobile || 'Not Provided'}</p>
                 </div>
               </div>
-            </div>
 
-            <div className="card-footer">
-              <small>Member ID: #{user.id} • Joined: {new Date(user.created_at).toLocaleDateString()}</small>
+              <div className="dh-info-item">
+                <div className="dh-icon-box dh-purple">
+                  <Briefcase size={16} />
+                </div>
+                <div>
+                  <label>Department</label>
+                  <p>Engineering & Development</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="dh-card-footer">
+              <small>User ID: #{user.id}</small>
             </div>
           </div>
         </div>
+
+        {/* === 3. Activity / Status Column (New Add) === */}
+        <div className="dh-status-column">
+          
+          {/* Quick Stats */}
+          <div className="dh-card dh-stat-card">
+            <div className="dh-stat-icon dh-orange">
+              <Activity size={20} />
+            </div>
+            <div className="dh-stat-info">
+              <label>System Status</label>
+              <p className="dh-text-success">Operational</p>
+            </div>
+          </div>
+
+          <div className="dh-card dh-stat-card">
+            <div className="dh-stat-icon dh-teal">
+              <Clock size={20} />
+            </div>
+            <div className="dh-stat-info">
+              <label>Last Login</label>
+              <p>{new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+            </div>
+          </div>
+
+          {/* Account Summary */}
+          <div className="dh-card dh-summary-card">
+            <h4 className="dh-card-title">Account Overview</h4>
+            <div className="dh-summary-row">
+              <span>Account Created</span>
+              <strong>{new Date(user.created_at || Date.now()).toLocaleDateString()}</strong>
+            </div>
+            <div className="dh-summary-row">
+              <span>Plan Type</span>
+              <strong>Pro License</strong>
+            </div>
+            <div className="dh-summary-row">
+              <span>Security Level</span>
+              <strong className="dh-text-high">High</strong>
+            </div>
+          </div>
+
+        </div>
+
       </div>
     </div>
   );

@@ -1,0 +1,417 @@
+/* Scoped Container */
+.vb-container {
+  padding: 8px;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: #334155;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Header Section */
+.vb-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  background: white;
+  padding: 10px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.vb-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vb-title h1 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.vb-title-icon {
+  color: #6366f1;
+}
+
+/* Actions Bar (Search/Filter) */
+.vb-actions-bar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.vb-search-wrapper, .vb-filter-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.vb-search-icon, .vb-filter-icon {
+  position: absolute;
+  left: 8px;
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.vb-search-input, .vb-select, .vb-date-input {
+  padding: 6px 8px 6px 30px; /* Left padding for icon */
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  font-size: 13px;
+  outline: none;
+  height: 32px;
+  transition: all 0.2s ease;
+  background-color: #f8fafc;
+}
+
+.vb-search-input {
+  width: 200px;
+}
+
+.vb-select {
+  padding-left: 28px;
+  cursor: pointer;
+}
+
+.vb-date-input {
+  padding-left: 8px;
+  width: 130px;
+}
+
+.vb-search-input:focus, .vb-select:focus, .vb-date-input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+  background-color: white;
+}
+
+.vb-date-inputs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.vb-to {
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* Table Card */
+.vb-table-card {
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  padding: 0; /* Table handles padding */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.vb-table-responsive {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.vb-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.vb-table thead {
+  background: #f1f5f9;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.vb-table th {
+  padding: 10px 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #475569;
+  white-space: nowrap;
+}
+
+.vb-table tbody tr {
+  border-bottom: 1px solid #f1f5f9;
+  transition: background-color 0.2s;
+}
+
+.vb-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.vb-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+.vb-table td {
+  padding: 8px 12px;
+  vertical-align: middle;
+}
+
+/* Cell Helpers */
+.vb-align-right { text-align: right; }
+.vb-align-center { text-align: center; }
+
+.vb-font-medium { font-weight: 600; color: #1e293b; }
+
+.vb-customer-cell {
+  display: flex;
+  flex-direction: column;
+}
+
+.vb-customer-name { font-weight: 500; }
+.vb-customer-sub { font-size: 11px; color: #94a3b8; }
+
+.vb-amount { font-weight: 600; }
+.vb-paid { color: #16a34a; }
+.vb-due { color: #dc2626; font-weight: 600; }
+
+/* Status Badges */
+.vb-badge {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: capitalize;
+  display: inline-block;
+}
+
+.vb-status-paid { background: #dcfce7; color: #166534; }
+.vb-status-partial { background: #ffedd5; color: #9a3412; }
+.vb-status-unpaid { background: #fee2e2; color: #991b1b; }
+
+/* Action Buttons */
+.vb-actions-cell {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
+.vb-icon-btn {
+  border: none;
+  background: transparent;
+  padding: 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vb-pdf-btn { color: #64748b; }
+.vb-pdf-btn:hover { background: #e2e8f0; color: #334155; }
+
+.vb-pay-btn { color: #6366f1; }
+.vb-pay-btn:hover { background: #e0e7ff; color: #4338ca; }
+
+/* Pagination */
+.vb-pagination {
+  padding: 10px 12px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+}
+
+.vb-page-info {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.vb-page-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vb-page-btn {
+  border: 1px solid #e2e8f0;
+  background: white;
+  border-radius: 4px;
+  padding: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.vb-page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.vb-page-btn:hover:not(:disabled) {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.vb-page-number {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Modal */
+.vb-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+  animation: vb-fadeIn 0.2s ease-out;
+}
+
+.vb-modal {
+  background: white;
+  width: 90%;
+  max-width: 400px;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  overflow: hidden;
+  animation: vb-slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.vb-modal-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8fafc;
+}
+
+.vb-modal-header h2 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  color: #1e293b;
+}
+
+.vb-close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #64748b;
+}
+
+.vb-modal-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.vb-info-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  padding: 4px 0;
+  border-bottom: 1px dashed #e2e8f0;
+}
+
+.vb-info-row.vb-highlight {
+  color: #dc2626;
+  border-bottom: none;
+  padding-top: 8px;
+}
+
+.vb-form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  color: #475569;
+}
+
+.vb-input-full {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box; /* Important for full width */
+}
+
+.vb-textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.vb-submit-btn {
+  margin-top: 8px;
+  width: 100%;
+  padding: 10px;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.vb-submit-btn:hover {
+  opacity: 0.9;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.vb-submit-btn:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Messages */
+.vb-msg-box {
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.vb-msg-success { background: #dcfce7; color: #166534; }
+.vb-msg-error { background: #fee2e2; color: #991b1b; }
+
+.vb-error-banner {
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 10px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+/* Animations */
+@keyframes vb-fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes vb-slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Utilities */
+.vb-loading-cell, .vb-empty-cell {
+  text-align: center;
+  color: #94a3b8;
+  padding: 30px !important;
+}
