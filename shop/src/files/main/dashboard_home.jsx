@@ -1,151 +1,228 @@
-// src/files/main/dashboard_home.jsx
-import React from 'react';
-import { useOutletContext, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { 
-  User, 
-  Phone, 
-  Mail, 
-  Briefcase, 
-  Calendar, 
-  ShieldCheck, 
-  Clock,
-  Activity,
-  MapPin
+    TrendingUp, 
+    TrendingDown, 
+    DollarSign, 
+    ShoppingBag, 
+    Truck, 
+    Calendar,
+    AlertCircle,
+    Loader2,
+    Package
 } from 'lucide-react';
 import './css/dashboard_home.css';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const DashboardHome = () => {
-  const { user } = useOutletContext();
-  const navigate = useNavigate();
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-  if (!user) return null;
+    // Fetch Data on Mount
+    useEffect(() => {
+        const fetchDashboardData = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) throw new Error("No access token found.");
 
-  const currentDate = new Date().toLocaleDateString('en-US', { 
-    weekday: 'long', 
-    month: 'long', 
-    day: 'numeric' 
-  });
+                const response = await axios.get(`${API_URL}/today-status`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                
+                setData(response.data);
+                setError(null);
+            } catch (err) {
+                console.error("Dashboard Fetch Error:", err);
+                setError(err.response?.data?.error || "Failed to load dashboard data.");
+            } finally {
+                setLoading(false);
+            }
+        };
 
-  return (
-    <div className="dh-container dh-fade-in">
-      
-      {/* === 1. Welcome Banner === */}
-      <div className="dh-banner">
-        <div className="dh-banner-content">
-          <h2 className="dh-welcome-title">Welcome back, {user.name}!</h2>
-          <p className="dh-welcome-text">
-            System is running smoothly. You have full access to the developer portal.
-          </p>
+        fetchDashboardData();
+    }, []);
+
+    // Helper to format currency
+    const formatCurrency = (amount) => {
+        return new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'INR',
+            minimumFractionDigits: 2
+        }).format(amount || 0);
+    };
+
+    if (loading) {
+        return (
+            <div className="dashboard-home-container loading-state">
+                <Loader2 className="animate-spin" size={32} color="#4f46e5" />
+                <p>Loading business insights...</p>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="dashboard-home-container error-state">
+                <AlertCircle size={32} color="#ef4444" />
+                <p>{error}</p>
+                <button className="retry-btn" onClick={() => window.location.reload()}>
+                    Retry
+                </button>
+            </div>
+        );
+    }
+
+    return (
+        <div className="dashboard-home-container fade-in">
+            {/* Header Section */}
+            <div className="dashboard-header">
+                <div className="header-left">
+                    <h1>Today's Overview</h1>
+                    <p className="subtitle">
+                        <Calendar size={14} style={{ marginRight: '4px' }} />
+                        {new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                    </p>
+                </div>
+            </div>
+
+            {/* Summary Cards Grid */}
+            <div className="stats-grid">
+                {/* Retail Card */}
+                <div className="stat-card retail-gradient">
+                    <div className="card-icon-bg">
+                        <ShoppingBag size={20} color="white" />
+                    </div>
+                    <div className="card-content">
+                        <h3>Retail</h3>
+                        <div className="stat-row">
+                            <span className="label">Revenue</span>
+                            <span className="value">{formatCurrency(data?.summary?.retail?.revenue)}</span>
+                        </div>
+                        <div className="stat-row profit-row">
+                            <span className="label">Profit</span>
+                            <span className="value">
+                                {formatCurrency(data?.summary?.retail?.profit)}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Wholesale Card */}
+                <div className="stat-card wholesale-gradient">
+                    <div className="card-icon-bg">
+                        <Truck size={20} color="white" />
+                    </div>
+                    <div className="card-content">
+                        <h3>Wholesale</h3>
+                        <div className="stat-row">
+                            <span className="label">Revenue</span>
+                            <span className="value">{formatCurrency(data?.summary?.wholesale?.revenue)}</span>
+                        </div>
+                        <div className="stat-row profit-row">
+                            <span className="label">Profit</span>
+                            <span className="value">
+                                {formatCurrency(data?.summary?.wholesale?.profit)}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Total Card */}
+                <div className="stat-card total-gradient">
+                    <div className="card-icon-bg">
+                        <DollarSign size={20} color="white" />
+                    </div>
+                    <div className="card-content">
+                        <h3>Total Performance</h3>
+                        <div className="stat-row">
+                            <span className="label">Total Revenue</span>
+                            <span className="value">{formatCurrency(data?.summary?.total?.revenue)}</span>
+                        </div>
+                        <div className="stat-row profit-row">
+                            <span className="label">Net Profit</span>
+                            <span className="value">
+                                {Number(data?.summary?.total?.profit) >= 0 ? <TrendingUp size={14}/> : <TrendingDown size={14}/>}
+                                {formatCurrency(data?.summary?.total?.profit)}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Top Products Section */}
+            <div className="tables-grid">
+                {/* Top Retail Products */}
+                <div className="table-card">
+                    <div className="table-header">
+                        <h2>Top Retail Products</h2>
+                        <Package size={16} className="header-icon text-retail" />
+                    </div>
+                    <div className="table-responsive">
+                        {data?.top_products?.retail?.length > 0 ? (
+                            <table className="products-table">
+                                <thead>
+                                    <tr>
+                                        <th>Product Name</th>
+                                        <th className="text-right">Qty</th>
+                                        <th className="text-right">Sales</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {data.top_products.retail.map((item, index) => (
+                                        <tr key={index}>
+                                            <td>{item.product_name}</td>
+                                            <td className="text-right">{item.total_qty}</td>
+                                            <td className="text-right font-medium">
+                                                {formatCurrency(item.total_sales)}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        ) : (
+                            <div className="empty-state">No retail sales today.</div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Top Wholesale Products */}
+                <div className="table-card">
+                    <div className="table-header">
+                        <h2>Top Wholesale Products</h2>
+                        <Package size={16} className="header-icon text-wholesale" />
+                    </div>
+                    <div className="table-responsive">
+                        {data?.top_products?.wholesale?.length > 0 ? (
+                            <table className="products-table">
+                                <thead>
+                                    <tr>
+                                        <th>Product Name</th>
+                                        <th className="text-right">Qty</th>
+                                        <th className="text-right">Sales</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {data.top_products.wholesale.map((item, index) => (
+                                        <tr key={index}>
+                                            <td>{item.product_name}</td>
+                                            <td className="text-right">{item.total_qty}</td>
+                                            <td className="text-right font-medium">
+                                                {formatCurrency(item.total_sales)}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        ) : (
+                            <div className="empty-state">No wholesale transactions today.</div>
+                        )}
+                    </div>
+                </div>
+            </div>
         </div>
-        <div className="dh-banner-date">
-           <Calendar size={16} className="dh-icon-white" />
-           <span>{currentDate}</span>
-        </div>
-      </div>
-
-      <div className="dh-grid">
-        
-        {/* === 2. Profile Card === */}
-        <div className="dh-card dh-profile-card">
-          <div className="dh-card-header-gradient">
-            <div className="dh-avatar-lg">
-              {user.name.charAt(0).toUpperCase()}
-            </div>
-          </div>
-          
-          <div className="dh-card-body">
-            <div className="dh-identity">
-              <h3 className="dh-user-name">{user.name}</h3>
-              <div className="dh-role-badge">
-                <ShieldCheck size={14} />
-                <span>{user.role_name || 'Administrator'}</span>
-              </div>
-            </div>
-
-            <div className="dh-info-list">
-              <div className="dh-info-item">
-                <div className="dh-icon-box dh-blue">
-                  <Mail size={16} />
-                </div>
-                <div>
-                  <label>Email Address</label>
-                  <p>{user.email}</p>
-                </div>
-              </div>
-
-              <div className="dh-info-item">
-                <div className="dh-icon-box dh-green">
-                  <Phone size={16} />
-                </div>
-                <div>
-                  <label>Phone Number</label>
-                  <p>{user.mobile || 'Not Provided'}</p>
-                </div>
-              </div>
-
-              <div className="dh-info-item">
-                <div className="dh-icon-box dh-purple">
-                  <Briefcase size={16} />
-                </div>
-                <div>
-                  <label>Department</label>
-                  <p>Engineering & Development</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="dh-card-footer">
-              <small>User ID: #{user.id}</small>
-            </div>
-          </div>
-        </div>
-
-        {/* === 3. Activity / Status Column (New Add) === */}
-        <div className="dh-status-column">
-          
-          {/* Quick Stats */}
-          <div className="dh-card dh-stat-card">
-            <div className="dh-stat-icon dh-orange">
-              <Activity size={20} />
-            </div>
-            <div className="dh-stat-info">
-              <label>System Status</label>
-              <p className="dh-text-success">Operational</p>
-            </div>
-          </div>
-
-          <div className="dh-card dh-stat-card">
-            <div className="dh-stat-icon dh-teal">
-              <Clock size={20} />
-            </div>
-            <div className="dh-stat-info">
-              <label>Last Login</label>
-              <p>{new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
-            </div>
-          </div>
-
-          {/* Account Summary */}
-          <div className="dh-card dh-summary-card">
-            <h4 className="dh-card-title">Account Overview</h4>
-            <div className="dh-summary-row">
-              <span>Account Created</span>
-              <strong>{new Date(user.created_at || Date.now()).toLocaleDateString()}</strong>
-            </div>
-            <div className="dh-summary-row">
-              <span>Plan Type</span>
-              <strong>Pro License</strong>
-            </div>
-            <div className="dh-summary-row">
-              <span>Security Level</span>
-              <strong className="dh-text-high">High</strong>
-            </div>
-          </div>
-
-        </div>
-
-      </div>
-    </div>
-  );
+    );
 };
 
 export default DashboardHome;

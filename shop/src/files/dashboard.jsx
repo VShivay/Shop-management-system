@@ -131,7 +131,9 @@ const Dashboard = () => {
              <span className={`d-cat-label ${!isSidebarOpen && 'd-hidden'}`}>FINANCE</span>
           </div>
           <NavItem to="/dashboard/retail-billing" icon={<Receipt size={20} />} label="Retail Billing" isOpen={isSidebarOpen} />
-          <NavItem to="/dashboard/view-bills" icon={<Receipt size={20} />} label="View Reail Bills" isOpen={isSidebarOpen} />
+          <NavItem to="/dashboard/view-retail-bills" icon={<Receipt size={20} />} label="View Retil Bills" isOpen={isSidebarOpen} />
+          <NavItem to="/dashboard/wholesale-billing" icon={<Receipt size={20} />} label="Create Wholesale Biils" isOpen={isSidebarOpen} />
+          <NavItem to="/dashboard/view-wholesale-bills" icon={<Receipt size={20} />} label="View Wholesale bills" isOpen={isSidebarOpen} />
 
         </nav>
 

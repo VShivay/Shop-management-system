@@ -1,0 +1,315 @@
+/* Container Scoping */
+.wb-container {
+    padding: 8px;
+    height: calc(100vh - 56px); /* Full height minus navbar */
+    display: flex;
+    flex-direction: column;
+    background-color: #f4f6f9;
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+}
+
+/* Animations */
+.fade-in {
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Header */
+.wb-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 0 4px;
+}
+
+.wb-header h2 {
+    font-size: 1.25rem;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-weight: 700;
+}
+
+/* Grid Layout */
+.wb-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr; /* Fixed sidebar, fluid table */
+    gap: 10px;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Panels */
+.wb-panel {
+    background: #ffffff;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.wb-panel.left {
+    gap: 15px;
+}
+
+.wb-panel.right {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Typography & Utilities */
+.text-muted { color: #64748b; }
+.text-red { color: #ef4444; }
+.text-green { color: #10b981; }
+.text-center { text-align: center; }
+.fw-bold { font-weight: 600; }
+.small { font-size: 0.8rem; }
+.mt-2 { margin-top: 8px; }
+
+/* Inputs & Search */
+.wb-section {
+    position: relative;
+}
+
+.wb-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.wb-search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.wb-search-box input {
+    width: 100%;
+    padding: 8px 30px 8px 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.wb-search-box input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.wb-search-box input.locked {
+    background-color: #f1f5f9;
+    color: #64748b;
+}
+
+.search-icon {
+    position: absolute;
+    right: 8px;
+    color: #94a3b8;
+    pointer-events: none;
+}
+
+/* Dropdowns */
+.wb-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    z-index: 50;
+    max-height: 200px;
+    overflow-y: auto;
+    list-style: none;
+    padding: 0;
+    margin: 4px 0 0 0;
+}
+
+.wb-dropdown li {
+    padding: 8px 10px;
+    border-bottom: 1px solid #f1f5f9;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.wb-dropdown li:hover {
+    background-color: #f8fafc;
+}
+
+/* Customer Card */
+.wb-customer-card {
+    margin-top: 8px;
+    padding: 8px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.wb-customer-card p {
+    margin: 4px 0;
+}
+
+/* Table */
+.wb-table-wrapper {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+}
+
+.wb-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.wb-table th {
+    background: #f1f5f9;
+    padding: 8px;
+    text-align: left;
+    font-weight: 600;
+    color: #475569;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.wb-table td {
+    padding: 6px 8px;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+}
+
+.wb-input-sm {
+    width: 60px;
+    padding: 4px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    text-align: center;
+}
+
+/* Footer Section */
+.wb-footer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    padding-top: 10px;
+    border-top: 1px solid #e2e8f0;
+    margin-bottom: 10px;
+}
+
+.wb-select, .wb-input {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.wb-totals {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.wb-total-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+.wb-total-row.grand {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e293b;
+    border-top: 1px dashed #cbd5e1;
+    padding-top: 4px;
+}
+
+.wb-total-row.paid { color: #10b981; font-weight: 600; }
+.wb-total-row.due { color: #ef4444; font-weight: 600; }
+
+/* Buttons */
+.wb-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.wb-btn {
+    padding: 8px 20px;
+    border-radius: 4px;
+    border: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.1s;
+}
+
+.wb-btn:active { transform: scale(0.98); }
+
+.wb-btn.primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
+}
+
+.wb-btn.primary:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.wb-btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.wb-btn-icon:hover { background-color: #f1f5f9; }
+.wb-btn-icon.danger { color: #ef4444; }
+
+/* Alerts */
+.wb-alert {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.wb-alert.error { background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; }
+.wb-alert.success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
