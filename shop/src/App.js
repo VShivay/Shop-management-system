@@ -20,14 +20,17 @@ import UpdateSupplier from './files/main/supplier/update_supplier';
 // Customers
 import ManageCustomer from './files/main/customer/manage_customer';
 import CustomerDetail from './files/main/customer/customer_detail';
-import AddCustomer from './files/main/customer/add_customer';         
+import AddCustomer from './files/main/customer/add_customer';          
 import UpdateCustomer from './files/main/customer/update_customer';
 
 // Billing
 import CreateRetailBill from './files/main/create_retail_bill';
 import ViewRetailBill from './files/main/view_retail_bill';
 import CreateWholesaleBill from './files/main/create_wholesale_bill'; 
-import ViewWholesaleBill from './files/main/view_wholesale_bill'; // <--- Import Component
+import ViewWholesaleBill from './files/main/view_wholesale_bill';
+
+// Restock (New Import)
+import RestockProduct from './files/main/restock_product'; 
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -64,7 +67,7 @@ function App() {
 
           {/* Customers */}
           <Route path="customers" element={<ManageCustomer />} />
-          <Route path="customers/add" element={<AddCustomer />} />         
+          <Route path="customers/add" element={<AddCustomer />} />          
           <Route path="customers/edit/:id" element={<UpdateCustomer />} /> 
           <Route path="customers/:id" element={<CustomerDetail />} />
 
@@ -72,8 +75,10 @@ function App() {
           <Route path="retail-billing" element={<CreateRetailBill />} />
           <Route path="wholesale-billing" element={<CreateWholesaleBill />} /> 
           <Route path="view-retail-bills" element={<ViewRetailBill />} />
-          {/* New Route */}
           <Route path="view-wholesale-bills" element={<ViewWholesaleBill />} /> 
+          
+          {/* Restock Route (New) */}
+          <Route path="restock" element={<RestockProduct />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

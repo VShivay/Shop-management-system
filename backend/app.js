@@ -14,6 +14,7 @@ const ViewBillRoutes = require('./route/view_retail_bill_route');
 const WholesaleBillRoutes = require('./route/create_wholesale_bill_route');
 const ViewWholesaleBillRoutes = require('./route/view_wholesale_bill_route');
 const status = require('./route/dashboard_home_route');
+const ReStockRoute = require('./route/restock_product_route');
 
 
 
@@ -58,6 +59,7 @@ app.use('/api/view-retail-bill', ViewBillRoutes);
 app.use('/api/create-bill', WholesaleBillRoutes);
 app.use('/api/view-wholesale-bill', ViewWholesaleBillRoutes);
 app.use('/api/today-status', status);
+app.use('/api/restock', ReStockRoute);
 
 
 // Global Error Handler

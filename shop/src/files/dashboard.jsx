@@ -125,6 +125,7 @@ const Dashboard = () => {
           <NavItem to="/dashboard/products" icon={<Package size={20} />} label="Products" isOpen={isSidebarOpen} />
           <NavItem to="/dashboard/suppliers" icon={<Truck size={20} />} label="Suppliers" isOpen={isSidebarOpen} />
           <NavItem to="/dashboard/customers" icon={<Users size={20} />} label="Customers" isOpen={isSidebarOpen} />
+          <NavItem to="/dashboard/restock" icon={<Truck size={20} />} label="Restock Product" isOpen={isSidebarOpen} />
 
           {/* Category: Finance */}
           <div className="d-nav-category">
