@@ -1,0 +1,396 @@
+/* src/files/main/css/report_analysis.css */
+
+/* Scope wrapper */
+.ra-wrapper {
+  padding: 8px;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  max-width: 100%;
+  color: #334155;
+}
+
+/* Animation */
+.fade-in {
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Header --- */
+.ra-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding: 0 4px;
+}
+
+.ra-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ra-icon-main {
+  color: #6366f1;
+}
+
+.ra-header h1 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+}
+
+/* --- Controls --- */
+.ra-controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.ra-toggle {
+  background: #f1f5f9;
+  padding: 3px;
+  border-radius: 6px;
+  display: flex;
+  gap: 2px;
+}
+
+.ra-toggle button {
+  padding: 5px 12px;
+  font-size: 0.85rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 4px;
+  color: #64748b;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.ra-toggle button.active {
+  background: white;
+  color: #6366f1;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.ra-btn-pdf {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2);
+  transition: transform 0.1s;
+}
+
+.ra-btn-pdf:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(220, 38, 38, 0.3);
+}
+
+/* --- Filters --- */
+.ra-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 15px;
+  background: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.ra-filter-chips {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ra-chip {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  border: 1px solid #e2e8f0;
+  background: white;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ra-chip:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.ra-chip.active {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);
+}
+
+.ra-date-picker {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-left: auto;
+}
+
+.ra-date-picker .input-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ra-date-picker label {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.ra-date-picker input {
+  padding: 4px 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: #334155;
+  outline: none;
+}
+
+.ra-date-picker input:focus {
+  border-color: #6366f1;
+}
+
+/* --- Summary Cards --- */
+.ra-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.ra-card {
+  background: white;
+  border-radius: 6px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.ra-card::after {
+  content: '';
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 4px;
+}
+
+.ra-card-sales::after { background: #3b82f6; }
+.ra-card-cost::after { background: #f59e0b; }
+.ra-card-profit::after { background: #10b981; }
+.ra-card-loss::after { background: #ef4444; }
+
+.ra-card-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  color: #64748b;
+}
+
+.ra-card-sales .ra-card-icon { background: #eff6ff; color: #3b82f6; }
+.ra-card-cost .ra-card-icon { background: #fffbeb; color: #f59e0b; }
+.ra-card-profit .ra-card-icon { background: #ecfdf5; color: #10b981; }
+.ra-card-loss .ra-card-icon { background: #fef2f2; color: #ef4444; }
+
+.ra-card-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.ra-card-info span {
+  font-size: 0.75rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.ra-card-info h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* --- Table --- */
+.ra-table-container {
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+.ra-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.ra-table thead {
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.ra-table th {
+  padding: 10px 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.5px;
+}
+
+.ra-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+}
+
+.ra-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.ra-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+/* Table Utilities */
+.text-right { text-align: right; }
+.text-center { text-align: center; }
+.font-medium { font-weight: 500; }
+.font-bold { font-weight: 700; }
+.text-muted { color: #94a3b8; }
+.text-green { color: #10b981; }
+.text-red { color: #ef4444; }
+
+.ra-date-badge {
+  display: inline-flex;
+  align-items: center;
+  background: #f1f5f9;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+/* Loading & Error */
+.ra-loading {
+  padding: 20px;
+  text-align: center;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.ra-error {
+  padding: 20px;
+  text-align: center;
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+
+/* Pagination */
+.ra-pagination {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #fff;
+  border-top: 1px solid #e2e8f0;
+}
+
+.ra-pagination span {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.ra-pg-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.ra-pg-controls button {
+  background: white;
+  border: 1px solid #e2e8f0;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s;
+}
+
+.ra-pg-controls button:hover:not(:disabled) {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.ra-pg-controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .ra-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .ra-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .ra-filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .ra-date-picker {
+    margin-left: 0;
+    justify-content: space-between;
+  }
+  .ra-table th:nth-child(2), /* Bill No */
+  .ra-table td:nth-child(2),
+  .ra-table th:nth-child(6), /* Hist Cost */
+  .ra-table td:nth-child(6) {
+    display: none;
+  }
+}

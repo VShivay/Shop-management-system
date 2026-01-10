@@ -9,13 +9,14 @@ import {
   Truck, 
   Receipt, 
   Menu, 
-  X, 
   LogOut, 
   ChevronDown, 
   Settings, 
-  UserCircle,
-  AlertCircle,
-  Loader2
+  AlertCircle, 
+  Loader2,
+  PieChart,
+  FileBarChart,
+  ClipboardList
 } from 'lucide-react';
 import './dashboard.css';
 
@@ -27,6 +28,7 @@ const Dashboard = () => {
   // UI State
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); 
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   
   const navigate = useNavigate();
   const location = useLocation();
@@ -38,12 +40,10 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem('token');
-
       if (!token) {
         navigate('/', { replace: true });
         return;
       }
-
       try {
         const response = await axios.get(`${API_URL}/me`, {
           headers: { Authorization: `Bearer ${token}` }
@@ -64,9 +64,20 @@ const Dashboard = () => {
 
   // --- 2. Event Listeners ---
   useEffect(() => {
-    // Auto-close sidebar on mobile when route changes
-    if (window.innerWidth < 768) setIsSidebarOpen(false);
-  }, [location]);
+    const handleResize = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      if (mobile) setIsSidebarOpen(false);
+      else setIsSidebarOpen(true);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Auto-close sidebar on mobile route change
+  useEffect(() => {
+    if (isMobile) setIsSidebarOpen(false);
+  }, [location, isMobile]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -85,122 +96,115 @@ const Dashboard = () => {
 
   // --- 3. Render Helpers ---
   if (error) return (
-    <div className="d-modern-layout d-center-state">
-      <div className="d-error-card">
-        <AlertCircle size={40} className="d-text-danger" />
-        <p>{error}</p>
+    <div className="dash-v2-center">
+      <div className="dash-v2-error">
+        <AlertCircle size={24} />
+        <p style={{ margin: 0, fontWeight: 500 }}>{error}</p>
       </div>
     </div>
   );
 
   if (isLoading || !user) return (
-    <div className="d-modern-layout d-center-state">
-      <Loader2 size={40} className="d-spinner" />
+    <div className="dash-v2-center">
+      <Loader2 size={40} className="dash-v2-spinner" />
     </div>
   );
 
   return (
-    <div className={`d-modern-layout ${isSidebarOpen ? 'd-sb-expanded' : 'd-sb-collapsed'}`}>
+    <div className="dash-v2-layout">
       
       {/* === SIDEBAR === */}
-      <aside className="d-sidebar">
-        <div className="d-sidebar-header">
-          <div className="d-logo-wrapper">
-            <div className="d-logo-icon">DP</div>
-            <h1 className={`d-logo-text ${!isSidebarOpen && 'd-hidden'}`}>DevPortal</h1>
-          </div>
+      <aside className={`dash-v2-sidebar ${!isSidebarOpen ? 'collapsed' : ''} ${isMobile && isSidebarOpen ? 'mobile-open' : ''}`}>
+        
+        {/* 1. Header (Fixed) */}
+        <div className="dash-v2-logo-area">
+          <div className="dash-v2-logo-icon">DP</div>
+          <span className="dash-v2-logo-text">DevPortal</span>
         </div>
 
-        <nav className="d-sidebar-nav">
-          {/* Category: Main */}
-          <div className="d-nav-category">
-            <span className={`d-cat-label ${!isSidebarOpen && 'd-hidden'}`}>ANALYTICS</span>
-          </div>
-          <NavItem to="/dashboard" icon={<LayoutDashboard size={20} />} label="Overview" isOpen={isSidebarOpen} end />
+        {/* 2. Navigation (Scrollable) */}
+        <nav className="dash-v2-nav-scroll">
+          <NavCategory label="ANALYTICS" isOpen={isSidebarOpen} />
+          <NavItem to="/dashboard" icon={<LayoutDashboard size={18} />} label="Overview" isOpen={isSidebarOpen} end />
 
-          {/* Category: Management */}
-          <div className="d-nav-category">
-             <span className={`d-cat-label ${!isSidebarOpen && 'd-hidden'}`}>MANAGEMENT</span>
-          </div>
-          <NavItem to="/dashboard/products" icon={<Package size={20} />} label="Products" isOpen={isSidebarOpen} />
-          <NavItem to="/dashboard/suppliers" icon={<Truck size={20} />} label="Suppliers" isOpen={isSidebarOpen} />
-          <NavItem to="/dashboard/customers" icon={<Users size={20} />} label="Customers" isOpen={isSidebarOpen} />
-          <NavItem to="/dashboard/restock" icon={<Truck size={20} />} label="Restock Product" isOpen={isSidebarOpen} />
+          <NavCategory label="MANAGEMENT" isOpen={isSidebarOpen} />
+          <NavItem to="/dashboard/products" icon={<Package size={18} />} label="Products" isOpen={isSidebarOpen} />
+          <NavItem to="/dashboard/suppliers" icon={<Truck size={18} />} label="Suppliers" isOpen={isSidebarOpen} />
+          <NavItem to="/dashboard/customers" icon={<Users size={18} />} label="Customers" isOpen={isSidebarOpen} />
+          <NavItem to="/dashboard/restock" icon={<ClipboardList size={18} />} label="Restock Product" isOpen={isSidebarOpen} />
 
-          {/* Category: Finance */}
-          <div className="d-nav-category">
-             <span className={`d-cat-label ${!isSidebarOpen && 'd-hidden'}`}>FINANCE</span>
-          </div>
-          <NavItem to="/dashboard/retail-billing" icon={<Receipt size={20} />} label="Retail Billing" isOpen={isSidebarOpen} />
-          <NavItem to="/dashboard/view-retail-bills" icon={<Receipt size={20} />} label="View Retil Bills" isOpen={isSidebarOpen} />
-          <NavItem to="/dashboard/wholesale-billing" icon={<Receipt size={20} />} label="Create Wholesale Biils" isOpen={isSidebarOpen} />
-          <NavItem to="/dashboard/view-wholesale-bills" icon={<Receipt size={20} />} label="View Wholesale bills" isOpen={isSidebarOpen} />
-
+          <NavCategory label="FINANCE" isOpen={isSidebarOpen} />
+          <NavItem to="/dashboard/retail-billing" icon={<Receipt size={18} />} label="POS Billing" isOpen={isSidebarOpen} />
+          <NavItem to="/dashboard/view-retail-bills" icon={<FileBarChart size={18} />} label="Retail Bills" isOpen={isSidebarOpen} />
+          <NavItem to="/dashboard/wholesale-billing" icon={<Receipt size={18} />} label="Wholesale POS" isOpen={isSidebarOpen} />
+          <NavItem to="/dashboard/view-wholesale-bills" icon={<FileBarChart size={18} />} label="Wholesale Bills" isOpen={isSidebarOpen} />
+          
+          <NavCategory label="REPORTS" isOpen={isSidebarOpen} />
+          <NavItem to="/dashboard/reports" icon={<PieChart size={18} />} label="Analytics Reports" isOpen={isSidebarOpen} />
         </nav>
 
-        <div className="d-sidebar-footer">
-          {isSidebarOpen ? <small>v2.0 Pro</small> : <small>v2</small>}
+        {/* 3. Footer (Fixed) */}
+        <div className="dash-v2-footer">
+          {isSidebarOpen ? 'v2.0 Pro System' : 'v2.0'}
         </div>
       </aside>
 
-      {/* === MAIN CONTENT === */}
-      <div className="d-main-wrapper">
+      {/* === MAIN WRAPPER === */}
+      <div className="dash-v2-main">
         
         {/* Top Navbar */}
-        <header className="d-topbar">
-          <div className="d-topbar-left">
-             <button 
-              className="d-toggle-btn" 
+        <header className="dash-v2-topbar">
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <button 
+              className="dash-v2-toggle-btn" 
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
               aria-label="Toggle Sidebar"
             >
-              {isSidebarOpen ? <Menu size={20} /> : <Menu size={20} />}
+              <Menu size={20} />
             </button>
-            <h2 className="d-page-title">
+            <h2 className="dash-v2-page-title">
               {getPageTitle(location.pathname)}
             </h2>
           </div>
 
-          <div className="d-topbar-right" ref={profileRef}>
+          <div className="dash-v2-profile-wrap" ref={profileRef}>
             <button 
-              className={`d-profile-trigger ${isProfileOpen ? 'd-active' : ''}`}
+              className={`dash-v2-profile-btn ${isProfileOpen ? 'open' : ''}`}
               onClick={() => setIsProfileOpen(!isProfileOpen)}
             >
-              <div className="d-avatar">
+              <div className="dash-v2-avatar">
                 {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
               </div>
-              <div className="d-user-info">
-                <span className="d-username">{user.name}</span>
-                <span className="d-userrole">Admin</span>
-              </div>
-              <ChevronDown size={16} className={`d-chevron ${isProfileOpen ? 'd-rotate' : ''}`} />
+              {!isMobile && (
+                <div className="dash-v2-user-details">
+                  <span className="dash-v2-user-name">{user.name}</span>
+                  <span className="dash-v2-user-role">Admin</span>
+                </div>
+              )}
+              <ChevronDown size={14} style={{ color: '#6b7280', transform: isProfileOpen ? 'rotate(180deg)' : 'none', transition: '0.2s' }} />
             </button>
 
             {/* Profile Dropdown */}
-            <div className={`d-dropdown-menu ${isProfileOpen ? 'd-show' : ''}`}>
-              <div className="d-dropdown-header">
-                <p className="d-dd-name">{user.name}</p>
-                <p className="d-dd-email">{user.email || 'user@portal.com'}</p>
+            <div className={`dash-v2-dropdown ${isProfileOpen ? 'show' : ''}`}>
+              <div className="dash-v2-dropdown-header">
+                <p className="dash-v2-dd-name">{user.name}</p>
+                <p className="dash-v2-dd-email">{user.email || 'user@portal.com'}</p>
               </div>
-              <ul className="d-dropdown-list">
-                <li>
-                  <button onClick={() => navigate('/dashboard/settings')}>
-                    <Settings size={16} /> Settings
-                  </button>
-                </li>
-                <li className="d-divider"></li>
-                <li>
-                  <button onClick={handleLogout} className="d-text-danger">
-                    <LogOut size={16} /> Logout
-                  </button>
-                </li>
-              </ul>
+              <div style={{ padding: '4px' }}>
+                <button className="dash-v2-dd-item" onClick={() => navigate('/dashboard/settings')}>
+                  <Settings size={16} /> Settings
+                </button>
+                <div style={{ height: '1px', background: '#f3f4f6', margin: '4px 0' }}></div>
+                <button onClick={handleLogout} className="dash-v2-dd-item danger">
+                  <LogOut size={16} /> Logout
+                </button>
+              </div>
             </div>
           </div>
         </header>
 
         {/* Dynamic Content Area */}
-        <main className="d-content-area">
+        <main className="dash-v2-content">
           <Outlet context={{ user }} />
         </main>
       </div>
@@ -209,27 +213,36 @@ const Dashboard = () => {
   );
 };
 
-// Sub-component for Nav Item
+// --- Sub Components ---
+
+const NavCategory = ({ label, isOpen }) => (
+  <div className={`dash-v2-cat-label ${!isOpen ? 'hidden' : ''}`}>
+    {label}
+  </div>
+);
+
 const NavItem = ({ to, icon, label, isOpen, end = false }) => (
   <NavLink 
     to={to} 
     end={end}
-    className={({ isActive }) => `d-nav-item ${isActive ? 'd-active' : ''}`}
+    className={({ isActive }) => `dash-v2-nav-item ${isActive ? 'active' : ''}`}
     title={!isOpen ? label : ''}
   >
-    <span className="d-nav-icon">{icon}</span>
-    <span className={`d-nav-text ${!isOpen && 'd-hidden'}`}>{label}</span>
+    <span style={{ display: 'flex', flexShrink: 0 }}>{icon}</span>
+    {isOpen && <span>{label}</span>}
   </NavLink>
 );
 
 // Helper for Title
 const getPageTitle = (path) => {
-  if (path === '/dashboard') return 'Dashboard Overview';
+  if (path === '/dashboard') return 'Overview';
   if (path.includes('products')) return 'Product Inventory';
   if (path.includes('suppliers')) return 'Supplier Directory';
   if (path.includes('customers')) return 'Client Database';
-  if (path.includes('retail-billing')) return 'Point of Sale (POS)';
-  if (path.includes('settings')) return 'System Settings';
+  if (path.includes('retail-billing')) return 'Point of Sale';
+  if (path.includes('wholesale-billing')) return 'Wholesale Order';
+  if (path.includes('reports')) return 'System Reports';
+  if (path.includes('settings')) return 'Settings';
   return 'Dashboard';
 };
 

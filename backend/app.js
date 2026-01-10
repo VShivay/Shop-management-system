@@ -15,6 +15,8 @@ const WholesaleBillRoutes = require('./route/create_wholesale_bill_route');
 const ViewWholesaleBillRoutes = require('./route/view_wholesale_bill_route');
 const status = require('./route/dashboard_home_route');
 const ReStockRoute = require('./route/restock_product_route');
+const report = require('./route/report_analysis_route');
+
 
 
 
@@ -60,6 +62,8 @@ app.use('/api/create-bill', WholesaleBillRoutes);
 app.use('/api/view-wholesale-bill', ViewWholesaleBillRoutes);
 app.use('/api/today-status', status);
 app.use('/api/restock', ReStockRoute);
+app.use('/api/report-analysis', report);
+
 
 
 // Global Error Handler
