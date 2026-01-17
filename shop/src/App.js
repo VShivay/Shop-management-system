@@ -20,7 +20,7 @@ import UpdateSupplier from './files/main/supplier/update_supplier';
 // Customers
 import ManageCustomer from './files/main/customer/manage_customer';
 import CustomerDetail from './files/main/customer/customer_detail';
-import AddCustomer from './files/main/customer/add_customer';           
+import AddCustomer from './files/main/customer/add_customer';            
 import UpdateCustomer from './files/main/customer/update_customer';
 
 // Billing
@@ -32,8 +32,9 @@ import ViewWholesaleBill from './files/main/view_wholesale_bill';
 // Restock
 import RestockProduct from './files/main/restock_product'; 
 
-// Reports (NEW)
-import ReportAnalysis from './files/main/report_analysis';
+// Reports
+import Profit_Loss_ReportAnalysis from './files/main/report_analysis';
+import CustomerReportAnalysis from './files/main/customer_report_analysis'; // NEW IMPORT
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -83,8 +84,10 @@ function App() {
           {/* Restock */}
           <Route path="restock" element={<RestockProduct />} />
 
-          {/* Reports Analysis (NEW) */}
-          <Route path="reports" element={<ReportAnalysis />} />
+          {/* Reports Analysis */}
+          <Route path="reports" element={<Profit_Loss_ReportAnalysis />} />
+          {/* NEW ROUTE */}
+          <Route path="customer-reports" element={<CustomerReportAnalysis />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

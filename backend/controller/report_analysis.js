@@ -2,69 +2,120 @@ const db = require('../db');
 const Joi = require('joi');
 const pdfService = require('../pdf/report_analysis_pdf');
 
-// Helper: Calculate Date Range based on filter
-const getDateRange = (filterType, customStart, customEnd) => {
-    const now = new Date();
-    let startDate = new Date();
-    let endDate = new Date();
+// --- HELPER: Get Current Time in India (IST) ---
+const getIndiaDate = () => {
+    const indiaTimeStr = new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
+    return new Date(indiaTimeStr);
+};
+
+// --- HELPER: Calculate Date Range ---
+const getDateRange = (filterType, customStart, customEnd, specificMonth, specificYear) => {
+    const now = getIndiaDate();
+    let startDate = new Date(now);
+    let endDate = new Date(now);
+
+    const startOfDay = (d) => { d.setHours(0, 0, 0, 0); return d; };
+    const endOfDay = (d) => { d.setHours(23, 59, 59, 999); return d; };
 
     switch (filterType) {
         case 'today':
-            startDate.setHours(0, 0, 0, 0);
-            endDate.setHours(23, 59, 59, 999);
+            startOfDay(startDate);
+            endOfDay(endDate);
             break;
+
+        case 'yesterday':
+            // Move back 1 day
+            startDate.setDate(startDate.getDate() - 1);
+            endDate.setDate(endDate.getDate() - 1);
+            
+            startOfDay(startDate);
+            endOfDay(endDate);
+            break;
+
         case 'this_week':
-            // Assume week starts on Monday
-            const day = startDate.getDay() || 7; 
-            if (day !== 1) startDate.setHours(-24 * (day - 1));
-            startDate.setHours(0,0,0,0);
-            endDate.setHours(23, 59, 59, 999);
+            // logic: Calculate Monday (Start) to Sunday (End)
+            const currentDay = startDate.getDay() || 7; // Mon=1, ... Sun=7
+            
+            // Set Start Date to Monday
+            startDate.setDate(startDate.getDate() - (currentDay - 1));
+            startOfDay(startDate);
+
+            // Set End Date to Sunday (Monday + 6 days)
+            endDate = new Date(startDate); // Copy Monday
+            endDate.setDate(startDate.getDate() + 6); 
+            endOfDay(endDate);
             break;
+
         case 'this_month':
-            startDate.setDate(1);
-            startDate.setHours(0,0,0,0);
-            endDate.setHours(23, 59, 59, 999);
+            startDate.setDate(1); // 1st of current month
+            startOfDay(startDate);
+            endOfDay(endDate); // Today (or end of month if preferred, currently sets to 'now')
+            // If you want full month end:
+            // endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0);
+            // endOfDay(endDate);
             break;
-        case 'this_year':
-            startDate.setMonth(0, 1);
-            startDate.setHours(0,0,0,0);
-            endDate.setHours(23, 59, 59, 999);
+
+        case 'month': 
+            if (!specificMonth || !specificYear) throw new Error('Month and Year required for month filter');
+            startDate = new Date(specificYear, specificMonth - 1, 1);
+            endDate = new Date(specificYear, specificMonth, 0);
+            startOfDay(startDate);
+            endOfDay(endDate);
             break;
+
+        case 'year':
+            if (!specificYear) throw new Error('Year required for year filter');
+            startDate = new Date(specificYear, 0, 1); 
+            endDate = new Date(specificYear, 11, 31); 
+            startOfDay(startDate);
+            endOfDay(endDate);
+            break;
+
         case 'custom':
             if (!customStart || !customEnd) throw new Error('Custom dates required');
             startDate = new Date(customStart);
             endDate = new Date(customEnd);
-            endDate.setHours(23, 59, 59, 999); // Ensure end of day
+            startOfDay(startDate);
+            endOfDay(endDate);
             break;
+
         default:
-            // Default to last 6 months
+            // Default: Last 6 months
             startDate.setMonth(startDate.getMonth() - 6);
+            startOfDay(startDate);
+            endOfDay(endDate);
             break;
     }
+
+    // --- DEBUG LOGS ---
+    console.log(`[Report Debug] Filter: ${filterType}`);
+    console.log(`[Report Debug] Range Start: ${startDate.toLocaleString()}`);
+    console.log(`[Report Debug] Range End:   ${endDate.toLocaleString()}`);
+
     return { startDate, endDate };
 };
 
-// Helper: Validation Schema
+// --- VALIDATION SCHEMA ---
 const reportSchema = Joi.object({
     type: Joi.string().valid('retail', 'wholesale').required(),
-    filter: Joi.string().valid('today', 'this_week', 'this_month', 'this_year', 'custom').required(),
+    // Updated filters: Removed 'tomorrow', Added 'yesterday'
+    filter: Joi.string().valid('today', 'yesterday', 'this_week', 'this_month', 'month', 'year', 'custom').required(),
+    
     startDate: Joi.date().iso().when('filter', { is: 'custom', then: Joi.required() }),
     endDate: Joi.date().iso().when('filter', { is: 'custom', then: Joi.required() }),
+    
+    selectedMonth: Joi.number().integer().min(1).max(12).when('filter', { is: 'month', then: Joi.required() }),
+    selectedYear: Joi.number().integer().min(2000).max(2100).when('filter', { is: Joi.valid('month', 'year'), then: Joi.required() }),
+
     page: Joi.number().integer().min(1).default(1),
     limit: Joi.number().integer().min(1).max(100).default(10),
     downloadPdf: Joi.boolean().default(false)
 });
 
-// Generic Report Handler
+// --- MAIN HANDLER ---
 const generateReport = async (req, res, tablePrefix) => {
     try {
-        // --- FIX IS HERE: Merge type: tablePrefix explicitly ---
-        const validationPayload = { 
-            ...req.query, 
-            ...req.params, 
-            type: tablePrefix 
-        };
-
+        const validationPayload = { ...req.query, ...req.params, type: tablePrefix };
         const { error, value } = reportSchema.validate(validationPayload);
         
         if (error) {
@@ -72,23 +123,20 @@ const generateReport = async (req, res, tablePrefix) => {
             return res.status(400).json({ error: error.details[0].message });
         }
 
-        const { filter, startDate: qStart, endDate: qEnd, page, limit, downloadPdf } = value;
+        const { filter, startDate: qStart, endDate: qEnd, selectedMonth, selectedYear, page, limit, downloadPdf } = value;
         
-        // Calculate dates
         let dateRange;
         try {
-            dateRange = getDateRange(filter, qStart, qEnd);
+            dateRange = getDateRange(filter, qStart, qEnd, selectedMonth, selectedYear);
         } catch (e) {
             return res.status(400).json({ error: e.message });
         }
         const { startDate, endDate } = dateRange;
 
-        // 2. Define Table Names based on prefix (retail vs wholesale)
         const billTable = `${tablePrefix}_bills`;
         const itemTable = `${tablePrefix}_bill_items`;
         const billIdCol = `${tablePrefix}_bill_id`;
 
-        // 3. SQL Query Construction
         const queryText = `
             WITH item_calculations AS (
                 SELECT 
@@ -98,7 +146,6 @@ const generateReport = async (req, res, tablePrefix) => {
                     i.quantity,
                     i.unit_price as selling_price,
                     i.total_price as total_revenue,
-                    -- Subquery to find cost price active at the moment of bill creation
                     COALESCE(
                         (SELECT cost_price FROM prices pr 
                          WHERE pr.product_id = i.product_id 
@@ -109,7 +156,7 @@ const generateReport = async (req, res, tablePrefix) => {
                 FROM ${itemTable} i
                 JOIN ${billTable} b ON i.${billIdCol} = b.${billIdCol}
                 JOIN products p ON i.product_id = p.product_id
-                WHERE b.bill_date >= $1 AND b.bill_date <= $2
+                WHERE b.bill_date::date >= $1::date AND b.bill_date::date <= $2::date
             ),
             aggregates AS (
                 SELECT 
@@ -137,8 +184,6 @@ const generateReport = async (req, res, tablePrefix) => {
         const result = await db.query(queryText, queryParams);
         const rows = result.rows;
 
-        // 4. Calculate Summary Metrics
-        // If rows exist, the aggregates are repeated in every row. We pick them from the first one.
         const summary = rows.length > 0 ? {
             totalSales: Number(rows[0].period_revenue) || 0,
             totalCost: Number(rows[0].period_cost) || 0,
@@ -146,7 +191,6 @@ const generateReport = async (req, res, tablePrefix) => {
             totalRecords: parseInt(rows[0].total_count) || 0
         } : { totalSales: 0, totalCost: 0, totalProfit: 0, totalRecords: 0 };
 
-        // Clean up rows for response (remove aggregate columns from individual rows)
         const cleanedRows = rows.map(r => ({
             bill_date: r.bill_date,
             bill_number: r.bill_number,
@@ -158,7 +202,6 @@ const generateReport = async (req, res, tablePrefix) => {
             profit: r.profit_loss
         }));
 
-        // 5. Handle PDF Download vs JSON Response
         if (downloadPdf) {
             return pdfService.createReportPDF(res, cleanedRows, summary, tablePrefix, startDate, endDate);
         }
@@ -166,6 +209,8 @@ const generateReport = async (req, res, tablePrefix) => {
         return res.json({
             meta: {
                 filter,
+                selectedMonth,
+                selectedYear,
                 startDate,
                 endDate,
                 page,
@@ -182,12 +227,5 @@ const generateReport = async (req, res, tablePrefix) => {
     }
 };
 
-exports.getWholesaleAnalysis = (req, res) => {
-    // We pass 'wholesale' as the third argument
-    return generateReport(req, res, 'wholesale');
-};
-
-exports.getRetailAnalysis = (req, res) => {
-    // We pass 'retail' as the third argument
-    return generateReport(req, res, 'retail');
-};
+exports.getWholesaleAnalysis = (req, res) => generateReport(req, res, 'wholesale');
+exports.getRetailAnalysis = (req, res) => generateReport(req, res, 'retail');

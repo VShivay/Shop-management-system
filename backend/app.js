@@ -16,6 +16,7 @@ const ViewWholesaleBillRoutes = require('./route/view_wholesale_bill_route');
 const status = require('./route/dashboard_home_route');
 const ReStockRoute = require('./route/restock_product_route');
 const report = require('./route/report_analysis_route');
+const CRA = require('./route/customer_report_analysis_route');
 
 
 
@@ -63,7 +64,7 @@ app.use('/api/view-wholesale-bill', ViewWholesaleBillRoutes);
 app.use('/api/today-status', status);
 app.use('/api/restock', ReStockRoute);
 app.use('/api/report-analysis', report);
-
+app.use('/api/CRA', CRA);
 
 
 // Global Error Handler

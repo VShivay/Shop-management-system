@@ -141,6 +141,8 @@ const Dashboard = () => {
           
           <NavCategory label="REPORTS" isOpen={isSidebarOpen} />
           <NavItem to="/dashboard/reports" icon={<PieChart size={18} />} label="Analytics Reports" isOpen={isSidebarOpen} />
+          <NavItem to="/dashboard/customer-reports" icon={<PieChart size={18} />} label="Customer Analytics Reports" isOpen={isSidebarOpen} />
+
         </nav>
 
         {/* 3. Footer (Fixed) */}
