@@ -30,6 +30,8 @@ exports.searchProducts = async (req, res) => {
         if (error) return res.status(400).json({ error: error.details[0].message });
 
         const searchTerm = `%${req.query.query}%`;
+        
+        // Updated SQL to filter for Retail and Both, excluding Wholesale
         const sql = `
             SELECT 
                 p.product_id, p.product_name, p.available_quantity, 
@@ -39,9 +41,11 @@ exports.searchProducts = async (req, res) => {
             JOIN prices pr ON p.product_id = pr.product_id
             WHERE p.is_active = TRUE 
               AND pr.is_active = TRUE
+              AND p.sales_channel IN ('Retail', 'Both') 
               AND p.product_name ILIKE $1
             LIMIT 10
         `;
+        
         const result = await db.query(sql, [searchTerm]);
         res.json(result.rows);
     } catch (err) {
@@ -49,7 +53,6 @@ exports.searchProducts = async (req, res) => {
         res.status(500).json({ error: 'Server error searching products' });
     }
 };
-
 exports.searchCustomers = async (req, res) => {
     try {
         const { error } = searchSchema.validate(req.query);
