@@ -236,9 +236,8 @@ exports.generatePdf = async (req, res) => {
     try {
         const { id } = req.params;
         
-        // 1. Fetch Bill Data
         const billQuery = `
-            SELECT wb.*, c.customer_name, c.address, c.phone 
+            SELECT wb.*, c.customer_name, c.address, c.phone, c.email
             FROM wholesale_bills wb 
             JOIN customers c ON wb.customer_id = c.customer_id 
             WHERE wb.wholesale_bill_id = $1`;
@@ -254,28 +253,32 @@ exports.generatePdf = async (req, res) => {
 
         const itemsData = await client.query(itemsQuery, [id]);
 
-        // 2. Safety Check: Does the PDF function exist?
         if (typeof pdfGenerator.buildPDF !== 'function') {
-            console.error("CRITICAL ERROR: pdfGenerator.buildPDF is not a function.");
-            console.error("Check your require path and module.exports in create_wholesale_bill_pdf.js");
-            return res.status(500).json({ error: "Server misconfiguration: PDF Generator not found" });
+            return res.status(500).json({ error: "PDF Generator not found" });
         }
 
-        // 3. Set Headers (Do not use writeHead yet to avoid lock-in)
         res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', `attachment;filename=bill_${billData.rows[0].bill_number}.pdf`);
+        res.setHeader('Content-Disposition', `attachment;filename=invoice_${billData.rows[0].bill_number}.pdf`);
 
-        // 4. Generate PDF
         pdfGenerator.buildPDF(
-            (chunk) => res.write(chunk),
-            () => res.end(),
+            (chunk) => {
+                // SAFETY CHECK: Only write if the response is still open
+                if (!res.writableEnded && !res.closed) {
+                    res.write(chunk);
+                }
+            },
+            () => {
+                if (!res.writableEnded && !res.closed) {
+                    res.end();
+                }
+            },
             billData.rows[0],
             itemsData.rows
         );
 
     } catch (error) {
         console.error("Error generating PDF:", error);
-        // Only send error response if headers haven't been sent yet
+        // SAFETY CHECK: Don't send error if headers are already sent
         if (!res.headersSent) {
             res.status(500).send("Error generating PDF");
         }
