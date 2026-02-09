@@ -70,32 +70,39 @@ const DetailSupplier = () => {
 
     // Product Search Logic
     useEffect(() => {
-        const delayDebounceFn = setTimeout(async () => {
-            if (searchTerm.trim().length > 1 && !selectedProduct) {
-                setIsSearching(true);
-                try {
-                    const token = localStorage.getItem('token');
-                    // FIXED: Changed endpoint to /products to search items to link
-                    const res = await axios.get(`${API_URL}/suppliers/product`, { 
-                        headers: { Authorization: `Bearer ${token}` },
-                        params: { 
-                            search: searchTerm, 
-                            limit: 5 
-                        } 
-                    });
-                    setProductResults(res.data.data || []);
-                } catch (err) {
-                    console.error("Error searching products", err);
-                } finally {
-                    setIsSearching(false);
-                }
-            } else if (searchTerm.trim().length <= 1) {
-                setProductResults([]);
-            }
-        }, 500);
+    const delayDebounceFn = setTimeout(async () => {
+        // Only search if term is > 1 char and no product is already selected
+        if (searchTerm.trim().length > 1 && !selectedProduct) {
+            setIsSearching(true);
+            try {
+                const token = localStorage.getItem('token');
+                
+                // FIXED: 
+                // 1. Added '/api' prefix to match backend
+                // 2. Changed param key from 'search' to 'search_name'
+                const res = await axios.get(`${API_URL}/suppliers/product`, { 
+                    headers: { Authorization: `Bearer ${token}` },
+                    params: { 
+                        search_name: searchTerm.trim(), // Matches backend searchName
+                        limit: 50,                      // Match the backend's limit
+                        page: 1
+                    } 
+                });
 
-        return () => clearTimeout(delayDebounceFn);
-    }, [searchTerm, selectedProduct]);
+                setProductResults(res.data.data || []);
+            } catch (err) {
+                console.error("Error searching products:", err);
+                setProductResults([]); // Clear results on error
+            } finally {
+                setIsSearching(false);
+            }
+        } else if (searchTerm.trim().length <= 1) {
+            setProductResults([]);
+        }
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+}, [searchTerm, selectedProduct]);
 
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
