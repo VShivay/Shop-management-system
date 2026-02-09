@@ -4,20 +4,20 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 const manageSupplierController = require('../controller/manage_supplier');
 
-// READ
+// IMPORTANT: Specific routes MUST come before parameterized routes
+// Place /product route BEFORE /:id route
+router.get('/product', auth, manageSupplierController.getProducts);
+
+// READ - Supplier routes
 router.get('/', auth, manageSupplierController.getSuppliers);
 router.get('/:id', auth, manageSupplierController.getSupplierById);
 
 // WRITE - Supplier Profile
-router.post('/', auth, manageSupplierController.addSupplier);         // Create new supplier
-router.put('/:id', auth, manageSupplierController.updateSupplier);    // Update supplier info
+router.post('/', auth, manageSupplierController.addSupplier);
+router.put('/:id', auth, manageSupplierController.updateSupplier);
 
 // WRITE - Product Linking
-// POST /api/suppliers/:id/products -> Link a product to this supplier
-router.post('/:id/products', auth, manageSupplierController.linkProduct); 
-
-// DELETE /api/suppliers/:id/products/:productId -> Unlink specific product
-router.delete('/:id/products/:productId', auth, manageSupplierController.unlinkProduct); 
-router.get('/product', auth, manageSupplierController.getProducts);
+router.post('/:id/products', auth, manageSupplierController.linkProduct);
+router.delete('/:id/products/:productId', auth, manageSupplierController.unlinkProduct);
 
 module.exports = router;
