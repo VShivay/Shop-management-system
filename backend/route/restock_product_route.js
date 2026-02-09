@@ -12,4 +12,6 @@ router.get('/', auth, restockController.getProductsToRestock);
 // Body: { product_id, supplier_id, quantity, supply_price }
 router.post('/', auth, restockController.restockProduct);
 
+router.get('/', auth, supplierController.getAllSuppliers);
+
 module.exports = router;

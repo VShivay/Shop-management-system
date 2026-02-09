@@ -170,3 +170,23 @@ exports.restockProduct = async (req, res) => {
         client.release();
     }
 };
+exports.getAllSuppliers = async (req, res) => {
+    try {
+        // Fetch only active suppliers, ordered by name
+        const query = `
+            SELECT supplier_id, supplier_name 
+            FROM suppliers 
+            WHERE is_active = TRUE 
+            ORDER BY supplier_name ASC
+        `;
+        
+        const { rows } = await db.query(query);
+
+        res.json({
+            data: rows
+        });
+    } catch (err) {
+        console.error('Error fetching suppliers:', err);
+        res.status(500).json({ error: 'Server error fetching suppliers.' });
+    }
+};
