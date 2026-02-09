@@ -49,6 +49,7 @@ const DetailSupplier = () => {
     const [productResults, setProductResults] = useState([]);
     const [isSearching, setIsSearching] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
+    const [searchPerformed, setSearchPerformed] = useState(false); // Track if search ran
 
     // Fetch Supplier Details
     useEffect(() => {
@@ -70,39 +71,43 @@ const DetailSupplier = () => {
 
     // Product Search Logic
     useEffect(() => {
-    const delayDebounceFn = setTimeout(async () => {
-        // Only search if term is > 1 char and no product is already selected
-        if (searchTerm.trim().length > 1 && !selectedProduct) {
-            setIsSearching(true);
-            try {
-                const token = localStorage.getItem('token');
+        const delayDebounceFn = setTimeout(async () => {
+            // Only search if term is > 1 char and no product is currently selected
+            if (searchTerm.trim().length > 1 && !selectedProduct) {
+                setIsSearching(true);
+                setSearchPerformed(false);
                 
-                // FIXED: 
-                // 1. Added '/api' prefix to match backend
-                // 2. Changed param key from 'search' to 'search_name'
-                const res = await axios.get(`${API_URL}/suppliers/product`, { 
-                    headers: { Authorization: `Bearer ${token}` },
-                    params: { 
-                        search_name: searchTerm.trim(), // Matches backend searchName
-                        limit: 50,                      // Match the backend's limit
-                        page: 1
-                    } 
-                });
+                try {
+                    const token = localStorage.getItem('token');
+                    
+                    const res = await axios.get(`${API_URL}/suppliers/product`, { 
+                        headers: { Authorization: `Bearer ${token}` },
+                        params: { 
+                            search_name: searchTerm.trim(),
+                            limit: 50,
+                            page: 1
+                        } 
+                    });
 
-                setProductResults(res.data.data || []);
-            } catch (err) {
-                console.error("Error searching products:", err);
-                setProductResults([]); // Clear results on error
-            } finally {
-                setIsSearching(false);
+                    // Handle various API response structures
+                    const products = res.data.data || res.data || [];
+                    setProductResults(Array.isArray(products) ? products : []);
+                    setSearchPerformed(true);
+
+                } catch (err) {
+                    console.error("Error searching products:", err);
+                    setProductResults([]);
+                } finally {
+                    setIsSearching(false);
+                }
+            } else if (searchTerm.trim().length <= 1) {
+                setProductResults([]);
+                setSearchPerformed(false);
             }
-        } else if (searchTerm.trim().length <= 1) {
-            setProductResults([]);
-        }
-    }, 500);
+        }, 500);
 
-    return () => clearTimeout(delayDebounceFn);
-}, [searchTerm, selectedProduct]);
+        return () => clearTimeout(delayDebounceFn);
+    }, [searchTerm, selectedProduct]);
 
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
@@ -282,8 +287,10 @@ const DetailSupplier = () => {
                                     <XMarkIcon className="ds-icon-sm"/>
                                 </button>
                             </div>
+                            
                             <form onSubmit={handleLinkProduct} className="ds-modal-body">
-                                <div className="ds-input-group relative">
+                                {/* Added 'relative-parent' class for CSS positioning context */}
+                                <div className="ds-input-group relative-parent">
                                     <label>Search Product</label>
                                     <div className={`ds-search-box ${selectedProduct ? 'valid' : ''}`}>
                                         <MagnifyingGlassIcon className="ds-input-icon" />
@@ -292,19 +299,31 @@ const DetailSupplier = () => {
                                             placeholder="Type to search..."
                                             value={searchTerm}
                                             onChange={handleSearchChange}
+                                            autoComplete="off"
                                         />
                                         {isSearching && <div className="ds-loader-spinner"></div>}
                                     </div>
                                     
-                                    {/* Dropdown Results */}
-                                    {productResults.length > 0 && (
-                                        <ul className="ds-dropdown-list">
+                                    {/* Dropdown Results Logic */}
+                                    {/* Only show if NOT selected AND we have a search term */}
+                                    {!selectedProduct && searchTerm.length > 1 && (
+                                        <ul 
+                                            className="ds-dropdown-list" 
+                                            style={{ display: (productResults.length > 0 || searchPerformed) ? 'block' : 'none' }}
+                                        >
                                             {productResults.map(p => (
                                                 <li key={p.product_id} onClick={() => selectProduct(p)}>
                                                     <div className="ds-res-name">{p.product_name}</div>
                                                     <div className="ds-res-cat">{p.category_name}</div>
                                                 </li>
                                             ))}
+                                            
+                                            {/* No Results Found State */}
+                                            {!isSearching && searchPerformed && productResults.length === 0 && (
+                                                <li className="ds-no-results">
+                                                    No products found.
+                                                </li>
+                                            )}
                                         </ul>
                                     )}
                                 </div>

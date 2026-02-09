@@ -341,7 +341,8 @@
     width: 400px;
     border-radius: 12px;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
+    /* CHANGED: overflow changed to visible so dropdown doesn't get cut off */
+    overflow: visible; 
     animation: slideUp 0.3s ease-out;
 }
 
@@ -352,6 +353,9 @@
     justify-content: space-between;
     align-items: center;
     background: #f8fafc;
+    /* rounded top only so it fits modal */
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
 }
 
 .ds-modal-header h3 {
@@ -372,6 +376,12 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
+    /* Ensure body is relatively positioned if needed, though children have their own contexts */
+}
+
+/* NEW: Helper to establish a positioning context */
+.relative-parent {
+    position: relative !important;
 }
 
 .ds-input-group label {
@@ -415,9 +425,10 @@
     background: #ecfdf5;
 }
 
+/* UPDATED: Dropdown Styling */
 .ds-dropdown-list {
     position: absolute;
-    top: 100%;
+    top: 100%; /* Push below input */
     left: 0; right: 0;
     background: white;
     border: 1px solid #e2e8f0;
@@ -427,22 +438,45 @@
     overflow-y: auto;
     list-style: none;
     padding: 0;
-    z-index: 10;
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    z-index: 9999; /* High Z-Index to sit on top of everything */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 .ds-dropdown-list li {
-    padding: 8px 12px;
+    padding: 10px 12px;
     cursor: pointer;
     border-bottom: 1px solid #f1f5f9;
+    transition: background-color 0.2s;
 }
 
 .ds-dropdown-list li:hover {
     background: #f8fafc;
 }
 
+.ds-no-results {
+    color: #64748b;
+    font-size: 0.85rem;
+    text-align: center;
+    padding: 12px;
+    cursor: default;
+}
+
 .ds-res-name { font-weight: 500; font-size: 0.9rem; color: #1e293b; }
 .ds-res-cat { font-size: 0.75rem; color: #94a3b8; }
+
+/* Loader Spinner for search */
+.ds-loader-spinner {
+    position: absolute;
+    right: 10px;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #6366f1;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
 
 .ds-input-price {
     padding-left: 10px !important; /* Override search padding */
