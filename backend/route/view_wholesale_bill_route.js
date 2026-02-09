@@ -3,20 +3,22 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth'); // User provided middleware
 const controller = require('../controller/view_wholesale_bill');
+const allowed = ['shop owner', 'admin', 'staff', 'cashier'];
+
 
 // 1. Search Customers (for Debounce inputs)
-router.get('/search-customers', auth, controller.searchCustomers);
+router.get('/search-customers', auth,auth.authorize(allowed), controller.searchCustomers);
 
 // 2. Get All Bills (Pagination + Filters)
-router.get('/', auth, controller.getWholesaleBills);
+router.get('/', auth,auth.authorize(allowed), controller.getWholesaleBills);
 
 // 3. Get Single Bill Details
-router.get('/:id', auth, controller.getBillDetails);
+router.get('/:id', auth,auth.authorize(allowed), controller.getBillDetails);
 
 // 4. Download PDF
-router.get('/:id/pdf', auth, controller.generateBillPDF);
+router.get('/:id/pdf', auth,auth.authorize(allowed), controller.generateBillPDF);
 
 // 5. Record Payment (Clearing Dues)
-router.post('/record-payment', auth, controller.recordDuePayment);
+router.post('/record-payment', auth,auth.authorize(allowed), controller.recordDuePayment);
 
 module.exports = router;

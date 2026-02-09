@@ -16,6 +16,7 @@ const loginSchema = Joi.object({
 });
 
 // 1. Login Controller
+// 1. Updated Login Controller
 const login = async (req, res) => {
     try {
         // Validate Input
@@ -24,8 +25,15 @@ const login = async (req, res) => {
 
         const { email, password } = req.body;
 
-        // Check if user exists
-        const result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+        // JOIN with roles table to get role_name immediately
+        const query = `
+            SELECT u.*, r.role_name 
+            FROM users u
+            JOIN roles r ON u.role_id = r.role_id
+            WHERE u.email = $1
+        `;
+        
+        const result = await db.query(query, [email]);
         
         if (result.rows.length === 0) {
             return res.status(400).json({ error: 'Invalid email or password' });
@@ -35,7 +43,7 @@ const login = async (req, res) => {
 
         // Check active status
         if (!user.is_active) {
-            return res.status(403).json({ error: 'Account is inactive. Please contact support.' });
+            return res.status(403).json({ error: 'Account is inactive.' });
         }
 
         // Compare Password
@@ -44,11 +52,12 @@ const login = async (req, res) => {
             return res.status(400).json({ error: 'Invalid email or password' });
         }
 
-        // Generate JWT (Session time: 1 hour)
+        // Generate JWT (Now including role_name in the payload)
         const token = jwt.sign(
             { 
                 user_id: user.user_id, 
                 role_id: user.role_id,
+                role_name: user.role_name, // Added role_name here
                 email: user.email 
             },
             process.env.JWT_SECRET,
@@ -61,7 +70,7 @@ const login = async (req, res) => {
             user: {
                 id: user.user_id,
                 name: user.name,
-                role_id: user.role_id
+                role: user.role_name // Passing role name to frontend
             }
         });
 
@@ -70,7 +79,6 @@ const login = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
-
 // 2. "Me" Controller (Get Logged User Details)
 const me = async (req, res) => {
     try {
