@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { 
   Search, PackagePlus, AlertTriangle, X, 
-  ChevronLeft, ChevronRight, CheckCircle, Loader2 
+  ChevronLeft, ChevronRight, CheckCircle, Loader2, DollarSign 
 } from 'lucide-react';
 import './css/restock_product.css';
 
@@ -12,7 +12,6 @@ const API_URL = process.env.REACT_APP_API_URL;
 const RestockProduct = () => {
   // State: Data
   const [products, setProducts] = useState([]);
-  const [suppliers, setSuppliers] = useState([]);
   
   // State: UI & Pagination
   const [loading, setLoading] = useState(false);
@@ -28,7 +27,7 @@ const RestockProduct = () => {
   const [formData, setFormData] = useState({
     supplier_id: '',
     quantity: '',
-    supply_price: ''
+    supply_price: '' // This will act as Unit Cost
   });
   const [formError, setFormError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -44,6 +43,7 @@ const RestockProduct = () => {
         params: { page, limit: 10, search },
         headers: { Authorization: `Bearer ${token}` }
       });
+      // The backend now returns linked_suppliers and cost_price inside each product
       setProducts(res.data.data);
       setPagination(res.data.meta);
     } catch (err) {
@@ -53,24 +53,10 @@ const RestockProduct = () => {
     }
   };
 
-  const fetchSuppliers = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      // Ensure this endpoint exists in your backend to get supplier list
-      const res = await axios.get(`${API_URL}/suppliers`, { 
-        headers: { Authorization: `Bearer ${token}` } 
-      });
-      // Adjust structure if your API returns {data: [...]} or directly [...]
-      const supplierList = res.data.data ? res.data.data : res.data;
-      setSuppliers(Array.isArray(supplierList) ? supplierList : []);
-    } catch (err) {
-      console.error("Fetch suppliers failed", err);
-    }
-  };
+  // Removed fetchSuppliers() as we now use linked_suppliers from product data
 
   useEffect(() => {
     fetchProducts(1, '');
-    fetchSuppliers();
   }, []);
 
   // --- 2. Handlers ---
@@ -89,7 +75,12 @@ const RestockProduct = () => {
 
   const openRestockModal = (product) => {
     setSelectedProduct(product);
-    setFormData({ supplier_id: '', quantity: '', supply_price: '' });
+    setFormData({ 
+      supplier_id: '', 
+      quantity: '', 
+      // Auto-fill Unit Cost from the product's cost_price fetched from DB
+      supply_price: product.cost_price || '' 
+    });
     setFormError('');
     setSuccessMsg('');
   };
@@ -114,8 +105,8 @@ const RestockProduct = () => {
       setSubmitting(false);
       return;
     }
-    if (Number(formData.quantity) <= 0 || Number(formData.supply_price) <= 0) {
-      setFormError("Quantity and Price must be positive.");
+    if (Number(formData.quantity) <= 0) {
+      setFormError("Quantity must be positive.");
       setSubmitting(false);
       return;
     }
@@ -126,7 +117,8 @@ const RestockProduct = () => {
         product_id: selectedProduct.product_id,
         supplier_id: parseInt(formData.supplier_id),
         quantity: parseFloat(formData.quantity),
-        supply_price: parseFloat(formData.supply_price)
+        supply_price: parseFloat(formData.supply_price), // Sending Unit Cost
+        change_type: 'restock'
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -148,6 +140,13 @@ const RestockProduct = () => {
   };
 
   const isLowStock = (qty, threshold) => Number(qty) <= Number(threshold);
+
+  // Helper to calculate total cost for display
+  const calculateTotalCost = () => {
+    const qty = parseFloat(formData.quantity) || 0;
+    const price = parseFloat(formData.supply_price) || 0;
+    return (qty * price).toFixed(2);
+  };
 
   return (
     <div className="restock-container">
@@ -183,8 +182,8 @@ const RestockProduct = () => {
                   <tr>
                     <th>Product</th>
                     <th>Category</th>
-                    <th>Available</th>
-                    <th>Status</th>
+                    <th>Available Stock</th>
+                    <th style={{textAlign: 'center'}}>Status</th>
                     <th style={{textAlign: 'center'}}>Action</th>
                   </tr>
                 </thead>
@@ -199,7 +198,7 @@ const RestockProduct = () => {
                             {prod.available_quantity} {prod.unit_name}
                           </span>
                         </td>
-                        <td>
+                        <td style={{textAlign: 'center'}}>
                           {isLowStock(prod.available_quantity, prod.low_stock_threshold) ? (
                             <span className="status-badge low">
                               <AlertTriangle size={12} /> Low
@@ -266,26 +265,35 @@ const RestockProduct = () => {
               {successMsg && <div className="alert success">{successMsg}</div>}
               {formError && <div className="alert error">{formError}</div>}
 
+              {/* Linked Suppliers Dropdown */}
               <div className="form-group">
-                <label>Select Supplier</label>
+                <label>Select Linked Supplier</label>
                 <select 
                   name="supplier_id" 
                   value={formData.supplier_id} 
                   onChange={handleInputChange}
                   required
                 >
-                  <option value="">-- Choose --</option>
-                  {suppliers.map(sup => (
-                    <option key={sup.supplier_id} value={sup.supplier_id}>
-                      {sup.supplier_name}
-                    </option>
-                  ))}
+                  <option value="">-- Choose Supplier --</option>
+                  {selectedProduct.linked_suppliers && selectedProduct.linked_suppliers.length > 0 ? (
+                    selectedProduct.linked_suppliers.map(sup => (
+                      <option key={sup.supplier_id} value={sup.supplier_id}>
+                        {sup.supplier_name}
+                      </option>
+                    ))
+                  ) : (
+                    <option disabled>No suppliers linked</option>
+                  )}
                 </select>
+                {(!selectedProduct.linked_suppliers || selectedProduct.linked_suppliers.length === 0) && (
+                   <small className="text-danger">Warning: No linked suppliers found for this product.</small>
+                )}
               </div>
 
               <div className="form-row">
+                {/* Quantity Input */}
                 <div className="form-group half">
-                  <label>Quantity</label>
+                  <label>Quantity ({selectedProduct.unit_name})</label>
                   <input 
                     type="number" 
                     name="quantity"
@@ -297,25 +305,34 @@ const RestockProduct = () => {
                     required
                   />
                 </div>
+
+                {/* Unit Cost (Read-Only/Editable) */}
                 <div className="form-group half">
-                  <label>Total Cost</label>
-                  <input 
-                    type="number" 
-                    name="supply_price"
-                    min="0"
-                    step="0.01"
-                    value={formData.supply_price} 
-                    onChange={handleInputChange}
-                    placeholder="0.00"
-                    required
-                  />
+                  <label>Unit Cost (Cost Price)</label>
+                  <div className="input-with-icon">
+                    <DollarSign size={14} className="input-icon"/>
+                    <input 
+                      type="number" 
+                      name="supply_price"
+                      value={formData.supply_price} 
+                      onChange={handleInputChange}
+                      readOnly // Read only as per "fetch via price table"
+                      className="read-only-input"
+                    />
+                  </div>
                 </div>
+              </div>
+
+              {/* Calculated Total Display */}
+              <div className="total-cost-display">
+                <span>Total Value:</span>
+                <strong>${calculateTotalCost()}</strong>
               </div>
 
               <div className="modal-footer">
                 <button type="button" className="btn-cancel" onClick={closeRestockModal}>Cancel</button>
                 <button type="submit" className="btn-submit" disabled={submitting}>
-                  {submitting ? <Loader2 className="animate-spin" size={14} /> : 'Confirm'}
+                  {submitting ? <Loader2 className="animate-spin" size={14} /> : 'Confirm Restock'}
                 </button>
               </div>
             </form>

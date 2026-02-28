@@ -35,6 +35,7 @@ import RestockProduct from './files/main/restock_product';
 // Reports
 import Profit_Loss_ReportAnalysis from './files/main/report_analysis';
 import CustomerReportAnalysis from './files/main/customer_report_analysis'; // NEW IMPORT
+import Inventory_Report_Analysis from './files/main/inventory_report_analysis'; // NEW
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -88,6 +89,7 @@ function App() {
           <Route path="reports" element={<Profit_Loss_ReportAnalysis />} />
           {/* NEW ROUTE */}
           <Route path="customer-reports" element={<CustomerReportAnalysis />} />
+          <Route path="reports/inventory" element={<Inventory_Report_Analysis />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

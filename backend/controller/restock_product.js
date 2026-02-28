@@ -26,7 +26,6 @@ const restockSchema = Joi.object({
  */
 exports.getProductsToRestock = async (req, res) => {
     try {
-        // 1. Validate Input
         const { error, value } = fetchSchema.validate(req.query);
         if (error) return res.status(400).json({ error: error.details[0].message });
 
@@ -37,52 +36,63 @@ exports.getProductsToRestock = async (req, res) => {
         let whereClause = '';
         let paramIndex = 1;
 
-        // 2. Build Query
-        let baseQuery = `
-            SELECT 
-                p.product_id, p.product_name, p.available_quantity, p.low_stock_threshold,
-                c.category_name, u.unit_name
-            FROM products p
-            LEFT JOIN categories c ON p.category_id = c.category_id
-            LEFT JOIN units u ON p.unit_id = u.unit_id
-        `;
-
-        let countQuery = `SELECT COUNT(*) FROM products p`;
-
         if (search) {
-            // Search Mode: Filter by name
-            whereClause = ` WHERE p.product_name ILIKE $${paramIndex}`;
+            whereClause = `WHERE p.product_name ILIKE $${paramIndex}`;
             queryParams.push(`%${search}%`);
             paramIndex++;
-        } 
-        // REMOVED: The 'else' block that restricted to low_stock_threshold.
-        // Now it defaults to showing all products.
+        }
 
-        // 3. Add Sort and Pagination
-        // ORDER BY p.available_quantity ASC ensures "Less stock" products (0, 5, 55, 90...) appear first
-        const finalQuery = `
-            ${baseQuery} 
-            ${whereClause} 
-            ORDER BY p.available_quantity ASC 
-            LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
-        `;
-
-        const countFinalQuery = `${countQuery} ${whereClause}`;
-
-        // Add limit and offset to params
-        queryParams.push(limit, offset);
-
-        // 4. Execute
-        const [productsResult, countResult] = await Promise.all([
-            db.query(finalQuery, queryParams),
-            db.query(countFinalQuery, search ? [`%${search}%`] : [])
-        ]);
-
-        const totalItems = parseInt(countResult.rows[0].count);
+        // 1. Get Count
+        const countQuery = `SELECT COUNT(*) FROM products p ${whereClause}`;
+        const countRes = await db.query(countQuery, queryParams);
+        const totalItems = parseInt(countRes.rows[0].count);
         const totalPages = Math.ceil(totalItems / limit);
 
+        // 2. Main Query
+        // Added JOIN with 'prices' to get cost_price
+        // Removed 'last_supply_price' from JSON_BUILD_OBJECT
+        const mainQuery = `
+            WITH PaginatedProducts AS (
+                SELECT 
+                    p.product_id, p.product_name, p.available_quantity, p.low_stock_threshold,
+                    c.category_name, u.unit_name,
+                    pr.cost_price -- Fetching Cost Price
+                FROM products p
+                LEFT JOIN categories c ON p.category_id = c.category_id
+                LEFT JOIN units u ON p.unit_id = u.unit_id
+                LEFT JOIN prices pr ON p.product_id = pr.product_id AND pr.is_active = TRUE
+                ${whereClause}
+                ORDER BY p.available_quantity ASC
+                LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
+            )
+            SELECT 
+                pp.*,
+                COALESCE(
+                    JSON_AGG(
+                        JSON_BUILD_OBJECT(
+                            'supplier_id', s.supplier_id,
+                            'supplier_name', s.supplier_name,
+                            'contact_person', s.contact_person
+                            -- Removed supply_price from here as per request
+                        ) ORDER BY s.supplier_name ASC
+                    ) FILTER (WHERE s.supplier_id IS NOT NULL), 
+                    '[]'
+                ) AS linked_suppliers
+            FROM PaginatedProducts pp
+            LEFT JOIN product_suppliers ps ON pp.product_id = ps.product_id
+            LEFT JOIN suppliers s ON ps.supplier_id = s.supplier_id
+            GROUP BY 
+                pp.product_id, pp.product_name, pp.available_quantity, 
+                pp.low_stock_threshold, pp.category_name, pp.unit_name, pp.cost_price
+            ORDER BY pp.available_quantity ASC;
+        `;
+
+        queryParams.push(limit, offset);
+
+        const { rows } = await db.query(mainQuery, queryParams);
+
         res.json({
-            data: productsResult.rows,
+            data: rows,
             meta: {
                 current_page: page,
                 total_pages: totalPages,
@@ -109,7 +119,7 @@ exports.restockProduct = async (req, res) => {
         if (error) return res.status(400).json({ error: error.details[0].message });
 
         const { product_id, supplier_id, quantity, supply_price, change_type } = value;
-        const user_id = req.user.id || req.user.user_id; // Handle JWT payload variations
+        const user_id = req.user.id || req.user.user_id; 
 
         await client.query('BEGIN');
 
@@ -133,15 +143,16 @@ exports.restockProduct = async (req, res) => {
             [newQty, product_id]
         );
 
-        // Log Change
+        // Log Change (UPDATED with supplier_id)
         await client.query(
             `INSERT INTO inventory_logs 
-            (product_id, change_type, quantity_change, previous_quantity, new_quantity, performed_by)
-            VALUES ($1, $2, $3, $4, $5, $6)`,
-            [product_id, change_type, quantity, currentQty, newQty, user_id]
+            (product_id, change_type, quantity_change, previous_quantity, new_quantity, performed_by, supplier_id)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+            [product_id, change_type, quantity, currentQty, newQty, user_id, supplier_id] 
         );
 
         // Upsert Supplier Info
+        // Note: We use Upsert to ensure if this supplier is new for this product, they get added
         const upsertSupplierQuery = `
             INSERT INTO product_suppliers (product_id, supplier_id, supply_price, last_supplied_date)
             VALUES ($1, $2, $3, NOW())

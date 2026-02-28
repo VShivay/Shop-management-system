@@ -136,8 +136,7 @@ const getProductDetails = async (req, res) => {
 
         const productId = value.id;
 
-        // 2. Query for Product Details
-        // We use JSON_AGG to bundle all suppliers associated with this product into a single array
+        // 2. Query for Product Details + Last 5 Logs
         const queryText = `
             SELECT 
                 p.product_id,
@@ -151,11 +150,13 @@ const getProductDetails = async (req, res) => {
                 c.category_id,
                 u.unit_name,
                 u.unit_id,
+                
                 -- Price Details (Active Only)
                 pr.retail_price,
                 pr.wholesale_price,
                 pr.cost_price,
                 pr.effective_from as price_effective_date,
+
                 -- Aggregated Suppliers List
                 COALESCE(
                     json_agg(
@@ -167,7 +168,28 @@ const getProductDetails = async (req, res) => {
                         ) 
                     ) FILTER (WHERE s.supplier_id IS NOT NULL), 
                     '[]'
-                ) as suppliers
+                ) as suppliers,
+
+                -- NEW: Last 5 Inventory Logs Subquery
+                (
+                    SELECT COALESCE(json_agg(log_row), '[]')
+                    FROM (
+                        SELECT 
+                            il.change_type,
+                            il.quantity_change,
+                            il.previous_quantity,
+                            il.new_quantity,
+                            il.change_date,
+                            -- Optional: Include supplier name if it was a restock
+                            sup.supplier_name
+                        FROM inventory_logs il
+                        LEFT JOIN suppliers sup ON il.supplier_id = sup.supplier_id
+                        WHERE il.product_id = p.product_id
+                        ORDER BY il.change_date DESC
+                        LIMIT 5
+                    ) log_row
+                ) as recent_logs
+
             FROM products p
             LEFT JOIN categories c ON p.category_id = c.category_id
             LEFT JOIN units u ON p.unit_id = u.unit_id
@@ -175,7 +197,9 @@ const getProductDetails = async (req, res) => {
             LEFT JOIN product_suppliers ps ON p.product_id = ps.product_id
             LEFT JOIN suppliers s ON ps.supplier_id = s.supplier_id
             WHERE p.product_id = $1
-            GROUP BY p.product_id, c.category_name, c.category_id, u.unit_name, u.unit_id, pr.retail_price, pr.wholesale_price, pr.cost_price, pr.effective_from;
+            GROUP BY 
+                p.product_id, c.category_name, c.category_id, u.unit_name, u.unit_id, 
+                pr.retail_price, pr.wholesale_price, pr.cost_price, pr.effective_from;
         `;
 
         const result = await db.query(queryText, [productId]);
@@ -191,7 +215,6 @@ const getProductDetails = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
-
 /**
  * Fetch dropdown options for frontend filters/forms
  */
@@ -301,20 +324,29 @@ const addProduct = async (req, res) => {
                 INSERT INTO product_suppliers (product_id, supplier_id, supply_price, last_supplied_date)
                 VALUES ($1, $2, $3, CURRENT_TIMESTAMP);
             `;
-            // Execute in parallel
+            
+            // CHANGED: We now use 'cost_price' as the supply_price for all linked suppliers
             await Promise.all(suppliers.map(s => 
-                client.query(supplierQuery, [newProductId, s.supplier_id, s.supply_price || null])
+                client.query(supplierQuery, [newProductId, s.supplier_id, cost_price])
             ));
         }
 
         // D. Create Initial Inventory Log (if opening stock > 0)
         if (opening_stock > 0) {
+            const initialSupplierId = (suppliers && suppliers.length > 0) ? suppliers[0].supplier_id : null;
+
             const logQuery = `
-                INSERT INTO inventory_logs (product_id, change_type, quantity_change, previous_quantity, new_quantity, performed_by)
-                VALUES ($1, 'adjustment', $2, 0, $2, $3); -- Assuming performed_by is handled via middleware (req.user.id)
+                INSERT INTO inventory_logs 
+                (product_id, change_type, quantity_change, previous_quantity, new_quantity, performed_by, supplier_id)
+                VALUES ($1, 'initial stock', $2, 0, $2, $3, $4);
             `;
-            // Note: passing null for user_id if not available in this snippet context
-            await client.query(logQuery, [newProductId, opening_stock, req.user ? req.user.user_id : null]);
+            
+            await client.query(logQuery, [
+                newProductId, 
+                opening_stock, 
+                req.user ? req.user.user_id : null,
+                initialSupplierId 
+            ]);
         }
 
         // 4. Commit Transaction
@@ -323,10 +355,10 @@ const addProduct = async (req, res) => {
         res.status(201).json({ message: "Product created successfully", product_id: newProductId });
 
     } catch (err) {
-        await client.query('ROLLBACK'); // Revert all changes on error
+        await client.query('ROLLBACK');
         console.error('Error adding product:', err);
         
-        if (err.code === '23505') { // Unique violation (e.g., duplicate product name)
+        if (err.code === '23505') { 
             return res.status(409).json({ error: "Product name already exists." });
         }
         res.status(500).json({ error: 'Internal Server Error' });
@@ -334,7 +366,6 @@ const addProduct = async (req, res) => {
         client.release();
     }
 };
-
 /**
  * Update product details
  * Transactional: Updates info and handles Price History (Versioning)

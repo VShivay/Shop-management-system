@@ -17,6 +17,8 @@ const status = require('./route/dashboard_home_route');
 const ReStockRoute = require('./route/restock_product_route');
 const report = require('./route/report_analysis_route');
 const CRA = require('./route/customer_report_analysis_route');
+const IRA = require('./route/inventory_report_analysis_route');
+
 
 
 
@@ -65,6 +67,8 @@ app.use('/api/today-status', status);
 app.use('/api/restock', ReStockRoute);
 app.use('/api/report-analysis', report);
 app.use('/api/CRA', CRA);
+app.use('/api/IRA', IRA);
+
 
 
 // Global Error Handler

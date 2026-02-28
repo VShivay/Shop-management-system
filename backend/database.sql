@@ -1,10 +1,35 @@
--- 1. ROLES & PERMISSIONS
+-- 1. ROLES
 CREATE TABLE roles (
     role_id SERIAL PRIMARY KEY,
     role_name VARCHAR(50) UNIQUE NOT NULL
 );
 
--- 2. USERS
+-- 2. CATEGORIES
+CREATE TABLE categories (
+    category_id SERIAL PRIMARY KEY,
+    category_name VARCHAR(100) NOT NULL UNIQUE, 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 3. UNITS
+CREATE TABLE units (
+    unit_id SERIAL PRIMARY KEY,
+    unit_name VARCHAR(20) NOT NULL UNIQUE 
+);
+
+-- 4. PAYMENT METHODS
+CREATE TABLE payment_methods (
+    payment_method_id SERIAL PRIMARY KEY,
+    method_name VARCHAR(50) UNIQUE NOT NULL, 
+    is_active BOOLEAN DEFAULT TRUE
+);
+
+-- 5. EXPENSE CATEGORIES
+CREATE TABLE expense_categories (
+    category_id SERIAL PRIMARY KEY,
+    category_name VARCHAR(100) UNIQUE NOT NULL
+);
+-- 6. USERS
 CREATE TABLE users (
     user_id SERIAL PRIMARY KEY,
     role_id INT REFERENCES roles(role_id) ON DELETE RESTRICT,
@@ -17,27 +42,7 @@ CREATE TABLE users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 3. CATEGORIES
-CREATE TABLE categories (
-    category_id SERIAL PRIMARY KEY,
-    category_name VARCHAR(100) NOT NULL UNIQUE, 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- 4. UNITS
-CREATE TABLE units (
-    unit_id SERIAL PRIMARY KEY,
-    unit_name VARCHAR(20) NOT NULL UNIQUE 
-);
-
--- 5. PAYMENT METHODS
-CREATE TABLE payment_methods (
-    payment_method_id SERIAL PRIMARY KEY,
-    method_name VARCHAR(50) UNIQUE NOT NULL, 
-    is_active BOOLEAN DEFAULT TRUE
-);
-
--- 6. SUPPLIERS
+-- 7. SUPPLIERS
 CREATE TABLE suppliers (
     supplier_id SERIAL PRIMARY KEY,
     supplier_name VARCHAR(150) NOT NULL UNIQUE,
@@ -50,7 +55,7 @@ CREATE TABLE suppliers (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 7. CUSTOMERS
+-- 8. CUSTOMERS
 CREATE TABLE customers (
     customer_id SERIAL PRIMARY KEY,
     customer_name VARCHAR(150) NOT NULL,
@@ -64,7 +69,7 @@ CREATE TABLE customers (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
--- 8. PRODUCTS
+-- 9. PRODUCTS
 CREATE TABLE products (
     product_id SERIAL PRIMARY KEY,
     product_name VARCHAR(100) NOT NULL,
@@ -77,7 +82,7 @@ CREATE TABLE products (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 9. PRICES
+-- 10. PRICES
 CREATE TABLE prices (
     price_id SERIAL PRIMARY KEY,
     product_id INT REFERENCES products(product_id) ON DELETE CASCADE,
@@ -90,7 +95,7 @@ CREATE TABLE prices (
 );
 CREATE UNIQUE INDEX uq_active_price_per_product ON prices (product_id) WHERE is_active = TRUE;
 
--- 10. PRODUCT SUPPLIERS
+-- 11. PRODUCT SUPPLIERS (Many-to-Many)
 CREATE TABLE product_suppliers (
     product_id INT REFERENCES products(product_id) ON DELETE CASCADE,
     supplier_id INT REFERENCES suppliers(supplier_id) ON DELETE CASCADE,
@@ -98,7 +103,7 @@ CREATE TABLE product_suppliers (
     last_supplied_date TIMESTAMP,
     PRIMARY KEY (product_id, supplier_id)
 );
--- 11. RETAIL BILLS
+-- 12. RETAIL BILLS
 CREATE TABLE retail_bills (
     retail_bill_id SERIAL PRIMARY KEY,
     bill_number VARCHAR(50) UNIQUE NOT NULL,
@@ -129,7 +134,7 @@ CREATE TABLE retail_bills (
     )
 );
 
--- 12. RETAIL BILL ITEMS
+-- 13. RETAIL BILL ITEMS
 CREATE TABLE retail_bill_items (
     item_id SERIAL PRIMARY KEY,
     retail_bill_id INT REFERENCES retail_bills(retail_bill_id) ON DELETE CASCADE,
@@ -140,7 +145,7 @@ CREATE TABLE retail_bill_items (
     CONSTRAINT uq_retail_bill_product UNIQUE (retail_bill_id, product_id)
 );
 
--- 13. WHOLESALE BILLS
+-- 14. WHOLESALE BILLS
 CREATE TABLE wholesale_bills (
     wholesale_bill_id SERIAL PRIMARY KEY,
     customer_id INT NOT NULL REFERENCES customers(customer_id),
@@ -167,7 +172,7 @@ CREATE TABLE wholesale_bills (
     )
 );
 
--- 14. WHOLESALE BILL ITEMS
+-- 15. WHOLESALE BILL ITEMS
 CREATE TABLE wholesale_bill_items (
     item_id SERIAL PRIMARY KEY,
     wholesale_bill_id INT REFERENCES wholesale_bills(wholesale_bill_id) ON DELETE CASCADE,
@@ -177,7 +182,7 @@ CREATE TABLE wholesale_bill_items (
     total_price NUMERIC(10,2) NOT NULL,
     CONSTRAINT uq_wholesale_bill_product UNIQUE (wholesale_bill_id, product_id)
 );
--- 15. CUSTOMER DUES (Linked to Bills)
+-- 16. CUSTOMER DUES (Linked to Bills)
 CREATE TABLE customer_dues (
     due_id SERIAL PRIMARY KEY,
     
@@ -188,7 +193,7 @@ CREATE TABLE customer_dues (
 
     customer_id INT REFERENCES customers(customer_id) ON DELETE RESTRICT,
 
-    -- Balances (Updated by Trigger)
+    -- Balances
     total_bill_amount NUMERIC(12,2) NOT NULL,
     total_paid NUMERIC(12,2) DEFAULT 0,
     balance_due NUMERIC(12,2) DEFAULT 0, -- Initially equals total_bill_amount
@@ -208,7 +213,7 @@ CREATE TABLE customer_dues (
     CONSTRAINT uq_retail_due UNIQUE (retail_bill_id)
 );
 
--- 16. DUE PAYMENT HISTORY (The Input Log)
+-- 17. DUE PAYMENT HISTORY
 CREATE TABLE due_payment_history (
     payment_id SERIAL PRIMARY KEY,
     due_id INT REFERENCES customer_dues(due_id) ON DELETE CASCADE,
@@ -216,11 +221,6 @@ CREATE TABLE due_payment_history (
     payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     payment_method_id INT REFERENCES payment_methods(payment_method_id),
     remarks TEXT
-);
--- 17. EXPENSE CATEGORIES
-CREATE TABLE expense_categories (
-    category_id SERIAL PRIMARY KEY,
-    category_name VARCHAR(100) UNIQUE NOT NULL
 );
 
 -- 18. EXPENSES
@@ -234,18 +234,100 @@ CREATE TABLE expenses (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 19. INVENTORY LOGS
+-- 19. INVENTORY LOGS (Consolidated)
 CREATE TABLE inventory_logs (
     log_id SERIAL PRIMARY KEY,
     product_id INT REFERENCES products(product_id) ON DELETE CASCADE,
-    change_type VARCHAR(20) CHECK (change_type IN ('restock', 'sale', 'return', 'damage', 'adjustment')),
+    supplier_id INT REFERENCES suppliers(supplier_id) ON DELETE SET NULL, -- Added from ALTER
+    
+    change_type VARCHAR(20) CHECK (
+        change_type IN ('restock', 'sale', 'return', 'damage', 'initial stock') -- Updated from ALTER
+    ),
+    
     quantity_change NUMERIC(10,2) NOT NULL,
     previous_quantity NUMERIC(10,2),
     new_quantity NUMERIC(10,2),
     performed_by INT REFERENCES users(user_id),
     change_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
--- 1. Create the Function
+CREATE OR REPLACE FUNCTION auto_create_due_record_func()
+RETURNS TRIGGER AS $$
+
+DECLARE
+    v_balance NUMERIC;
+    v_due_status VARCHAR(20);
+    v_new_due_id INT; -- Variable to capture the new Due ID
+BEGIN
+    -- 1. Calculate Balance
+    v_balance := NEW.total_amount - NEW.amount_paid;
+
+    -- 2. ONLY proceed if there is debt (Balance > 0) AND a valid customer
+    IF v_balance > 0 AND NEW.customer_id IS NOT NULL THEN
+
+        -- Map Bill Status to Due Status
+        IF NEW.payment_status = 'unpaid' THEN
+            v_due_status := 'pending';
+        ELSE
+            v_due_status := 'partial';
+        END IF;
+
+        -- 3. Insert into Customer Dues AND capture the ID
+        IF TG_TABLE_NAME = 'wholesale_bills' THEN
+            INSERT INTO customer_dues (
+                wholesale_bill_id, retail_bill_id, bill_type, 
+                customer_id, total_bill_amount, total_paid, 
+                balance_due, status
+            ) VALUES (
+                NEW.wholesale_bill_id, NULL, 'wholesale',
+                NEW.customer_id, NEW.total_amount, NEW.amount_paid,
+                v_balance, v_due_status
+            ) RETURNING due_id INTO v_new_due_id; -- <--- Capture ID here
+            
+        ELSIF TG_TABLE_NAME = 'retail_bills' THEN
+            INSERT INTO customer_dues (
+                wholesale_bill_id, retail_bill_id, bill_type, 
+                customer_id, total_bill_amount, total_paid, 
+                balance_due, status
+            ) VALUES (
+                NULL, NEW.retail_bill_id, 'retail',
+                NEW.customer_id, NEW.total_amount, NEW.amount_paid,
+                v_balance, v_due_status
+            ) RETURNING due_id INTO v_new_due_id; -- <--- Capture ID here
+        END IF;
+
+        -- 4. CRITICAL FIX: Log the Initial Payment in History
+        -- This ensures the history table starts with the down payment (e.g., 3000)
+        IF NEW.amount_paid > 0 THEN
+            INSERT INTO due_payment_history (
+                due_id, 
+                amount_paid, 
+                payment_method_id, 
+                remarks
+            ) VALUES (
+                v_new_due_id, 
+                NEW.amount_paid, 
+                NEW.payment_method_id, 
+                'Initial Payment at Bill Creation'
+            );
+        END IF;
+
+    END IF;
+
+    RETURN NEW;
+END;
+
+$$ LANGUAGE plpgsql;
+
+-- Attach Triggers for Auto Creation
+CREATE TRIGGER trg_auto_create_wholesale_due
+AFTER INSERT ON wholesale_bills
+FOR EACH ROW
+EXECUTE FUNCTION auto_create_due_record_func();
+
+CREATE TRIGGER trg_auto_create_retail_due
+AFTER INSERT ON retail_bills
+FOR EACH ROW
+EXECUTE FUNCTION auto_create_due_record_func();
 CREATE OR REPLACE FUNCTION update_bill_and_dues_func()
 RETURNS TRIGGER AS $$
 DECLARE
@@ -309,68 +391,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- 2. Attach the Trigger
+-- Attach Trigger for Payment Sync
 CREATE TRIGGER trg_sync_payments_to_bills
 AFTER INSERT ON due_payment_history
 FOR EACH ROW
 EXECUTE FUNCTION update_bill_and_dues_func();
-CREATE OR REPLACE FUNCTION auto_create_due_record_func()
-RETURNS TRIGGER AS $$
-DECLARE
-    v_balance NUMERIC;
-    v_due_status VARCHAR(20);
-BEGIN
-    -- 1. Calculate Balance
-    v_balance := NEW.total_amount - NEW.amount_paid;
-
-    -- 2. ONLY proceed if there is debt (Balance > 0) AND a valid customer
-    -- (Walk-in customers with NULL ID cannot have debt)
-    IF v_balance > 0 AND NEW.customer_id IS NOT NULL THEN
-
-        -- Map Bill Status to Due Status
-        IF NEW.payment_status = 'unpaid' THEN
-            v_due_status := 'pending';
-        ELSE
-            v_due_status := 'partial';
-        END IF;
-
-        -- 3. Insert into Customer Dues
-        IF TG_TABLE_NAME = 'wholesale_bills' THEN
-            INSERT INTO customer_dues (
-                wholesale_bill_id, retail_bill_id, bill_type, 
-                customer_id, total_bill_amount, total_paid, 
-                balance_due, status
-            ) VALUES (
-                NEW.wholesale_bill_id, NULL, 'wholesale',
-                NEW.customer_id, NEW.total_amount, NEW.amount_paid,
-                v_balance, v_due_status
-            );
-            
-        ELSIF TG_TABLE_NAME = 'retail_bills' THEN
-            INSERT INTO customer_dues (
-                wholesale_bill_id, retail_bill_id, bill_type, 
-                customer_id, total_bill_amount, total_paid, 
-                balance_due, status
-            ) VALUES (
-                NULL, NEW.retail_bill_id, 'retail',
-                NEW.customer_id, NEW.total_amount, NEW.amount_paid,
-                v_balance, v_due_status
-            );
-        END IF;
-
-    END IF;
-
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
--- Trigger for Wholesale Bills
-CREATE TRIGGER trg_auto_create_wholesale_due
-AFTER INSERT ON wholesale_bills
-FOR EACH ROW
-EXECUTE FUNCTION auto_create_due_record_func();
-
--- Trigger for Retail Bills
-CREATE TRIGGER trg_auto_create_retail_due
-AFTER INSERT ON retail_bills
-FOR EACH ROW
-EXECUTE FUNCTION auto_create_due_record_func();

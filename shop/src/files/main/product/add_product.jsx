@@ -29,7 +29,7 @@ const AddProduct = () => {
         cost_price: '',
         retail_price: '',
         wholesale_price: '',
-        suppliers: [] // Array of { supplier_id, supply_price }
+        suppliers: [] // Array of { supplier_id }
     });
 
     const [loading, setLoading] = useState(false);
@@ -39,13 +39,10 @@ const AddProduct = () => {
     useEffect(() => {
         const fetchOptions = async () => {
             try {
-                // Assuming you have an endpoint that returns { categories, units, suppliers, sales_channels }
-                // If not, fetch them individually here
-                        const token = localStorage.getItem('token');
-
+                const token = localStorage.getItem('token');
                 const res = await axios.get(`${API_URL}/products/dropdowns`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+                     headers: { Authorization: `Bearer ${token}` }
+                });
                 setOptions(res.data);
             } catch (err) {
                 console.error("Failed to load options", err);
@@ -64,11 +61,12 @@ const AddProduct = () => {
         }));
     };
 
-    // Supplier Row Logic
+    // --- Supplier Row Logic (Modified) ---
     const addSupplierRow = () => {
         setFormData(prev => ({
             ...prev,
-            suppliers: [...prev.suppliers, { supplier_id: '', supply_price: '' }]
+            // supply_price removed here, we only need ID now
+            suppliers: [...prev.suppliers, { supplier_id: '' }]
         }));
     };
 
@@ -77,9 +75,9 @@ const AddProduct = () => {
         setFormData(prev => ({ ...prev, suppliers: newSuppliers }));
     };
 
-    const handleSupplierChange = (index, field, value) => {
+    const handleSupplierChange = (index, value) => {
         const newSuppliers = [...formData.suppliers];
-        newSuppliers[index][field] = value;
+        newSuppliers[index].supplier_id = value;
         setFormData(prev => ({ ...prev, suppliers: newSuppliers }));
     };
 
@@ -97,7 +95,6 @@ const AddProduct = () => {
         }
 
         try {
-            // 1. Get Token
             const token = localStorage.getItem('token');
             if (!token) {
                 setError("Authentication token missing. Please login again.");
@@ -105,16 +102,19 @@ const AddProduct = () => {
                 return;
             }
 
-            // Clean up empty numbers
+            // Clean up payload
             const payload = {
                 ...formData,
                 category_id: formData.category_id || null,
                 unit_id: formData.unit_id || null,
                 retail_price: formData.retail_price || null,
                 wholesale_price: formData.wholesale_price || null,
+                // Ensure cost_price is sent as number
+                cost_price: parseFloat(formData.cost_price),
+                // Filter out empty supplier rows
+                suppliers: formData.suppliers.filter(s => s.supplier_id)
             };
 
-            // 2. Send Request with Authorization Header
             await axios.post(`${API_URL}/products`, payload, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -122,11 +122,9 @@ const AddProduct = () => {
                 }
             });
 
-            navigate('/dashboard/products'); // Redirect on success
+            navigate('/dashboard/products'); 
         } catch (err) {
             console.error("Add product error:", err);
-            
-            // Handle Session Expiry specifically
             if (err.response?.status === 401) {
                 setError("Session expired. Please login again.");
             } else {
@@ -194,10 +192,13 @@ const AddProduct = () => {
                 {/* Section: Pricing & Inventory */}
                 <div className="pf-card">
                     <h3 className="pf-card-title">Pricing & Stock</h3>
-                    <div className="pf-group">
-                        <label>Cost Price <span className="pf-req">*</span></label>
-                        <input type="number" step="0.01" name="cost_price" value={formData.cost_price} onChange={handleChange} required />
+                    {/* Highlighted Cost Price since it now drives supplier cost */}
+                    <div className="pf-group" style={{backgroundColor: '#f8fafc', padding: '10px', borderRadius: '6px'}}>
+                        <label style={{fontWeight: 600}}>Cost Price (Supply Price) <span className="pf-req">*</span></label>
+                        <input type="number" step="0.01" name="cost_price" value={formData.cost_price} onChange={handleChange} required placeholder="0.00" />
+                        <small style={{color: '#64748b', fontSize: '0.8rem'}}>This price will be used for all linked suppliers.</small>
                     </div>
+                    
                     <div className="pf-row">
                         <div className="pf-group">
                             <label>Retail Price</label>
@@ -232,22 +233,18 @@ const AddProduct = () => {
                     
                     <div className="pf-suppliers-list">
                         {formData.suppliers.map((item, index) => (
-                            <div key={index} className="pf-supplier-row slide-in">
+                            <div key={index} className="pf-supplier-row slide-in" style={{ gridTemplateColumns: "1fr auto" }}>
+                                {/* REMOVED Supply Price Input */}
                                 <select 
                                     value={item.supplier_id} 
-                                    onChange={(e) => handleSupplierChange(index, 'supplier_id', e.target.value)}
+                                    onChange={(e) => handleSupplierChange(index, e.target.value)}
                                     required
+                                    style={{width: '100%'}}
                                 >
                                     <option value="">Select Supplier</option>
                                     {options.suppliers.map(s => <option key={s.supplier_id} value={s.supplier_id}>{s.supplier_name}</option>)}
                                 </select>
-                                <input 
-                                    type="number" 
-                                    step="0.01"
-                                    placeholder="Supply Price"
-                                    value={item.supply_price}
-                                    onChange={(e) => handleSupplierChange(index, 'supply_price', e.target.value)}
-                                />
+                                
                                 <button type="button" className="pf-btn-icon-danger" onClick={() => removeSupplierRow(index)}>
                                     <TrashIcon className="pf-icon-xs" />
                                 </button>

@@ -8,7 +8,8 @@ import {
   TruckIcon,
   PencilSquareIcon,
   TagIcon,
-  GlobeAltIcon
+  GlobeAltIcon,
+  ClipboardDocumentListIcon // Added for logs
 } from '@heroicons/react/24/outline';
 import './view_product_detail.css';
 
@@ -36,7 +37,14 @@ const ViewProductDetail = () => {
       }
     };
     fetchDetail();
-  }, [id, API_URL]);
+  }, [id]);
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '-';
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+    });
+  };
 
   if (loading) return <div className="vpd-loading"><div className="vpd-spinner"></div></div>;
   
@@ -57,13 +65,13 @@ const ViewProductDetail = () => {
           <ArrowLeftIcon className="vpd-icon-sm" /> Back to Inventory
         </button>
         <div className="vpd-actions">
-        <button 
+          <button 
             className="vpd-btn-edit"
-           onClick={() => navigate(`/dashboard/products/edit/${id}`)}
-            >
+            onClick={() => navigate(`/dashboard/products/edit/${id}`)}
+          >
             <PencilSquareIcon className="vpd-icon-sm" /> Edit Product
           </button>
-          </div>
+        </div>
       </div>
 
       {/* Hero Card with Basic Info */}
@@ -126,7 +134,7 @@ const ViewProductDetail = () => {
               <span className="vpd-val muted">${parseFloat(product.cost_price || 0).toFixed(2)}</span>
             </div>
             <div className="vpd-note">
-              Price Effective From: {product.price_effective_date ? new Date(product.price_effective_date).toLocaleDateString() : 'N/A'}
+              Price Effective From: {formatDate(product.price_effective_date)}
             </div>
           </div>
         </div>
@@ -144,7 +152,7 @@ const ViewProductDetail = () => {
                   <tr>
                     <th>Supplier</th>
                     <th>Contact</th>
-                    <th className="text-right">Cost</th>
+                    <th className="text-right">Unit Cost</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -167,6 +175,59 @@ const ViewProductDetail = () => {
           </div>
         </div>
       </div>
+
+      {/* NEW: Recent Logs Section */}
+      <div className="vpd-full-width slide-up" style={{ animationDelay: '0.3s', marginTop: '20px' }}>
+        <div className="vpd-card">
+          <div className="vpd-card-head">
+            <div className="icon-bg-green"><ClipboardDocumentListIcon className="vpd-card-icon" /></div>
+            <h3>Recent Inventory Activity</h3>
+          </div>
+          <div className="vpd-table-wrap">
+            {product.recent_logs && product.recent_logs.length > 0 ? (
+              <table className="vpd-logs-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Activity</th>
+                    <th>Supplier</th>
+                    <th className="text-right">Change</th>
+                    <th className="text-right">New Qty</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {product.recent_logs.map((log, idx) => (
+                    <tr key={idx}>
+                      <td className="text-muted text-sm">{formatDate(log.change_date)}</td>
+                      <td>
+                        <span className={`log-badge ${log.change_type.toLowerCase().replace(' ', '-')}`}>
+                          {log.change_type}
+                        </span>
+                      </td>
+                      <td className="text-sm">
+                        {log.supplier_name ? (
+                           <span className="text-dark">{log.supplier_name}</span>
+                        ) : (
+                           <span className="text-muted">-</span>
+                        )}
+                      </td>
+                      <td className={`text-right font-bold ${log.quantity_change > 0 ? 'text-success' : 'text-danger'}`}>
+                        {log.quantity_change > 0 ? '+' : ''}{log.quantity_change}
+                      </td>
+                      <td className="text-right font-mono">{log.new_quantity}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <div className="vpd-empty-state">
+                <p>No recent activity logs found.</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
     </div>
   );
 };
