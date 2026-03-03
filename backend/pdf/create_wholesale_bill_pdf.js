@@ -1,179 +1,242 @@
 const PDFDocument = require('pdfkit');
+const { formatCurrency } = require('../utils/formatters');
 
 function buildPDF(dataCallback, endCallback, bill, items) {
-    const doc = new PDFDocument({ 
-        size: 'A4', 
-        margin: 0, 
-        bufferPages: true 
+    const doc = new PDFDocument({
+        size: 'A4',
+        margin: 0,
+        bufferPages: true
     });
 
     doc.on('data', dataCallback);
     doc.on('end', endCallback);
 
-    const colors = {
-        primaryBlue: '#1e3c72',
-        accentRed: '#e94057',
-        textDark: '#2c3e50',
-        textLight: '#ffffff',
-        textGrey: '#7f8c8d',
-        lightBg: '#f3f5f9'
+    const C = {
+        ink:        '#1a1a2e',   // deep navy – headings
+        accent:     '#4f46e5',   // indigo – key highlights
+        accentSoft: '#eef2ff',   // very light indigo – row fills
+        success:    '#16a34a',   // green – paid
+        danger:     '#dc2626',   // red – balance due
+        muted:      '#6b7280',   // grey – secondary text
+        border:     '#e5e7eb',   // light grey – lines
+        white:      '#ffffff',
+        page:       '#f9fafb',   // off-white page background
     };
 
-    // --- 1. DRAW BACKGROUND GRAPHICS ---
-    drawHeaderBackground(doc, colors);
-    drawFooterBackground(doc, colors);
+    // ── PAGE BACKGROUND ──────────────────────────────────────────────────────
+    doc.rect(0, 0, 595, 842).fill(C.page);
 
-    // --- 2. HEADER CONTENT ---
-    doc.fillColor(colors.textLight)
-       .font('Helvetica-Bold')
-       .fontSize(40)
-       .text('INVOICE', 50, 60, { letterSpacing: 2 });
+    // ── HEADER BAND ──────────────────────────────────────────────────────────
+    doc.rect(0, 0, 595, 150).fill(C.ink);
 
-    doc.fontSize(10)
-       .font('Helvetica')
-       .text(`INVOICE NO: ${bill.bill_number}`, 50, 110)
-       .text(new Date(bill.bill_date).toLocaleDateString(), 50, 125);
+    // accent bar on left edge
+    doc.rect(0, 0, 6, 150).fill(C.accent);
 
-    doc.fontSize(16)
-       .text('My Wholesale Co.', 350, 60, { align: 'right', width: 200 })
-       .fontSize(10)
-       .text('Contractor', 350, 80, { align: 'right', width: 200 });
+    // INVOICE wordmark
+    doc.fillColor(C.white).font('Helvetica-Bold').fontSize(36)
+       .text('INVOICE', 30, 40, { characterSpacing: 4 });
 
-    // --- 3. CUSTOMER CARD ---
-    const cardTop = 170;
-    
-    doc.roundedRect(40, cardTop, 515, 100, 15).fill(colors.textLight);
+    // invoice meta
+    doc.fillColor(C.accent).font('Helvetica-Bold').fontSize(9)
+       .text('INVOICE NO', 30, 90);
+    doc.fillColor(C.white).font('Helvetica').fontSize(9)
+       .text(`#${bill.bill_number}`, 30, 103);
 
-    doc.fillColor(colors.primaryBlue)
-       .fontSize(10)
-       .font('Helvetica-Bold')
-       .text('Invoice to:', 60, cardTop + 20);
+    doc.fillColor(C.accent).font('Helvetica-Bold').fontSize(9)
+       .text('DATE', 150, 90);
+    doc.fillColor(C.white).font('Helvetica').fontSize(9)
+       .text(new Date(bill.bill_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }), 150, 103);
 
-    doc.fontSize(20)
-       .text(bill.customer_name, 60, cardTop + 35);
+    // company name (right-aligned)
+    doc.fillColor(C.white).font('Helvetica-Bold').fontSize(16)
+       .text('My Wholesale Co.', 300, 48, { width: 265, align: 'right' });
+    doc.fillColor(C.accent).font('Helvetica').fontSize(9)
+       .text('www.mycompany.com  ·  +123-456-7890', 300, 70, { width: 265, align: 'right' });
+    doc.fillColor(C.muted).font('Helvetica').fontSize(8)
+       .text('123 Anywhere St., Any City', 300, 84, { width: 265, align: 'right' });
 
-    doc.fillColor(colors.textGrey)
-       .fontSize(9)
-       .font('Helvetica')
-       .text(bill.email || 'email@example.com', 300, cardTop + 30, { align: 'right', width: 230 })
-       .text(bill.address || 'Address Line 1', 300, cardTop + 45, { align: 'right', width: 230 })
-       .text(bill.phone || 'Phone Number', 300, cardTop + 60, { align: 'right', width: 230 });
+    // ── BILLED TO / STATUS CARD ───────────────────────────────────────────────
+    const cardY = 168;
 
-    // --- 4. TABLE HEADERS ---
-    const tableTop = 320;
-    const descX = 60;
-    const qtyX = 300;
-    const costX = 370;
-    const totalX = 460;
+    // Bill-to card
+    doc.roundedRect(30, cardY, 300, 100, 8).fill(C.white);
+    // left accent strip
+    doc.rect(30, cardY, 4, 100).fill(C.accent);
 
-    doc.moveTo(50, tableTop - 10).lineTo(545, tableTop - 10).lineWidth(2).strokeColor(colors.primaryBlue).stroke();
-    doc.moveTo(50, tableTop + 15).lineTo(545, tableTop + 15).lineWidth(1).strokeColor(colors.primaryBlue).stroke();
+    doc.fillColor(C.muted).font('Helvetica-Bold').fontSize(7.5)
+       .text('BILLED TO', 44, cardY + 14, { characterSpacing: 1 });
 
-    doc.fillColor(colors.primaryBlue).fontSize(10).font('Helvetica-Bold');
-    doc.text('Description', descX, tableTop);
-    doc.text('Qty', qtyX, tableTop, { align: 'center', width: 40 });
-    doc.text('Cost', costX, tableTop, { align: 'right', width: 70 });
-    doc.text('Subtotal', totalX, tableTop, { align: 'right', width: 70 });
+    doc.fillColor(C.ink).font('Helvetica-Bold').fontSize(14)
+       .text(bill.customer_name, 44, cardY + 26, { width: 270 });
 
-    // --- 5. TABLE ITEMS ---
-    let y = tableTop + 30;
-    doc.font('Helvetica').fontSize(10).fillColor(colors.textDark);
+    doc.fillColor(C.muted).font('Helvetica').fontSize(8.5)
+       .text(bill.email   || '—', 44, cardY + 50)
+       .text(bill.address || '—', 44, cardY + 63)
+       .text(bill.phone   || '—', 44, cardY + 76);
 
-    items.forEach((item) => {
-        if (y > 650) {
+    // Payment status badge
+    const statusColors = { paid: C.success, partial: '#d97706', unpaid: C.danger };
+    const statusBg = { paid: '#dcfce7', partial: '#fef3c7', unpaid: '#fee2e2' };
+    const status = (bill.payment_status || 'unpaid').toLowerCase();
+    doc.roundedRect(345, cardY, 220, 100, 8).fill(C.white);
+
+    doc.fillColor(C.muted).font('Helvetica-Bold').fontSize(7.5)
+       .text('PAYMENT STATUS', 360, cardY + 14, { characterSpacing: 1 });
+
+    doc.roundedRect(360, cardY + 28, 90, 22, 4).fill(statusBg[status] || statusBg.unpaid);
+    doc.fillColor(statusColors[status] || C.danger).font('Helvetica-Bold').fontSize(9)
+       .text(status.toUpperCase(), 360, cardY + 34, { width: 90, align: 'center' });
+
+    doc.fillColor(C.muted).font('Helvetica').fontSize(8)
+       .text(`Method: ${bill.payment_method || 'N/A'}`, 360, cardY + 60)
+       .text(`Created by: ${bill.creator_name || 'Admin'}`, 360, cardY + 74);
+
+    // ── TABLE ─────────────────────────────────────────────────────────────────
+    const tX      = 30;
+    const tWidth  = 535;
+    const col = {
+        name:      tX + 14,
+        price:     tX + 220,
+        discount:  tX + 305,
+        afterDisc: tX + 390,
+        total:     tX + 465,
+    };
+
+    let y = cardY + 120;
+
+    // Table header background
+    doc.roundedRect(tX, y, tWidth, 28, 4).fill(C.ink);
+
+    doc.fillColor(C.white).font('Helvetica-Bold').fontSize(8.5);
+    doc.text('PRODUCT',         col.name,      y + 9);
+    doc.text('UNIT PRICE',      col.price,     y + 9, { width: 70, align: 'right' });
+    doc.text('DISCOUNT',        col.discount,  y + 9, { width: 70, align: 'right' });
+    doc.text('NET PRICE',       col.afterDisc, y + 9, { width: 65, align: 'right' });
+    doc.text('TOTAL',           col.total,     y + 9, { width: 60, align: 'right' });
+
+    y += 28;
+
+    // Rows
+    let grandTotal    = 0;
+    let grandDiscount = 0;
+
+    items.forEach((item, idx) => {
+        const rowH = 28;
+
+        if (y + rowH > 760) {
             doc.addPage();
-            drawHeaderBackground(doc, colors);
-            drawFooterBackground(doc, colors);
-            y = 100;
+            doc.rect(0, 0, 595, 842).fill(C.page);
+            y = 40;
         }
 
-        const unitPrice = parseFloat(item.unit_price).toFixed(2);
-        const lineTotal = parseFloat(item.total_price).toFixed(2);
+        const unitPrice  = parseFloat(item.unit_price)   || 0;
+        const qty        = parseFloat(item.quantity)      || 0;
+        const totalPrice = parseFloat(item.total_price)   || 0;
 
-        doc.text(item.product_name, descX, y, { width: 220 });
-        doc.text(item.quantity, qtyX, y, { align: 'center', width: 40 });
-        doc.text(`$${unitPrice}`, costX, y, { align: 'right', width: 70 });
-        doc.text(`$${lineTotal}`, totalX, y, { align: 'right', width: 70 });
+        // Per-item discount = (unit_price × qty) − total_price
+        const itemDiscount  = Math.max(0, (unitPrice * qty) - totalPrice);
+        const netUnitPrice  = qty > 0 ? totalPrice / qty : unitPrice;
+        const discountPct   = unitPrice > 0 ? ((itemDiscount / (unitPrice * qty)) * 100) : 0;
 
-        y += 25;
+        grandTotal    += totalPrice;
+        grandDiscount += itemDiscount;
+
+        // alternating row fill
+        if (idx % 2 === 0) {
+            doc.rect(tX, y, tWidth, rowH).fill(C.accentSoft);
+        } else {
+            doc.rect(tX, y, tWidth, rowH).fill(C.white);
+        }
+
+        const midY = y + (rowH - 10) / 2;
+
+        doc.fillColor(C.ink).font('Helvetica-Bold').fontSize(9)
+           .text(item.product_name, col.name, midY, { width: 195, ellipsis: true });
+
+        doc.fillColor(C.muted).font('Helvetica').fontSize(8.5)
+           .text(`Rs.${formatCurrency(unitPrice)}`, col.price, midY, { width: 70, align: 'right' });
+
+        // discount pill
+        if (itemDiscount > 0) {
+            doc.fillColor('#dc2626').font('Helvetica-Bold').fontSize(8)
+               .text(`-${discountPct.toFixed(0)}%  (Rs.${formatCurrency(itemDiscount)})`, col.discount, midY, { width: 75, align: 'right' });
+        } else {
+            doc.fillColor(C.muted).font('Helvetica').fontSize(8.5)
+               .text('—', col.discount, midY, { width: 75, align: 'right' });
+        }
+
+        doc.fillColor(C.ink).font('Helvetica').fontSize(8.5)
+           .text(`Rs.${formatCurrency(netUnitPrice)}`, col.afterDisc, midY, { width: 65, align: 'right' });
+
+        doc.fillColor(C.ink).font('Helvetica-Bold').fontSize(9)
+           .text(`Rs.${formatCurrency(totalPrice)}`, col.total, midY, { width: 60, align: 'right' });
+
+        y += rowH;
     });
 
-    // --- 6. TOTALS ---
-    doc.moveTo(50, y).lineTo(545, y).lineWidth(1).strokeColor('#e0e0e0').stroke();
-    y += 20;
+    // bottom table border
+    doc.moveTo(tX, y).lineTo(tX + tWidth, y).lineWidth(1).strokeColor(C.border).stroke();
 
-    const totalAmount = parseFloat(bill.total_amount || 0);
-    const paidAmount = parseFloat(bill.amount_paid || 0);
-    const discount = parseFloat(bill.discount || 0);
-    const taxAmount = totalAmount * 0.10; 
-    const subTotal = totalAmount - taxAmount + discount;
-    const dueAmount = totalAmount - paidAmount;
+    // ── TOTALS SECTION ────────────────────────────────────────────────────────
+    y += 18;
 
-    // Payment Info
-    doc.fontSize(10).fillColor(colors.primaryBlue).font('Helvetica-Bold');
-    doc.text('Payment Details:', 60, y);
-    doc.fontSize(9).fillColor(colors.textDark).font('Helvetica');
-    doc.text('Bank Name: Brocelle Bank', 60, y + 15);
-    doc.text('Account: 123-456-7890', 60, y + 30);
+    const totalsX     = 330;
+    const totalsW     = 235;
+    const totalsLabelX = totalsX + 14;
+    const totalsValX   = totalsX + totalsW - 14;
 
-    // Calculations
-    const rightColX = 350;
-    const valColX = 460;
-    
-    const printTotalRow = (label, value, isBold = false, color = colors.textDark) => {
-        doc.fillColor(color).font(isBold ? 'Helvetica-Bold' : 'Helvetica');
-        doc.text(label, rightColX, y, { align: 'left' });
-        doc.text(value, valColX, y, { align: 'right', width: 70 });
-        y += 20;
+    const totalAmount = parseFloat(bill.total_amount || grandTotal);
+    const paidAmount  = parseFloat(bill.amount_paid  || 0);
+    const dueAmount   = totalAmount - paidAmount;
+
+    // outer card
+    doc.roundedRect(totalsX, y, totalsW, 140, 8).fill(C.white);
+
+    const rowLine = (label, value, labelColor, valueColor, bold, lineY) => {
+        doc.fillColor(labelColor).font(bold ? 'Helvetica-Bold' : 'Helvetica').fontSize(9)
+           .text(label, totalsLabelX, lineY);
+        doc.fillColor(valueColor).font(bold ? 'Helvetica-Bold' : 'Helvetica').fontSize(9)
+           .text(value, totalsValX - 70, lineY, { width: 70, align: 'right' });
     };
-    y += 5;
-    doc.fontSize(12);
-    printTotalRow('Total', `$${totalAmount.toFixed(2)}`, true, colors.primaryBlue);
-    doc.fontSize(10);
-    printTotalRow('Amount Paid', `$${paidAmount.toFixed(2)}`, false, '#27ae60');
-    doc.fontSize(12);
-    printTotalRow('Balance Due', `$${dueAmount.toFixed(2)}`, true, colors.accentRed);
 
-    // --- 7. FOOTER ---
-    const footerY = 740;
-    doc.fillColor(colors.primaryBlue).fontSize(12).font('Helvetica-Bold').text('Contact Us', 60, footerY);
-    doc.fontSize(9).font('Helvetica')
-       .text('123 Anywhere St., Any City', 60, footerY + 20)
-       .text('www.website.com | +123-456-7890', 60, footerY + 35);
-    
-    doc.fillColor(colors.primaryBlue).fontSize(12).font('Helvetica-Bold').text('Thank You!', 400, footerY, { align: 'center' });
-    doc.font('Helvetica').fontSize(8).text('Administrator', 400, footerY + 45, { align: 'center' });
+    let ty = y + 14;
+    rowLine('Subtotal (before discount)', `Rs.${formatCurrency(grandTotal + grandDiscount)}`, C.muted, C.ink, false, ty); ty += 20;
+    rowLine('Total Discount',             `-Rs.${formatCurrency(grandDiscount)}`,              C.muted, '#dc2626', false, ty); ty += 2;
+
+    // divider
+    doc.moveTo(totalsX + 10, ty + 12).lineTo(totalsX + totalsW - 10, ty + 12).lineWidth(0.5).strokeColor(C.border).stroke();
+    ty += 20;
+
+    rowLine('Grand Total',    `Rs.${formatCurrency(totalAmount)}`, C.ink,   C.accent,  true, ty); ty += 22;
+    rowLine('Amount Paid',    `Rs.${formatCurrency(paidAmount)}`,  C.muted, C.success, true, ty); ty += 2;
+
+    // balance due highlight strip
+    doc.roundedRect(totalsX + 8, ty + 14, totalsW - 16, 24, 4).fill('#fee2e2');
+    doc.fillColor(C.danger).font('Helvetica-Bold').fontSize(10)
+       .text('Balance Due', totalsLabelX, ty + 20)
+       .text(`Rs.${formatCurrency(dueAmount)}`, totalsValX - 80, ty + 20, { width: 80, align: 'right' });
+
+    // ── CREATED BY ────────────────────────────────────────────────────────────
+    const createdBy = bill.creator_name || 'Administrator';
+    doc.fillColor(C.muted).font('Helvetica').fontSize(8)
+       .text(`Prepared by: `, tX, y + 14);
+    doc.fillColor(C.ink).font('Helvetica-Bold').fontSize(8)
+       .text(createdBy, tX + 57, y + 14);
+
+    // ── FOOTER ────────────────────────────────────────────────────────────────
+    const fY = 800;
+    doc.rect(0, fY, 595, 42).fill(C.ink);
+    doc.rect(0, fY, 6, 42).fill(C.accent);
+
+    doc.fillColor(C.white).font('Helvetica-Bold').fontSize(9)
+       .text('My Wholesale Co.', 22, fY + 8);
+    doc.fillColor(C.muted).font('Helvetica').fontSize(7.5)
+       .text('123 Anywhere St. · www.mycompany.com · +123-456-7890', 22, fY + 21);
+
+    doc.fillColor(C.accent).font('Helvetica-Bold').fontSize(9)
+       .text('Thank you for your business!', 0, fY + 14, { width: 575, align: 'right' });
 
     doc.end();
-}
-
-function drawHeaderBackground(doc, colors) {
-    const grad = doc.linearGradient(0, 0, 595, 0);
-    grad.stop(0, colors.primaryBlue).stop(1, colors.accentRed);
-
-    doc.save();
-    // CORRECTED: using bezierCurveTo instead of curveTo
-    doc.rect(0, 0, 595, 180).fill(grad);
-    doc.moveTo(0, 180)
-       .bezierCurveTo(150, 180, 400, 100, 595, 120) 
-       .lineTo(595, 0)
-       .lineTo(0, 0)
-       .fill(grad);
-    doc.restore();
-}
-
-function drawFooterBackground(doc, colors) {
-    const grad = doc.linearGradient(0, 0, 595, 0);
-    grad.stop(0, colors.primaryBlue).stop(1, colors.accentRed);
-
-    doc.save();
-    // CORRECTED: using bezierCurveTo instead of curveTo
-    doc.moveTo(0, 842)
-       .lineTo(595, 842) 
-       .lineTo(595, 760) 
-       .bezierCurveTo(400, 800, 150, 820, 0, 780)
-       .fill(grad);
-    doc.restore();
 }
 
 module.exports = { buildPDF };

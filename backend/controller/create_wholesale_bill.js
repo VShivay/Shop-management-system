@@ -231,21 +231,26 @@ exports.getBillDetails = async (req, res) => {
 };
 
 // 5. Generate PDF
+// 5. Generate PDF
 exports.generatePdf = async (req, res) => {
     const client = await db.pool.connect();
     try {
         const { id } = req.params;
-        
+
         const billQuery = `
-            SELECT wb.*, c.customer_name, c.address, c.phone, c.email
-            FROM wholesale_bills wb 
-            JOIN customers c ON wb.customer_id = c.customer_id 
+            SELECT 
+                wb.*,
+                c.customer_name, c.address, c.phone, c.email,
+                u.name AS creator_name
+            FROM wholesale_bills wb
+            JOIN customers c  ON wb.customer_id = c.customer_id
+            LEFT JOIN users u ON wb.created_by  = u.user_id
             WHERE wb.wholesale_bill_id = $1`;
-        
+
         const itemsQuery = `
-            SELECT wbi.*, p.product_name 
-            FROM wholesale_bill_items wbi 
-            JOIN products p ON wbi.product_id = p.product_id 
+            SELECT wbi.*, p.product_name
+            FROM wholesale_bill_items wbi
+            JOIN products p ON wbi.product_id = p.product_id
             WHERE wbi.wholesale_bill_id = $1`;
 
         const billData = await client.query(billQuery, [id]);
@@ -262,26 +267,18 @@ exports.generatePdf = async (req, res) => {
 
         pdfGenerator.buildPDF(
             (chunk) => {
-                // SAFETY CHECK: Only write if the response is still open
-                if (!res.writableEnded && !res.closed) {
-                    res.write(chunk);
-                }
+                if (!res.writableEnded && !res.closed) res.write(chunk);
             },
             () => {
-                if (!res.writableEnded && !res.closed) {
-                    res.end();
-                }
+                if (!res.writableEnded && !res.closed) res.end();
             },
-            billData.rows[0],
+            billData.rows[0],   // now includes creator_name
             itemsData.rows
         );
 
     } catch (error) {
         console.error("Error generating PDF:", error);
-        // SAFETY CHECK: Don't send error if headers are already sent
-        if (!res.headersSent) {
-            res.status(500).send("Error generating PDF");
-        }
+        if (!res.headersSent) res.status(500).send("Error generating PDF");
     } finally {
         client.release();
     }
