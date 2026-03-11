@@ -1,42 +1,50 @@
 // src/App.js
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Loader2 } from 'lucide-react'; // Re-using lucide-react from your dashboard
+
+// --- Eager Loading ---
+// We load Login and the main Layout immediately so the initial paint is fast
 import Login from './files/login';
 import DashboardLayout from './files/dashboard'; 
-import DashboardHome from './files/main/dashboard_home';
+
+// --- Lazy Loading (Code Splitting) ---
+// These components are only downloaded when the user navigates to their routes
+const DashboardHome = lazy(() => import('./files/main/dashboard_home'));
 
 // Products
-import ManageProducts from './files/main/product/manage_products';
-import ViewProductDetail from './files/main/product/view_product_detail';
-import AddProduct from './files/main/product/add_product';        
-import UpdateProduct from './files/main/product/update_product';
+const ManageProducts = lazy(() => import('./files/main/product/manage_products'));
+const ViewProductDetail = lazy(() => import('./files/main/product/view_product_detail'));
+const AddProduct = lazy(() => import('./files/main/product/add_product'));        
+const UpdateProduct = lazy(() => import('./files/main/product/update_product'));
 
 // Suppliers
-import ManageSupplier from './files/main/supplier/manage_supplier';
-import DetailSupplier from './files/main/supplier/detail_supplier';
-import AddSupplier from './files/main/supplier/add_supplier';        
-import UpdateSupplier from './files/main/supplier/update_supplier'; 
+const ManageSupplier = lazy(() => import('./files/main/supplier/manage_supplier'));
+const DetailSupplier = lazy(() => import('./files/main/supplier/detail_supplier'));
+const AddSupplier = lazy(() => import('./files/main/supplier/add_supplier'));        
+const UpdateSupplier = lazy(() => import('./files/main/supplier/update_supplier')); 
 
 // Customers
-import ManageCustomer from './files/main/customer/manage_customer';
-import CustomerDetail from './files/main/customer/customer_detail';
-import AddCustomer from './files/main/customer/add_customer';            
-import UpdateCustomer from './files/main/customer/update_customer';
+const ManageCustomer = lazy(() => import('./files/main/customer/manage_customer'));
+const CustomerDetail = lazy(() => import('./files/main/customer/customer_detail'));
+const AddCustomer = lazy(() => import('./files/main/customer/add_customer'));            
+const UpdateCustomer = lazy(() => import('./files/main/customer/update_customer'));
 
 // Billing
-import CreateRetailBill from './files/main/create_retail_bill';
-import ViewRetailBill from './files/main/view_retail_bill';
-import CreateWholesaleBill from './files/main/create_wholesale_bill'; 
-import ViewWholesaleBill from './files/main/view_wholesale_bill';
+const CreateRetailBill = lazy(() => import('./files/main/create_retail_bill'));
+const ViewRetailBill = lazy(() => import('./files/main/view_retail_bill'));
+const CreateWholesaleBill = lazy(() => import('./files/main/create_wholesale_bill')); 
+const ViewWholesaleBill = lazy(() => import('./files/main/view_wholesale_bill'));
 
 // Restock
-import RestockProduct from './files/main/restock_product'; 
+const RestockProduct = lazy(() => import('./files/main/restock_product')); 
 
 // Reports
-import Profit_Loss_ReportAnalysis from './files/main/report_analysis';
-import CustomerReportAnalysis from './files/main/customer_report_analysis'; // NEW IMPORT
-import Inventory_Report_Analysis from './files/main/inventory_report_analysis'; // NEW
+const ProfitLossReportAnalysis = lazy(() => import('./files/main/report_analysis'));
+const CustomerReportAnalysis = lazy(() => import('./files/main/customer_report_analysis'));
+const InventoryReportAnalysis = lazy(() => import('./files/main/inventory_report_analysis')); 
 
+// --- Route Guards ---
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
   if (!token) return <Navigate to="/" replace />;
@@ -49,51 +57,62 @@ const PublicRoute = ({ children }) => {
   return children;
 };
 
+// --- Fallback Loader ---
+const PageLoader = () => (
+  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+    <Loader2 size={40} className="animate-spin" color="#3b82f6" />
+  </div>
+);
+
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<PublicRoute><Login /></PublicRoute>} />
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          {/* Public Route */}
+          <Route path="/" element={<PublicRoute><Login /></PublicRoute>} />
 
-        <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
-          <Route index element={<DashboardHome />} />
-          
-          {/* Products */}
-          <Route path="products" element={<ManageProducts />} />
-          <Route path="products/add" element={<AddProduct />} />          
-          <Route path="products/edit/:id" element={<UpdateProduct />} />  
-          <Route path="products/:id" element={<ViewProductDetail />} />
+          {/* Protected Routes inside Dashboard Layout */}
+          <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
+            <Route index element={<DashboardHome />} />
+            
+            {/* Products */}
+            <Route path="products" element={<ManageProducts />} />
+            <Route path="products/add" element={<AddProduct />} />          
+            <Route path="products/edit/:id" element={<UpdateProduct />} />  
+            <Route path="products/:id" element={<ViewProductDetail />} />
 
-          {/* Suppliers */}
-          <Route path="suppliers" element={<ManageSupplier />} />
-          <Route path="suppliers/add" element={<AddSupplier />} />          
-          <Route path="suppliers/edit/:id" element={<UpdateSupplier />} /> 
-          <Route path="suppliers/:id" element={<DetailSupplier />} />
+            {/* Suppliers */}
+            <Route path="suppliers" element={<ManageSupplier />} />
+            <Route path="suppliers/add" element={<AddSupplier />} />          
+            <Route path="suppliers/edit/:id" element={<UpdateSupplier />} /> 
+            <Route path="suppliers/:id" element={<DetailSupplier />} />
 
-          {/* Customers */}
-          <Route path="customers" element={<ManageCustomer />} />
-          <Route path="customers/add" element={<AddCustomer />} />          
-          <Route path="customers/edit/:id" element={<UpdateCustomer />} /> 
-          <Route path="customers/:id" element={<CustomerDetail />} />
+            {/* Customers */}
+            <Route path="customers" element={<ManageCustomer />} />
+            <Route path="customers/add" element={<AddCustomer />} />          
+            <Route path="customers/edit/:id" element={<UpdateCustomer />} /> 
+            <Route path="customers/:id" element={<CustomerDetail />} />
 
-          {/* Billing */}
-          <Route path="retail-billing" element={<CreateRetailBill />} />
-          <Route path="wholesale-billing" element={<CreateWholesaleBill />} /> 
-          <Route path="view-retail-bills" element={<ViewRetailBill />} />
-          <Route path="view-wholesale-bills" element={<ViewWholesaleBill />} /> 
-          
-          {/* Restock */}
-          <Route path="restock" element={<RestockProduct />} />
+            {/* Billing */}
+            <Route path="retail-billing" element={<CreateRetailBill />} />
+            <Route path="wholesale-billing" element={<CreateWholesaleBill />} /> 
+            <Route path="view-retail-bills" element={<ViewRetailBill />} />
+            <Route path="view-wholesale-bills" element={<ViewWholesaleBill />} /> 
+            
+            {/* Restock */}
+            <Route path="restock" element={<RestockProduct />} />
 
-          {/* Reports Analysis */}
-          <Route path="reports" element={<Profit_Loss_ReportAnalysis />} />
-          {/* NEW ROUTE */}
-          <Route path="customer-reports" element={<CustomerReportAnalysis />} />
-          <Route path="reports/inventory" element={<Inventory_Report_Analysis />} />
-        </Route>
+            {/* Reports */}
+            <Route path="reports" element={<ProfitLossReportAnalysis />} />
+            <Route path="customer-reports" element={<CustomerReportAnalysis />} />
+            <Route path="reports/inventory" element={<InventoryReportAnalysis />} />
+          </Route>
 
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+          {/* 404 Catch-All */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Suspense>
     </Router>
   );
 }

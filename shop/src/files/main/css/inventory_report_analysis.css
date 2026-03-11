@@ -1,328 +1,380 @@
-/* Scoped Container */
+/* =========================================
+   INVENTORY REPORT ANALYSIS (STRICTLY SCOPED)
+   ========================================= */
+
+/* Scoped Container (Global layout padding: 8px) */
 .ira-container {
   padding: 8px;
   max-width: 100%;
   box-sizing: border-box;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   color: #333;
+  background-color: transparent;
 }
 
 /* Header */
-.ira-header {
+.ira-container .ira-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 10px; /* Section spacing */
   background: white;
-  padding: 10px;
+  padding: 10px; /* Card padding */
   border-radius: 6px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: box-shadow 0.3s ease;
 }
 
-.ira-title {
+.ira-container .ira-header:hover {
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.ira-container .ira-title {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 8px; /* Grid/Flex gap */
 }
 
-.ira-title h2 {
+.ira-container .ira-title h2 {
   margin: 0;
   font-size: 18px;
   font-weight: 700;
   color: #1a1a1a;
+  letter-spacing: -0.02em;
 }
 
-.ira-title p {
+.ira-container .ira-title p {
   margin: 0;
   font-size: 12px;
-  color: #666;
+  color: #64748b;
 }
 
-.ira-icon-lg {
+.ira-container .ira-icon-lg {
   color: #4f46e5;
   width: 28px;
   height: 28px;
+  margin: 4px; /* Icon margin */
 }
 
 /* Filters Bar */
-.ira-filters {
+.ira-container .ira-filters {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px; /* Grid/Flex gap */
   background: white;
-  padding: 10px;
+  padding: 10px; /* Card padding */
   border-radius: 6px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  margin-bottom: 10px;
+  margin-bottom: 10px; /* Section spacing */
   align-items: flex-end;
 }
 
-.ira-filter-group {
+.ira-container .ira-filter-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px; /* Grid/Flex gap */
 }
 
-.ira-filter-group label {
+.ira-container .ira-filter-group label {
   font-size: 11px;
   font-weight: 600;
-  color: #555;
+  color: #475569;
   margin-left: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.ira-filter-group select,
-.ira-filter-group input {
-  padding: 6px 8px;
+.ira-container .ira-filter-group select,
+.ira-container .ira-filter-group input {
+  padding: 6px 8px; /* Input padding */
   border: 1px solid #e2e8f0;
-  border-radius: 4px;
+  border-radius: 4px; /* Small radius */
   font-size: 13px;
   outline: none;
-  min-width: 120px;
-  transition: border-color 0.2s;
+  min-width: 130px;
+  background-color: #f8fafc;
+  transition: all 0.2s ease;
 }
 
-.ira-filter-group select:focus,
-.ira-filter-group input:focus {
+.ira-container .ira-filter-group select:focus,
+.ira-container .ira-filter-group input:focus {
   border-color: #4f46e5;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }
 
 /* Buttons */
-.ira-btn-primary {
-  padding: 6px 12px;
+.ira-container .ira-btn-primary {
+  padding: 6px 12px; /* Button padding */
   background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 4px; /* Small radius */
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  height: 30px; /* match input height approx */
-  transition: transform 0.1s;
+  height: 32px;
+  box-shadow: 0 1px 3px rgba(79, 70, 229, 0.3);
+  transition: all 0.2s ease;
 }
 
-.ira-btn-primary:active {
-  transform: scale(0.98);
+.ira-container .ira-btn-primary:hover {
+  background: linear-gradient(135deg, #4338ca 0%, #3730a3 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(79, 70, 229, 0.4);
 }
 
-.ira-btn-secondary {
-  padding: 6px 12px;
+.ira-container .ira-btn-primary:active {
+  transform: translateY(1px);
+}
+
+.ira-container .ira-btn-secondary {
+  padding: 6px 12px; /* Button padding */
   background: white;
   border: 1px solid #e2e8f0;
-  color: #333;
-  border-radius: 4px;
+  color: #334155;
+  border-radius: 4px; /* Small radius */
   font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 6px;
-  transition: all 0.2s;
+  height: 32px;
+  transition: all 0.2s ease;
 }
 
-.ira-btn-secondary:hover {
+.ira-container .ira-btn-secondary:hover {
   background: #f8fafc;
   border-color: #cbd5e1;
+  color: #0f172a;
 }
 
-/* Summary Cards */
-.ira-summary-grid {
+/* Summary Cards Grid */
+.ira-container .ira-summary-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 10px; /* Grid/Flex gap */
+  margin-bottom: 10px; /* Section spacing */
 }
 
-.ira-card {
-  padding: 12px 16px;
+/* Individual Cards */
+.ira-container .ira-card {
+  padding: 10px; /* Card padding */
+  border-radius: 6px; /* Card border-radius */
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Grid/Flex gap */
+  color: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Card shadow */
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ira-container .ira-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+/* Stunning Vibrant Gradients */
+.ira-container .card-gradient-1 { background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%); } /* Blue */
+.ira-container .card-gradient-2 { background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%); } /* Orange */
+.ira-container .card-gradient-3 { background: linear-gradient(135deg, #10b981 0%, #059669 100%); } /* Emerald */
+.ira-container .card-gradient-4 { background: linear-gradient(135deg, #f43f5e 0%, #be123c 100%); } /* Rose */
+
+.ira-container .ira-card-icon {
+  background: rgba(255,255,255,0.2);
+  padding: 8px;
   border-radius: 6px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  color: white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  position: relative;
-  overflow: hidden;
+  justify-content: center;
+  backdrop-filter: blur(4px);
 }
 
-/* Vibrant Gradients */
-.card-gradient-1 {
-  background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+.ira-container .ira-card-content {
+  flex: 1;
 }
 
-.card-gradient-2 {
-  background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
-}
-
-.ira-card-icon {
-  background: rgba(255,255,255,0.2);
-  padding: 8px;
-  border-radius: 50%;
-  display: flex;
-}
-
-.ira-card-content h3 {
+.ira-container .ira-card-content h3 {
   margin: 0;
   font-size: 12px;
   font-weight: 500;
   opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
-.ira-card-content p {
-  margin: 2px 0 0 0;
+.ira-container .ira-card-content p {
+  margin: 4px 0 0 0;
   font-size: 20px;
   font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
-/* Tables Layout */
-.ira-tables-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 10px;
+/* Tables Layout & Wrappers */
+.ira-container .ira-tables-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Grid/Flex gap */
 }
 
-.ira-table-wrapper {
+.ira-container .ira-table-wrapper {
   background: white;
-  border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  padding: 0; /* Header inside handles padding */
+  border-radius: 6px; /* Border radius */
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Card shadow */
+  padding: 0; /* Content flush with edges */
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  height: 400px; /* Fixed height for scroll */
+  height: 400px; /* Scroll boundary */
 }
 
-.ira-section-header {
-  padding: 10px 12px;
+.ira-container .ira-section-header {
+  padding: 10px; /* Card padding */
   border-bottom: 1px solid #f1f5f9;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #fff;
+  background: #ffffff;
 }
 
-.ira-section-header h3 {
+.ira-container .ira-section-header h3 {
   margin: 0;
   font-size: 14px;
-  font-weight: 600;
-  color: #334155;
+  font-weight: 700;
+  color: #0f172a;
 }
 
-.ira-badge {
+/* Badges */
+.ira-container .ira-badge {
   font-size: 11px;
-  padding: 2px 8px;
-  border-radius: 10px;
+  padding: 4px 8px;
+  border-radius: 4px; /* Small radius */
   font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
-.ira-badge.sales {
-  background: #e0f2fe;
-  color: #0369a1;
-}
+.ira-container .ira-badge.sales { background: #e0f2fe; color: #0369a1; }
+.ira-container .ira-badge.restock { background: #ffedd5; color: #c2410c; }
 
-.ira-badge.restock {
-  background: #ffedd5;
-  color: #c2410c;
-}
-
-.ira-table-scroll {
+/* Table Elements (Strictly Scoped) */
+.ira-container .ira-table-scroll {
   flex: 1;
   overflow-y: auto;
 }
 
-table {
+.ira-container table {
   width: 100%;
   border-collapse: collapse;
+  margin: 0;
 }
 
-thead th {
+.ira-container thead th {
   background: #f8fafc;
   color: #64748b;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  padding: 8px 12px;
+  letter-spacing: 0.05em;
+  padding: 8px 10px;
   text-align: left;
   position: sticky;
   top: 0;
   z-index: 1;
+  border-bottom: 2px solid #e2e8f0;
 }
 
-tbody td {
-  padding: 8px 12px;
+.ira-container tbody td {
+  padding: 8px 10px;
   font-size: 13px;
   border-bottom: 1px solid #f1f5f9;
   color: #334155;
+  transition: background-color 0.2s ease;
 }
 
-tbody tr:last-child td {
+.ira-container tbody tr:last-child td {
   border-bottom: none;
 }
 
-tbody tr:hover {
-  background: #f8fafc;
+.ira-container tbody tr:hover td {
+  background-color: #f8fafc;
 }
 
 /* Utilities */
-.text-right { text-align: right; }
-.text-center { text-align: center; }
-.font-bold { font-weight: 600; }
-.text-success { color: #16a34a; }
+.ira-container .text-right { text-align: right; }
+.ira-container .text-center { text-align: center; }
+.ira-container .font-bold { font-weight: 600; color: #0f172a; }
+.ira-container .text-success { color: #16a34a; font-weight: 600; }
+.ira-container .text-warning { color: #ea580c; font-weight: 600; }
 
-.ira-error {
-  background: #fee2e2;
+/* Error Handling */
+.ira-container .ira-error {
+  background: #fef2f2;
   color: #b91c1c;
-  padding: 8px 12px;
-  border-radius: 4px;
+  padding: 8px 12px; /* Input padding */
+  border-radius: 4px; /* Small radius */
   font-size: 13px;
-  margin-bottom: 10px;
+  font-weight: 500;
+  margin-bottom: 10px; /* Section spacing */
   display: flex;
   align-items: center;
   gap: 8px;
   border: 1px solid #fecaca;
+  box-shadow: 0 1px 3px rgba(220, 38, 38, 0.1);
 }
 
-/* Animations */
-@keyframes fadeIn {
+/* Custom Animations */
+@keyframes iraFadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
-@keyframes fadeInUp {
+@keyframes iraFadeInUp {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes spin {
+@keyframes iraSpin {
   to { transform: rotate(360deg); }
 }
 
-@keyframes shake {
+@keyframes iraShake {
   0%, 100% { transform: translateX(0); }
   25% { transform: translateX(-4px); }
   75% { transform: translateX(4px); }
 }
 
-.fade-in { animation: fadeIn 0.4s ease-out; }
-.fade-in-up { animation: fadeInUp 0.4s ease-out; }
-.delay-1 { animation-delay: 0.1s; }
-.spin { animation: spin 1s linear infinite; }
-.shake { animation: shake 0.3s ease-in-out; }
+.ira-container .fade-in { animation: iraFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.ira-container .fade-in-up { animation: iraFadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.ira-container .delay-1 { animation-delay: 0.1s; }
+.ira-container .spin { animation: iraSpin 1s linear infinite; }
+.ira-container .shake { animation: iraShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; }
 
-/* Responsive Adjustments */
+/* Responsive Grid Adjustments */
 @media (max-width: 768px) {
-  .ira-tables-container {
-    grid-template-columns: 1fr;
-  }
-  
-  .ira-filters {
+  .ira-container .ira-filters {
     flex-direction: column;
     align-items: stretch;
   }
   
-  .ira-btn-primary {
-    justify-content: center;
+  .ira-container .ira-btn-primary {
     margin-top: 4px;
+  }
+  
+  .ira-container .ira-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .ira-container .ira-btn-secondary {
+    width: 100%;
+    justify-content: center;
   }
 }

@@ -48,21 +48,21 @@ exports.getProductsToRestock = async (req, res) => {
         const totalItems = parseInt(countRes.rows[0].count);
         const totalPages = Math.ceil(totalItems / limit);
 
-        // 2. Main Query
-        // Added JOIN with 'prices' to get cost_price
-        // Removed 'last_supply_price' from JSON_BUILD_OBJECT
+        // 2. Main Query (UPDATED: Joins inventory table for stock data)
         const mainQuery = `
             WITH PaginatedProducts AS (
                 SELECT 
-                    p.product_id, p.product_name, p.available_quantity, p.low_stock_threshold,
+                    p.product_id, p.product_name, 
+                    i.available_quantity_in_hand, i.low_stock_threshold, i.last_supplied_date,
                     c.category_name, u.unit_name,
-                    pr.cost_price -- Fetching Cost Price
+                    pr.cost_price
                 FROM products p
+                LEFT JOIN inventory i ON p.product_id = i.product_id
                 LEFT JOIN categories c ON p.category_id = c.category_id
                 LEFT JOIN units u ON p.unit_id = u.unit_id
                 LEFT JOIN prices pr ON p.product_id = pr.product_id AND pr.is_active = TRUE
                 ${whereClause}
-                ORDER BY p.available_quantity ASC
+                ORDER BY i.available_quantity_in_hand ASC
                 LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
             )
             SELECT 
@@ -73,7 +73,6 @@ exports.getProductsToRestock = async (req, res) => {
                             'supplier_id', s.supplier_id,
                             'supplier_name', s.supplier_name,
                             'contact_person', s.contact_person
-                            -- Removed supply_price from here as per request
                         ) ORDER BY s.supplier_name ASC
                     ) FILTER (WHERE s.supplier_id IS NOT NULL), 
                     '[]'
@@ -82,9 +81,10 @@ exports.getProductsToRestock = async (req, res) => {
             LEFT JOIN product_suppliers ps ON pp.product_id = ps.product_id
             LEFT JOIN suppliers s ON ps.supplier_id = s.supplier_id
             GROUP BY 
-                pp.product_id, pp.product_name, pp.available_quantity, 
-                pp.low_stock_threshold, pp.category_name, pp.unit_name, pp.cost_price
-            ORDER BY pp.available_quantity ASC;
+                pp.product_id, pp.product_name, pp.available_quantity_in_hand, 
+                pp.low_stock_threshold, pp.last_supplied_date, pp.category_name, 
+                pp.unit_name, pp.cost_price
+            ORDER BY pp.available_quantity_in_hand ASC;
         `;
 
         queryParams.push(limit, offset);
@@ -123,9 +123,9 @@ exports.restockProduct = async (req, res) => {
 
         await client.query('BEGIN');
 
-        // Lock row to prevent race conditions
+        // 1. Verify product exists
         const productRes = await client.query(
-            `SELECT available_quantity FROM products WHERE product_id = $1 FOR UPDATE`,
+            `SELECT product_id FROM products WHERE product_id = $1`,
             [product_id]
         );
 
@@ -134,42 +134,39 @@ exports.restockProduct = async (req, res) => {
             return res.status(404).json({ error: 'Product not found' });
         }
 
-        const currentQty = parseFloat(productRes.rows[0].available_quantity);
-        const newQty = currentQty + quantity;
-
-        // Update Product
+        // 2. Log Change in Ledger -> THIS FIRES THE DATABASE TRIGGER!
+        // The trigger will automatically update available_quantity_in_hand and last_supplied_date
         await client.query(
-            `UPDATE products SET available_quantity = $1 WHERE product_id = $2`,
-            [newQty, product_id]
+            `INSERT INTO inventory_transactions 
+            (product_id, transaction_type, quantity, performed_by, supplier_id, reference_type, remarks)
+            VALUES ($1, $2, $3, $4, $5, 'manual_restock', 'Restocked via admin dashboard')`,
+            [product_id, change_type, quantity, user_id, supplier_id] 
         );
 
-        // Log Change (UPDATED with supplier_id)
-        await client.query(
-            `INSERT INTO inventory_logs 
-            (product_id, change_type, quantity_change, previous_quantity, new_quantity, performed_by, supplier_id)
-            VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-            [product_id, change_type, quantity, currentQty, newQty, user_id, supplier_id] 
-        );
-
-        // Upsert Supplier Info
-        // Note: We use Upsert to ensure if this supplier is new for this product, they get added
+        // 3. Upsert Supplier Info (Removed last_supplied_date as it lives in inventory now)
         const upsertSupplierQuery = `
-            INSERT INTO product_suppliers (product_id, supplier_id, supply_price, last_supplied_date)
-            VALUES ($1, $2, $3, NOW())
+            INSERT INTO product_suppliers (product_id, supplier_id, supply_price)
+            VALUES ($1, $2, $3)
             ON CONFLICT (product_id, supplier_id) 
             DO UPDATE SET 
-                supply_price = EXCLUDED.supply_price,
-                last_supplied_date = EXCLUDED.last_supplied_date
+                supply_price = EXCLUDED.supply_price
         `;
         
         await client.query(upsertSupplierQuery, [product_id, supplier_id, supply_price]);
+
+        // 4. Fetch the NEW quantity generated by the trigger to send back to the frontend
+        const updatedInventoryRes = await client.query(
+            `SELECT available_quantity_in_hand FROM inventory WHERE product_id = $1`,
+            [product_id]
+        );
+        const newQty = parseFloat(updatedInventoryRes.rows[0].available_quantity_in_hand);
 
         await client.query('COMMIT');
 
         res.status(200).json({
             message: 'Product restocked successfully',
             product_id,
-            previous_quantity: currentQty,
+            added_quantity: quantity,
             new_quantity: newQty
         });
 
@@ -181,6 +178,7 @@ exports.restockProduct = async (req, res) => {
         client.release();
     }
 };
+
 exports.getAllSuppliers = async (req, res) => {
     try {
         // Fetch only active suppliers, ordered by name

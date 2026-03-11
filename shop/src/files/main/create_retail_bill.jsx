@@ -132,7 +132,9 @@ const CreateRetailBill = () => {
       setShowProdDropdown(false);
       return;
     }
-    if(Number(product.available_quantity) <= 0) {
+    
+    // UPDATED: Look for available_quantity_in_hand from the API response
+    if(Number(product.available_quantity_in_hand) <= 0) {
       setError(`"${product.product_name}" is out of stock.`);
       return;
     }
@@ -141,7 +143,8 @@ const CreateRetailBill = () => {
       product_id: product.product_id,
       product_name: product.product_name,
       unit_name: product.unit_name,
-      available_quantity: Number(product.available_quantity),
+      // UPDATED: Map the new quantity variable into our state
+      available_quantity_in_hand: Number(product.available_quantity_in_hand), 
       retail_price: Number(product.retail_price),
       cost_price: Number(product.cost_price),
       quantity: 1,
@@ -153,15 +156,15 @@ const CreateRetailBill = () => {
     setShowProdDropdown(false);
     setError('');
   };
-
   const updateItem = (index, field, value) => {
     const newItems = [...items];
     const item = newItems[index];
     const val = Number(value);
 
     if (field === 'quantity') {
-      if (val > item.available_quantity) {
-        alert(`Cannot exceed stock (${item.available_quantity})`);
+      // UPDATED: Check against the new variable name
+      if (val > item.available_quantity_in_hand) {
+        alert(`Cannot exceed stock (${item.available_quantity_in_hand})`);
         return;
       }
       item.quantity = val >= 0 ? val : 0;
@@ -373,8 +376,9 @@ const CreateRetailBill = () => {
                         <div className="crb-dd-main">{p.product_name}</div>
                         <div className="crb-dd-sub">₹{p.retail_price}</div>
                       </div>
-                      <span className={`crb-stock-badge ${p.available_quantity > 0 ? 'good' : 'bad'}`}>
-                        {p.available_quantity} {p.unit_name}
+                      {/* UPDATED: Reference available_quantity_in_hand */}
+                      <span className={`crb-stock-badge ${p.available_quantity_in_hand > 0 ? 'good' : 'bad'}`}>
+                        {p.available_quantity_in_hand} {p.unit_name}
                       </span>
                     </li>
                   ))}
@@ -408,7 +412,7 @@ const CreateRetailBill = () => {
                       <tr key={item.product_id} className="crb-row-anim">
                         <td>
                           <div className="crb-p-name">{item.product_name}</div>
-                          <div className="crb-p-stock">Stock: {item.available_quantity}</div>
+                          <div className="crb-p-stock">Stock: {item.available_quantity_in_hand}</div>                          
                         </td>
                         <td className="crb-text-sm">₹{item.retail_price.toFixed(2)}</td>
                         <td>

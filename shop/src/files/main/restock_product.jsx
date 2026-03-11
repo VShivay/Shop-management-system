@@ -53,8 +53,6 @@ const RestockProduct = () => {
     }
   };
 
-  // Removed fetchSuppliers() as we now use linked_suppliers from product data
-
   useEffect(() => {
     fetchProducts(1, '');
   }, []);
@@ -78,8 +76,8 @@ const RestockProduct = () => {
     setFormData({ 
       supplier_id: '', 
       quantity: '', 
-      // Auto-fill Unit Cost from the product's cost_price fetched from DB
-      supply_price: product.cost_price || '' 
+      // Auto-fill Unit Cost from the product's cost_price fetched from DB (fallback to 0)
+      supply_price: product.cost_price || 0 
     });
     setFormError('');
     setSuccessMsg('');
@@ -100,7 +98,7 @@ const RestockProduct = () => {
     setSubmitting(true);
 
     // Validation
-    if (!formData.supplier_id || !formData.quantity || !formData.supply_price) {
+    if (!formData.supplier_id || !formData.quantity || formData.supply_price === '') {
       setFormError("All fields are required.");
       setSubmitting(false);
       return;
@@ -190,16 +188,17 @@ const RestockProduct = () => {
                 <tbody>
                   {products.length > 0 ? (
                     products.map(prod => (
-                      <tr key={prod.product_id} className={isLowStock(prod.available_quantity, prod.low_stock_threshold) ? 'row-low-stock' : ''}>
+                      <tr key={prod.product_id} className={isLowStock(prod.available_quantity_in_hand, prod.low_stock_threshold) ? 'row-low-stock' : ''}>
                         <td className="fw-500">{prod.product_name}</td>
                         <td>{prod.category_name || '-'}</td>
                         <td>
                           <span className="qty-badge">
-                            {prod.available_quantity} {prod.unit_name}
+                            {/* CHANGED: available_quantity to available_quantity_in_hand */}
+                            {prod.available_quantity_in_hand} {prod.unit_name}
                           </span>
                         </td>
                         <td style={{textAlign: 'center'}}>
-                          {isLowStock(prod.available_quantity, prod.low_stock_threshold) ? (
+                          {isLowStock(prod.available_quantity_in_hand, prod.low_stock_threshold) ? (
                             <span className="status-badge low">
                               <AlertTriangle size={12} /> Low
                             </span>

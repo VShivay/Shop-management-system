@@ -70,16 +70,16 @@ const getProducts = async (req, res) => {
         }
 
         // 3. Count Query (To calculate total pages)
-        // We replicate the exact same filters to get the accurate count of matching rows
         const countQueryText = `SELECT COUNT(*) FROM products p ${whereClause}`;
         
         // 4. Data Query
+        // MODIFIED: Added LEFT JOIN for inventory 'i' and updated selected columns
         const dataQueryText = `
             SELECT 
                 p.product_id,
                 p.product_name,
-                p.available_quantity,
-                p.low_stock_threshold,
+                i.available_quantity_in_hand,
+                i.low_stock_threshold,
                 p.sales_channel,
                 p.is_active,
                 c.category_name,
@@ -91,13 +91,13 @@ const getProducts = async (req, res) => {
             LEFT JOIN categories c ON p.category_id = c.category_id
             LEFT JOIN units u ON p.unit_id = u.unit_id
             LEFT JOIN prices pr ON p.product_id = pr.product_id AND pr.is_active = TRUE
+            LEFT JOIN inventory i ON p.product_id = i.product_id
             ${whereClause}
             ORDER BY p.product_name ASC
             LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
         `;
 
         // 5. Execute Queries
-        // We use Promise.all to run them in parallel for speed
         const [countResult, dataResult] = await Promise.all([
             db.query(countQueryText, queryParams),
             db.query(dataQueryText, [...queryParams, limit, offset])
@@ -141,8 +141,9 @@ const getProductDetails = async (req, res) => {
             SELECT 
                 p.product_id,
                 p.product_name,
-                p.available_quantity,
-                p.low_stock_threshold,
+                i.available_quantity_in_hand,
+                i.low_stock_threshold,
+                i.last_supplied_date,
                 p.sales_channel,
                 p.is_active,
                 p.created_at,
@@ -163,29 +164,26 @@ const getProductDetails = async (req, res) => {
                         json_build_object(
                             'supplier_name', s.supplier_name,
                             'contact_person', s.contact_person,
-                            'supply_price', ps.supply_price,
-                            'last_supplied', ps.last_supplied_date
+                            'supply_price', ps.supply_price
                         ) 
                     ) FILTER (WHERE s.supplier_id IS NOT NULL), 
                     '[]'
                 ) as suppliers,
 
-                -- NEW: Last 5 Inventory Logs Subquery
+                -- NEW: Last 5 Inventory Transactions Subquery
                 (
                     SELECT COALESCE(json_agg(log_row), '[]')
                     FROM (
                         SELECT 
-                            il.change_type,
-                            il.quantity_change,
-                            il.previous_quantity,
-                            il.new_quantity,
-                            il.change_date,
-                            -- Optional: Include supplier name if it was a restock
+                            it.transaction_type,
+                            it.quantity,
+                            it.reference_type,
+                            it.transaction_date,
                             sup.supplier_name
-                        FROM inventory_logs il
-                        LEFT JOIN suppliers sup ON il.supplier_id = sup.supplier_id
-                        WHERE il.product_id = p.product_id
-                        ORDER BY il.change_date DESC
+                        FROM inventory_transactions it
+                        LEFT JOIN suppliers sup ON it.supplier_id = sup.supplier_id
+                        WHERE it.product_id = p.product_id
+                        ORDER BY it.transaction_date DESC
                         LIMIT 5
                     ) log_row
                 ) as recent_logs
@@ -194,11 +192,13 @@ const getProductDetails = async (req, res) => {
             LEFT JOIN categories c ON p.category_id = c.category_id
             LEFT JOIN units u ON p.unit_id = u.unit_id
             LEFT JOIN prices pr ON p.product_id = pr.product_id AND pr.is_active = TRUE
+            LEFT JOIN inventory i ON p.product_id = i.product_id
             LEFT JOIN product_suppliers ps ON p.product_id = ps.product_id
             LEFT JOIN suppliers s ON ps.supplier_id = s.supplier_id
             WHERE p.product_id = $1
             GROUP BY 
-                p.product_id, c.category_name, c.category_id, u.unit_name, u.unit_id, 
+                p.product_id, i.available_quantity_in_hand, i.low_stock_threshold, i.last_supplied_date,
+                c.category_name, c.category_id, u.unit_name, u.unit_id, 
                 pr.retail_price, pr.wholesale_price, pr.cost_price, pr.effective_from;
         `;
 
@@ -254,15 +254,16 @@ const productWriteSchema = Joi.object({
     low_stock_threshold: Joi.number().min(0).default(10),
     is_active: Joi.boolean().default(true),
     
-    // Inventory (Only for creation or specific adjustments)
-    opening_stock: Joi.number().min(0).default(0),
+    // Fixed: Look for available_quantity_in_hand, but catch available_quantity if frontend hasn't updated
+    available_quantity_in_hand: Joi.number().min(0).default(0),
+    available_quantity: Joi.number().min(0).optional(), 
 
-    // Pricing (Required for creation)
+    // Pricing
     cost_price: Joi.number().precision(2).required(),
     retail_price: Joi.number().precision(2).allow(null).optional(),
     wholesale_price: Joi.number().precision(2).allow(null).optional(),
 
-    // Suppliers (Array of objects)
+    // Suppliers
     suppliers: Joi.array().items(
         Joi.object({
             supplier_id: Joi.number().integer().required(),
@@ -270,44 +271,44 @@ const productWriteSchema = Joi.object({
         })
     ).optional().default([])
 }).custom((value, helpers) => {
-    // Custom Validator: Ensure at least one selling price exists based on sales_channel
     if (!value.retail_price && !value.wholesale_price) {
         return helpers.message('At least one selling price (Retail or Wholesale) must be provided.');
     }
     return value;
 });
 
-const productUpdateSchema = productWriteSchema.fork(['opening_stock'], (schema) => schema.forbidden()); // Prevent stock override on update
-
-/**
+const productUpdateSchema = productWriteSchema.fork(
+    ['available_quantity_in_hand', 'available_quantity'], 
+    (schema) => schema.forbidden()
+);/**
  * Add a new product
  * Transactional: Inserts into products, prices, product_suppliers, and inventory_logs
  */
 const addProduct = async (req, res) => {
-    // 1. Get a dedicated client for Transaction
     const client = await db.pool.connect();
 
     try {
-        // 2. Validate Input
         const { error, value } = productWriteSchema.validate(req.body);
         if (error) return res.status(400).json({ error: error.details[0].message });
 
         const { 
             product_name, category_id, unit_id, sales_channel, low_stock_threshold, is_active,
-            opening_stock, cost_price, retail_price, wholesale_price, suppliers 
+            cost_price, retail_price, wholesale_price, suppliers 
         } = value;
 
-        // 3. Start Transaction
+        // Extract the quantity safely, whichever name the frontend used
+        const startingQuantity = value.available_quantity_in_hand || value.available_quantity || 0;
+
         await client.query('BEGIN');
 
         // A. Insert Product
         const productQuery = `
-            INSERT INTO products (product_name, category_id, unit_id, sales_channel, available_quantity, low_stock_threshold, is_active)
-            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            INSERT INTO products (product_name, category_id, unit_id, sales_channel, is_active)
+            VALUES ($1, $2, $3, $4, $5)
             RETURNING product_id;
         `;
         const productRes = await client.query(productQuery, [
-            product_name, category_id, unit_id, sales_channel, opening_stock, low_stock_threshold, is_active
+            product_name, category_id, unit_id, sales_channel, is_active
         ]);
         const newProductId = productRes.rows[0].product_id;
 
@@ -321,37 +322,41 @@ const addProduct = async (req, res) => {
         // C. Link Suppliers (if any)
         if (suppliers && suppliers.length > 0) {
             const supplierQuery = `
-                INSERT INTO product_suppliers (product_id, supplier_id, supply_price, last_supplied_date)
-                VALUES ($1, $2, $3, CURRENT_TIMESTAMP);
+                INSERT INTO product_suppliers (product_id, supplier_id, supply_price)
+                VALUES ($1, $2, $3);
             `;
-            
-            // CHANGED: We now use 'cost_price' as the supply_price for all linked suppliers
             await Promise.all(suppliers.map(s => 
                 client.query(supplierQuery, [newProductId, s.supplier_id, cost_price])
             ));
         }
 
-        // D. Create Initial Inventory Log (if opening stock > 0)
-        if (opening_stock > 0) {
+        // D. Create Baseline Inventory Record (Initializes at 0)
+        const initInventoryQuery = `
+            INSERT INTO inventory (product_id, low_stock_threshold, available_quantity_in_hand)
+            VALUES ($1, $2, 0); 
+        `;
+        await client.query(initInventoryQuery, [newProductId, low_stock_threshold]);
+
+        // E. Log Initial Stock -> This automatically triggers the database to do the math (0 + startingQuantity)
+        if (startingQuantity > 0) {
             const initialSupplierId = (suppliers && suppliers.length > 0) ? suppliers[0].supplier_id : null;
+            const performedBy = req.user ? req.user.user_id : null;
 
             const logQuery = `
-                INSERT INTO inventory_logs 
-                (product_id, change_type, quantity_change, previous_quantity, new_quantity, performed_by, supplier_id)
-                VALUES ($1, 'initial stock', $2, 0, $2, $3, $4);
+                INSERT INTO inventory_transactions 
+                (product_id, transaction_type, quantity, performed_by, supplier_id, reference_type, remarks)
+                VALUES ($1, 'initial_stock', $2, $3, $4, 'product_creation', 'Opening stock during product creation');
             `;
             
             await client.query(logQuery, [
                 newProductId, 
-                opening_stock, 
-                req.user ? req.user.user_id : null,
+                startingQuantity, 
+                performedBy,
                 initialSupplierId 
             ]);
         }
 
-        // 4. Commit Transaction
         await client.query('COMMIT');
-
         res.status(201).json({ message: "Product created successfully", product_id: newProductId });
 
     } catch (err) {
@@ -359,7 +364,15 @@ const addProduct = async (req, res) => {
         console.error('Error adding product:', err);
         
         if (err.code === '23505') { 
-            return res.status(409).json({ error: "Product name already exists." });
+            // Check the exact constraint name (Postgres usually names them table_column_key)
+            if (err.constraint?.includes('product_name')) {
+                return res.status(409).json({ error: "Product name already exists." });
+            } else if (err.constraint?.includes('product_suppliers_pkey')) {
+                return res.status(409).json({ error: "You cannot link the exact same supplier twice." });
+            } else {
+                // Fallback for other unique constraints
+                return res.status(409).json({ error: `Duplicate entry error: ${err.constraint}` });
+            }
         }
         res.status(500).json({ error: 'Internal Server Error' });
     } finally {
@@ -392,15 +405,15 @@ const updateProduct = async (req, res) => {
 
         await client.query('BEGIN');
 
-        // A. Update Basic Product Info
+        // A. Update Basic Product Info (Removed low_stock_threshold)
         const updateProductQuery = `
             UPDATE products 
             SET product_name = $1, category_id = $2, unit_id = $3, 
-                sales_channel = $4, low_stock_threshold = $5, is_active = $6
-            WHERE product_id = $7;
+                sales_channel = $4, is_active = $5
+            WHERE product_id = $6;
         `;
         const updateRes = await client.query(updateProductQuery, [
-            product_name, category_id, unit_id, sales_channel, low_stock_threshold, is_active, productId
+            product_name, category_id, unit_id, sales_channel, is_active, productId
         ]);
 
         if (updateRes.rowCount === 0) {
@@ -408,8 +421,17 @@ const updateProduct = async (req, res) => {
             return res.status(404).json({ error: "Product not found" });
         }
 
-        // B. Handle Price Change (Versioning)
-        // Check current active price to see if it actually changed
+        // B. Update Inventory Configurations (New Step for low_stock_threshold)
+        if (low_stock_threshold !== undefined) {
+            const updateInventoryQuery = `
+                UPDATE inventory
+                SET low_stock_threshold = $1
+                WHERE product_id = $2;
+            `;
+            await client.query(updateInventoryQuery, [low_stock_threshold, productId]);
+        }
+
+        // C. Handle Price Change (Versioning)
         const currentPriceRes = await client.query(
             `SELECT retail_price, wholesale_price, cost_price FROM prices WHERE product_id = $1 AND is_active = TRUE`,
             [productId]
@@ -434,9 +456,7 @@ const updateProduct = async (req, res) => {
             `, [productId, retail_price, wholesale_price, cost_price]);
         }
 
-        // C. Update Suppliers (Replace Logic)
-        // For simplicity, we remove existing links and re-add them. 
-        // In a complex app, you might want to "Upsert" to keep history.
+        // D. Update Suppliers (Replace Logic)
         if (suppliers) {
             await client.query(`DELETE FROM product_suppliers WHERE product_id = $1`, [productId]);
             

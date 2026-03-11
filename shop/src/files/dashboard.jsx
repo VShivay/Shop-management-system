@@ -16,7 +16,14 @@ import {
   Loader2,
   PieChart,
   FileBarChart,
-  ClipboardList
+  ClipboardList,
+  Store,          // For Retail
+  ShoppingBag,    // For Wholesale
+  History,        // For Bills View
+  RefreshCw,      // For Restock
+  BarChart3,      // For Profit/Loss
+  Users2,         // For Customer Analytics
+  Boxes           // For Inventory Reports
 } from 'lucide-react';
 import './dashboard.css';
 
@@ -36,7 +43,6 @@ const Dashboard = () => {
 
   const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
-  // --- 1. Authentication & Data Fetching ---
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem('token');
@@ -62,7 +68,6 @@ const Dashboard = () => {
     fetchUser();
   }, [navigate, API_URL]);
 
-  // --- 2. Event Listeners ---
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768;
@@ -74,7 +79,6 @@ const Dashboard = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Auto-close sidebar on mobile route change
   useEffect(() => {
     if (isMobile) setIsSidebarOpen(false);
   }, [location, isMobile]);
@@ -94,7 +98,6 @@ const Dashboard = () => {
     navigate('/', { replace: true });
   };
 
-  // --- 3. Render Helpers ---
   if (error) return (
     <div className="dash-v2-center">
       <div className="dash-v2-error">
@@ -113,16 +116,12 @@ const Dashboard = () => {
   return (
     <div className="dash-v2-layout">
       
-      {/* === SIDEBAR === */}
       <aside className={`dash-v2-sidebar ${!isSidebarOpen ? 'collapsed' : ''} ${isMobile && isSidebarOpen ? 'mobile-open' : ''}`}>
-        
-        {/* 1. Header (Fixed) */}
         <div className="dash-v2-logo-area">
           <div className="dash-v2-logo-icon">DP</div>
           <span className="dash-v2-logo-text">DevPortal</span>
         </div>
 
-        {/* 2. Navigation (Scrollable) */}
         <nav className="dash-v2-nav-scroll">
           <NavCategory label="ANALYTICS" isOpen={isSidebarOpen} />
           <NavItem to="/dashboard" icon={<LayoutDashboard size={18} />} label="Overview" isOpen={isSidebarOpen} end />
@@ -131,31 +130,26 @@ const Dashboard = () => {
           <NavItem to="/dashboard/products" icon={<Package size={18} />} label="Products" isOpen={isSidebarOpen} />
           <NavItem to="/dashboard/suppliers" icon={<Truck size={18} />} label="Suppliers" isOpen={isSidebarOpen} />
           <NavItem to="/dashboard/customers" icon={<Users size={18} />} label="Customers" isOpen={isSidebarOpen} />
-          <NavItem to="/dashboard/restock" icon={<ClipboardList size={18} />} label="Restock Product" isOpen={isSidebarOpen} />
+          <NavItem to="/dashboard/restock" icon={<RefreshCw size={18} />} label="Restock Product" isOpen={isSidebarOpen} />
 
           <NavCategory label="FINANCE" isOpen={isSidebarOpen} />
-          <NavItem to="/dashboard/retail-billing" icon={<Receipt size={18} />} label="POS Billing" isOpen={isSidebarOpen} />
-          <NavItem to="/dashboard/view-retail-bills" icon={<FileBarChart size={18} />} label="Retail Bills" isOpen={isSidebarOpen} />
-          <NavItem to="/dashboard/wholesale-billing" icon={<Receipt size={18} />} label="Wholesale POS" isOpen={isSidebarOpen} />
+          <NavItem to="/dashboard/retail-billing" icon={<Store size={18} />} label="POS Billing" isOpen={isSidebarOpen} />
+          <NavItem to="/dashboard/view-retail-bills" icon={<History size={18} />} label="Retail Bills" isOpen={isSidebarOpen} />
+          <NavItem to="/dashboard/wholesale-billing" icon={<ShoppingBag size={18} />} label="Wholesale POS" isOpen={isSidebarOpen} />
           <NavItem to="/dashboard/view-wholesale-bills" icon={<FileBarChart size={18} />} label="Wholesale Bills" isOpen={isSidebarOpen} />
           
           <NavCategory label="REPORTS" isOpen={isSidebarOpen} />
-          <NavItem to="/dashboard/reports" icon={<PieChart size={18} />} label="Analytics Reports" isOpen={isSidebarOpen} />
-          <NavItem to="/dashboard/customer-reports" icon={<PieChart size={18} />} label="Customer Analytics Reports" isOpen={isSidebarOpen} />
-          <NavItem to="/dashboard/reports/inventory" icon={<PieChart size={18} />} label="Inventory Analytics Reports" isOpen={isSidebarOpen} />
-
+          <NavItem to="/dashboard/reports" icon={<BarChart3 size={18} />} label="Profit & Loss" isOpen={isSidebarOpen} end />
+          <NavItem to="/dashboard/customer-reports" icon={<Users2 size={18} />} label="Customer Analytics" isOpen={isSidebarOpen} />
+          <NavItem to="/dashboard/reports/inventory" icon={<Boxes size={18} />} label="Inventory Analytics" isOpen={isSidebarOpen} />
         </nav>
 
-        {/* 3. Footer (Fixed) */}
         <div className="dash-v2-footer">
           {isSidebarOpen ? 'v2.0 Pro System' : 'v2.0'}
         </div>
       </aside>
 
-      {/* === MAIN WRAPPER === */}
       <div className="dash-v2-main">
-        
-        {/* Top Navbar */}
         <header className="dash-v2-topbar">
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <button 
@@ -187,7 +181,6 @@ const Dashboard = () => {
               <ChevronDown size={14} style={{ color: '#6b7280', transform: isProfileOpen ? 'rotate(180deg)' : 'none', transition: '0.2s' }} />
             </button>
 
-            {/* Profile Dropdown */}
             <div className={`dash-v2-dropdown ${isProfileOpen ? 'show' : ''}`}>
               <div className="dash-v2-dropdown-header">
                 <p className="dash-v2-dd-name">{user.name}</p>
@@ -206,12 +199,10 @@ const Dashboard = () => {
           </div>
         </header>
 
-        {/* Dynamic Content Area */}
         <main className="dash-v2-content">
           <Outlet context={{ user }} />
         </main>
       </div>
-
     </div>
   );
 };
@@ -236,15 +227,17 @@ const NavItem = ({ to, icon, label, isOpen, end = false }) => (
   </NavLink>
 );
 
-// Helper for Title
 const getPageTitle = (path) => {
   if (path === '/dashboard') return 'Overview';
   if (path.includes('products')) return 'Product Inventory';
   if (path.includes('suppliers')) return 'Supplier Directory';
   if (path.includes('customers')) return 'Client Database';
-  if (path.includes('retail-billing')) return 'Point of Sale';
-  if (path.includes('wholesale-billing')) return 'Wholesale Order';
-  if (path.includes('reports')) return 'System Reports';
+  if (path.includes('retail-billing')) return 'Retail POS';
+  if (path.includes('view-retail-bills')) return 'Retail Bill History';
+  if (path.includes('wholesale-billing')) return 'Wholesale POS';
+  if (path.includes('view-wholesale-bills')) return 'Wholesale Bill History';
+  if (path.includes('restock')) return 'Stock Management';
+  if (path.includes('reports')) return 'System Analytics';
   if (path.includes('settings')) return 'Settings';
   return 'Dashboard';
 };

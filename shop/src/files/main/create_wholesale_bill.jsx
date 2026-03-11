@@ -109,12 +109,22 @@ const CreateWholesaleBill = () => {
       return;
     }
 
+    // UPDATED: Guard against zero stock using the new variable name
+    if(Number(prod.available_quantity_in_hand) <= 0) {
+      setError(`"${prod.product_name}" is out of stock.`);
+      setTimeout(() => setError(''), 3000);
+      return;
+    }
+
     const newItem = {
       ...prod,
+      // UPDATED: Map the new variable
+      available_quantity_in_hand: Number(prod.available_quantity_in_hand),
       quantity: 1,
       discount_per_unit: 0,
       total: parseFloat(prod.wholesale_price)
     };
+    
     setBillItems([...billItems, newItem]);
     setProductSearch('');
     setProducts([]);
@@ -125,11 +135,11 @@ const CreateWholesaleBill = () => {
     const item = newItems[index];
     let val = parseFloat(value) || 0;
 
-    // Logic: Quantity check against stock
+    // Logic: Quantity check against stock (UPDATED variable name)
     if (field === 'quantity') {
-      if (val > item.available_quantity) {
-        setError(`Quantity exceeds stock! Available: ${item.available_quantity}`);
-        val = item.available_quantity;
+      if (val > item.available_quantity_in_hand) {
+        setError(`Quantity exceeds stock! Available: ${item.available_quantity_in_hand}`);
+        val = item.available_quantity_in_hand;
       }
     }
 
@@ -313,7 +323,8 @@ const CreateWholesaleBill = () => {
                             <li key={p.product_id} onClick={() => handleAddProduct(p)}>
                                 <div>
                                     <strong>{p.product_name}</strong>
-                                    <div className="small">Stk: {p.available_quantity} {p.unit_name} | Price: {p.wholesale_price}</div>
+                                    {/* UPDATED: Reference available_quantity_in_hand */}
+                                    <div className="small">Stk: {p.available_quantity_in_hand} {p.unit_name} | Price: {p.wholesale_price}</div>
                                 </div>
                                 <Plus size={16} className="text-green"/>
                             </li>
@@ -345,7 +356,8 @@ const CreateWholesaleBill = () => {
                                 <tr key={idx}>
                                     <td>
                                         <div className="fw-bold">{item.product_name}</div>
-                                        <div className="small text-muted">Stock: {item.available_quantity}</div>
+                                        {/* UPDATED: Reference available_quantity_in_hand */}
+                                        <div className="small text-muted">Stock: {item.available_quantity_in_hand}</div>
                                     </td>
                                     <td>
                                         <input 

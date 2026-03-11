@@ -75,8 +75,6 @@ CREATE TABLE products (
     product_name VARCHAR(100) NOT NULL,
     category_id INT REFERENCES categories(category_id) ON DELETE SET NULL,
     unit_id INT REFERENCES units(unit_id) ON DELETE SET NULL,
-    available_quantity NUMERIC(10,2) DEFAULT 0,
-    low_stock_threshold NUMERIC(10,2) DEFAULT 10,
     sales_channel VARCHAR(20) DEFAULT 'Both' CHECK (sales_channel IN ('Retail', 'Wholesale', 'Both')),
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -100,7 +98,6 @@ CREATE TABLE product_suppliers (
     product_id INT REFERENCES products(product_id) ON DELETE CASCADE,
     supplier_id INT REFERENCES suppliers(supplier_id) ON DELETE CASCADE,
     supply_price NUMERIC(10,2),
-    last_supplied_date TIMESTAMP,
     PRIMARY KEY (product_id, supplier_id)
 );
 -- 12. RETAIL BILLS
@@ -234,22 +231,37 @@ CREATE TABLE expenses (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 19. INVENTORY LOGS (Consolidated)
-CREATE TABLE inventory_logs (
-    log_id SERIAL PRIMARY KEY,
+CREATE TABLE inventory (
+    inventory_id SERIAL PRIMARY KEY,
+    product_id INT UNIQUE REFERENCES products(product_id) ON DELETE CASCADE,
+    available_quantity_in_hand NUMERIC(10,2) DEFAULT 0, -- Updated name
+    reserved_quantity NUMERIC(10,2) DEFAULT 0,
+    low_stock_threshold NUMERIC(10,2) DEFAULT 10,
+    last_supplied_date TIMESTAMP,
+    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE inventory_transactions (
+    transaction_id SERIAL PRIMARY KEY,
     product_id INT REFERENCES products(product_id) ON DELETE CASCADE,
-    supplier_id INT REFERENCES suppliers(supplier_id) ON DELETE SET NULL, -- Added from ALTER
     
-    change_type VARCHAR(20) CHECK (
-        change_type IN ('restock', 'sale', 'return', 'damage', 'initial stock') -- Updated from ALTER
+    -- transaction_type determines if stock goes UP or DOWN
+    transaction_type VARCHAR(20) CHECK (
+        transaction_type IN ('restock', 'sale', 'return', 'damage', 'initial_stock', 'adjustment')
     ),
     
-    quantity_change NUMERIC(10,2) NOT NULL,
-    previous_quantity NUMERIC(10,2),
-    new_quantity NUMERIC(10,2),
-    performed_by INT REFERENCES users(user_id),
-    change_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    -- Always use a positive number here. The trigger will handle the math based on transaction_type.
+    quantity NUMERIC(10,2) NOT NULL CHECK (quantity > 0),
+    
+    -- Context: Where did this transaction come from?
+    reference_id INT, -- e.g., retail_bill_id, wholesale_bill_id, or supplier_invoice_id
+    reference_type VARCHAR(50), -- e.g., 'retail_bill', 'wholesale_bill', 'supplier_purchase'
+    
+    supplier_id INT REFERENCES suppliers(supplier_id) ON DELETE SET NULL,
+    performed_by INT REFERENCES users(user_id) ON DELETE SET NULL,
+    transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    remarks TEXT
 );
+
 CREATE OR REPLACE FUNCTION auto_create_due_record_func()
 RETURNS TRIGGER AS $$
 
@@ -396,3 +408,95 @@ CREATE TRIGGER trg_sync_payments_to_bills
 AFTER INSERT ON due_payment_history
 FOR EACH ROW
 EXECUTE FUNCTION update_bill_and_dues_func();
+CREATE OR REPLACE FUNCTION process_inventory_transaction_func()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_multiplier INT;
+    v_new_supplied_date TIMESTAMP := NULL;
+BEGIN
+    -- 1. Determine stock direction
+    IF NEW.transaction_type IN ('restock', 'initial_stock', 'return') THEN
+        v_multiplier := 1;
+    ELSIF NEW.transaction_type IN ('sale', 'damage') THEN
+        v_multiplier := -1;
+    ELSE
+        v_multiplier := 1; 
+    END IF;
+
+    -- 2. Capture supplied date if it's a restock or initial stock
+    IF NEW.transaction_type IN ('restock', 'initial_stock') THEN
+        v_new_supplied_date := NEW.transaction_date;
+    END IF;
+
+    -- 3. Safely UPSERT into the inventory table
+    INSERT INTO inventory (
+        product_id, 
+        available_quantity_in_hand, 
+        last_supplied_date, 
+        last_updated
+    )
+    VALUES (
+        NEW.product_id, 
+        (NEW.quantity * v_multiplier), 
+        v_new_supplied_date, 
+        CURRENT_TIMESTAMP
+    )
+    ON CONFLICT (product_id) 
+    DO UPDATE SET 
+        -- COALESCE prevents math from failing if a value is currently NULL
+        -- EXCLUDED grabs the exact value we attempted to insert above
+        available_quantity_in_hand = COALESCE(inventory.available_quantity_in_hand, 0) + EXCLUDED.available_quantity_in_hand,
+        last_supplied_date = COALESCE(EXCLUDED.last_supplied_date, inventory.last_supplied_date),
+        last_updated = CURRENT_TIMESTAMP;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+CREATE OR REPLACE FUNCTION update_customer_balance_func()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_customer_id INT;
+    v_total_balance NUMERIC(12,2);
+BEGIN
+    -- 1. Determine which customer to update based on the trigger action
+    IF TG_OP = 'DELETE' THEN
+        v_customer_id := OLD.customer_id;
+    ELSE
+        v_customer_id := NEW.customer_id;
+    END IF;
+
+    -- 2. Calculate the exact current balance from the customer_dues table
+    SELECT COALESCE(SUM(balance_due), 0)
+    INTO v_total_balance
+    FROM customer_dues
+    WHERE customer_id = v_customer_id;
+
+    -- 3. Update the customer's record
+    UPDATE customers
+    SET 
+        current_balance = v_total_balance,
+        updated_at = CURRENT_TIMESTAMP
+    WHERE customer_id = v_customer_id;
+
+    -- 4. Edge Case: If a due was reassigned to a different customer during an UPDATE
+    IF TG_OP = 'UPDATE' AND OLD.customer_id IS DISTINCT FROM NEW.customer_id THEN
+        SELECT COALESCE(SUM(balance_due), 0)
+        INTO v_total_balance
+        FROM customer_dues
+        WHERE customer_id = OLD.customer_id;
+
+        UPDATE customers
+        SET 
+            current_balance = v_total_balance,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE customer_id = OLD.customer_id;
+    END IF;
+
+    -- 5. Return the appropriate record
+    IF TG_OP = 'DELETE' THEN
+        RETURN OLD;
+    ELSE
+        RETURN NEW;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;

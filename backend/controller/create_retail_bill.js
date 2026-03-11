@@ -31,17 +31,23 @@ exports.searchProducts = async (req, res) => {
 
         const searchTerm = `%${req.query.query}%`;
         
-        // Updated SQL to filter for Retail and Both, excluding Wholesale
+        // FIXED: Switched to LEFT JOINs so products aren't hidden if they lack a unit or inventory row
+        // Added COALESCE to safely default null quantities to 0
         const sql = `
             SELECT 
-                p.product_id, p.product_name, p.available_quantity, 
-                pr.retail_price, pr.cost_price, u.unit_name
+                p.product_id, 
+                p.product_name, 
+                COALESCE(i.available_quantity_in_hand, 0) AS available_quantity_in_hand, 
+                pr.retail_price, 
+                pr.cost_price, 
+                COALESCE(u.unit_name, 'pcs') AS unit_name
             FROM products p
-            JOIN units u ON p.unit_id = u.unit_id
-            JOIN prices pr ON p.product_id = pr.product_id
+            LEFT JOIN inventory i ON p.product_id = i.product_id
+            LEFT JOIN units u ON p.unit_id = u.unit_id
+            LEFT JOIN prices pr ON p.product_id = pr.product_id AND pr.is_active = TRUE
             WHERE p.is_active = TRUE 
-              AND pr.is_active = TRUE
               AND p.sales_channel IN ('Retail', 'Both') 
+              AND pr.retail_price IS NOT NULL -- Prevents wholesale-only items from breaking the retail UI
               AND p.product_name ILIKE $1
             LIMIT 10
         `;
@@ -111,15 +117,16 @@ exports.createRetailBill = async (req, res) => {
         let tax_amount = 0; 
         const processedItems = [];
 
-        // 2. Process Items & Inventory Logs
+        // 2. Process Items & Verify Stock
         for (const item of items) {
-            // Fetch current DB state (Locking row for update safety is good practice here)
+            // UPDATED: Lock the inventory row instead of the product row
             const prodRes = await client.query(`
-                SELECT p.available_quantity, p.product_name, pr.cost_price
+                SELECT i.available_quantity_in_hand, p.product_name, pr.cost_price
                 FROM products p
-                JOIN prices pr ON p.product_id = pr.product_id
-                WHERE p.product_id = $1 AND pr.is_active = TRUE
-                FOR UPDATE OF p
+                JOIN prices pr ON p.product_id = pr.product_id AND pr.is_active = TRUE
+                JOIN inventory i ON p.product_id = i.product_id
+                WHERE p.product_id = $1
+                FOR UPDATE OF i
             `, [item.product_id]);
 
             if (prodRes.rows.length === 0) {
@@ -127,7 +134,7 @@ exports.createRetailBill = async (req, res) => {
             }
 
             const product = prodRes.rows[0];
-            const oldQty = Number(product.available_quantity);
+            const oldQty = Number(product.available_quantity_in_hand);
             const qtyToDeduct = Number(item.quantity);
             const netPrice = item.unit_price - item.discount_per_unit;
 
@@ -149,37 +156,6 @@ exports.createRetailBill = async (req, res) => {
             total_discount_amount += itemDiscountTotal;
 
             processedItems.push({ ...item, total_price: itemTotal });
-
-            // --- INVENTORY LOGIC START ---
-            
-            const newQty = oldQty - qtyToDeduct;
-
-            // A. Update Product Stock
-            await client.query(`
-                UPDATE products 
-                SET available_quantity = $1 
-                WHERE product_id = $2
-            `, [newQty, item.product_id]);
-
-            // B. Insert Inventory Log
-            await client.query(`
-                INSERT INTO inventory_logs (
-                    product_id, 
-                    change_type, 
-                    quantity_change, 
-                    previous_quantity, 
-                    new_quantity, 
-                    performed_by
-                ) VALUES ($1, 'sale', $2, $3, $4, $5)
-            `, [
-                item.product_id, 
-                -qtyToDeduct,       // Negative for sales
-                oldQty, 
-                newQty, 
-                req.user.user_id    // Logged-in user ID
-            ]);
-
-            // --- INVENTORY LOGIC END ---
         }
 
         const total_amount = subtotal - total_discount_amount;
@@ -190,8 +166,9 @@ exports.createRetailBill = async (req, res) => {
         }
 
         const bill_number = `RB-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+        const user_id = req.user ? (req.user.id || req.user.user_id) : null;
 
-        // 3. Insert Bill
+        // 3. Insert Bill First (So we get the ID for our inventory logs)
         const billInsertQuery = `
             INSERT INTO retail_bills (
                 bill_number, customer_id, subtotal, discount_amount, tax_amount, 
@@ -204,20 +181,33 @@ exports.createRetailBill = async (req, res) => {
         const billValues = [
             bill_number, customer_id, subtotal, total_discount_amount, tax_amount,
             total_amount, amount_paid, payment_method_id, payment_status,
-            req.user.user_id, 
-            remarks
+            user_id, remarks
         ];
 
         const billRes = await client.query(billInsertQuery, billValues);
         const retail_bill_id = billRes.rows[0].retail_bill_id;
 
-        // 4. Insert Bill Items
+        // 4. Insert Bill Items & Log Inventory Transactions
         for (const item of processedItems) {
+            // A. Insert the line item
             await client.query(`
                 INSERT INTO retail_bill_items (
                     retail_bill_id, product_id, quantity, unit_price, total_price
                 ) VALUES ($1, $2, $3, $4, $5)
             `, [retail_bill_id, item.product_id, item.quantity, item.unit_price, item.total_price]); 
+
+            // B. Log the transaction (The Database Trigger handles the subtraction automatically!)
+            await client.query(`
+                INSERT INTO inventory_transactions (
+                    product_id, transaction_type, quantity, 
+                    reference_id, reference_type, performed_by
+                ) VALUES ($1, 'sale', $2, $3, 'retail_bill', $4)
+            `, [
+                item.product_id, 
+                item.quantity,    // Pass positive quantity, the trigger deducts based on 'sale'
+                retail_bill_id,   // Link to this specific bill
+                user_id
+            ]);
         }
 
         await client.query('COMMIT');

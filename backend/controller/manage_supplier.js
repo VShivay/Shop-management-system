@@ -99,23 +99,42 @@ const getSupplierById = async (req, res) => {
         
         const supplierId = value.id;
 
-        const supplierResult = await db.query(`SELECT * FROM suppliers WHERE supplier_id = $1`, [supplierId]);
-        if (supplierResult.rows.length === 0) return res.status(404).json({ error: 'Supplier not found' });
+        // Optimized Query: Fetches Supplier + Array of Products in one go
+        const sql = `
+            SELECT 
+                s.*,
+                COALESCE(
+                    JSON_AGG(
+                        JSON_BUILD_OBJECT(
+                            'product_id', p.product_id,
+                            'product_name', p.product_name,
+                            'supply_price', ps.supply_price,
+                            'last_supplied_date', i.last_supplied_date
+                        ) ORDER BY p.product_name ASC
+                    ) FILTER (WHERE p.product_id IS NOT NULL), 
+                    '[]'
+                ) AS products
+            FROM suppliers s
+            LEFT JOIN product_suppliers ps ON s.supplier_id = ps.supplier_id
+            LEFT JOIN products p ON ps.product_id = p.product_id
+            LEFT JOIN inventory i ON p.product_id = i.product_id
+            WHERE s.supplier_id = $1
+            GROUP BY s.supplier_id;
+        `;
 
-        const productsResult = await db.query(`
-            SELECT p.product_id, p.product_name, ps.supply_price, ps.last_supplied_date
-            FROM product_suppliers ps
-            JOIN products p ON ps.product_id = p.product_id
-            WHERE ps.supplier_id = $1 ORDER BY p.product_name ASC
-        `, [supplierId]);
+        const result = await db.query(sql, [supplierId]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Supplier not found' });
+        }
 
         return res.status(200).json({
-            message: 'Details fetched',
-            data: { ...supplierResult.rows[0], products: productsResult.rows }
+            message: 'Supplier details fetched successfully',
+            data: result.rows[0]
         });
 
     } catch (err) {
-        console.error(err);
+        console.error('Error fetching supplier details:', err);
         return res.status(500).json({ error: 'Internal Server Error' });
     }
 };

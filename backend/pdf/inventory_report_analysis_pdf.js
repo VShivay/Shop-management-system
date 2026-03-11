@@ -2,26 +2,20 @@ const PDFDocument = require('pdfkit');
 const { fetchReportData } = require('../controller/inventory_report_analysis');
 const { reportFilterSchema } = require('../validation/reportValidation');
 const { formatNumber } = require('../utils/reportUtils');
+const { format } = require('date-fns'); // IMPORT DATE-FNS
 
 const generateReportPDF = async (req, res) => {
     try {
-        // 1. Validate Query Params
         const { error, value } = reportFilterSchema.validate(req.query);
         if (error) return res.status(400).send(`Validation Error: ${error.details[0].message}`);
 
-        // 2. Fetch Data
         const data = await fetchReportData(value);
 
-        // 3. Create PDF Stream
         const doc = new PDFDocument({ margin: 50, size: 'A4' });
         
-        // Set Headers for file download
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `attachment; filename=Inventory_Report_${Date.now()}.pdf`);
-        
         doc.pipe(res);
-
-        // --- PDF CONTENT START ---
 
         // Header
         doc.fontSize(20).text('Inventory Analysis Report', { align: 'center' });
@@ -43,12 +37,35 @@ const generateReportPDF = async (req, res) => {
         doc.moveDown(1);
 
         // --- Summary Section ---
-        doc.fontSize(14).text('Summary', { underline: true });
+        doc.fontSize(14).text('Performance Summary', { underline: true });
         doc.moveDown(0.5);
         doc.fontSize(12);
-        doc.text(`Total Items Sold: ${formatNumber(data.summary.totalSalesQuantity)}`);
-        doc.text(`Total Items Restocked: ${formatNumber(data.summary.totalRestockQuantity)}`);
-        doc.moveDown(2);
+        
+        // Two-column layout for summary
+        const summaryY = doc.y;
+        doc.text(`Total Items Sold: ${formatNumber(data.summary.totalSalesQuantity)}`, 50, summaryY);
+        doc.text(`Total Items Restocked: ${formatNumber(data.summary.totalRestockQuantity)}`, 50, summaryY + 20);
+        
+        doc.text(`Est. Revenue: Rs. ${formatNumber(data.summary.totalEstimatedRevenue)}`, 300, summaryY);
+        doc.text(`Est. Cost: Rs. ${formatNumber(data.summary.totalEstimatedCost)}`, 300, summaryY + 20);
+        
+        // Grand Totals for Stock & Value
+        doc.font('Helvetica-Bold')
+           .text(`Total Current Stock (All): ${formatNumber(data.summary.totalCurrentStock)}`, 50, summaryY + 50);
+        doc.text(`Total Stock Value: Rs. ${formatNumber(data.summary.totalCurrentStockValue)}`, 300, summaryY + 50);
+        doc.font('Helvetica'); // Reset to normal font
+        
+        doc.y = summaryY + 80; // Move cursor down below the summary block
+
+        // Date Formatter Helper
+        const formatDate = (dateString) => {
+            if (!dateString) return '-';
+            try {
+                return format(new Date(dateString), 'dd MMM yyyy, hh:mm a');
+            } catch (e) {
+                return '-';
+            }
+        };
 
         // --- ROBUST TABLE DRAWING FUNCTION ---
         const drawTable = (title, headers, rows, columnsWidth) => {
@@ -58,55 +75,42 @@ const generateReportPDF = async (req, res) => {
             const pageHeight = doc.page.height;
             const tableWidth = 500;
 
-            // 1. Check if there is space for the Title + Header (approx 60px)
-            if (doc.y + 60 > pageHeight - bottomMargin) {
-                doc.addPage();
-            }
+            if (doc.y + 60 > pageHeight - bottomMargin) doc.addPage();
 
             doc.fontSize(14).text(title, { underline: true });
             doc.moveDown(0.5);
-
             let y = doc.y;
 
-            // Helper to draw headers
             const drawHeaders = (currentY) => {
                 doc.fillColor('#dddddd').rect(startX, currentY, tableWidth, rowHeight).fill();
-                doc.fillColor('black').fontSize(10);
+                // Reduced font size to 8 to comfortably fit 7 columns
+                doc.fillColor('black').fontSize(8); 
                 
                 let currentX = startX + 5;
                 headers.forEach((header, i) => {
-                    doc.text(header, currentX, currentY + 6, { 
-                        width: columnsWidth[i], 
-                        align: 'left' 
-                    });
+                    doc.text(header, currentX, currentY + 6, { width: columnsWidth[i], align: 'left' });
                     currentX += columnsWidth[i];
                 });
                 return currentY + rowHeight;
             };
 
-            // Draw Initial Headers
             y = drawHeaders(y);
 
-            // Draw Rows
             rows.forEach((row, rowIndex) => {
-                // Check if current row will overflow page
                 if (y + rowHeight > pageHeight - bottomMargin) {
                     doc.addPage();
-                    y = 50; // Reset to top of new page
-                    y = drawHeaders(y); // Re-draw headers for continuity
+                    y = 50;
+                    y = drawHeaders(y); 
                 }
 
-                // Zebra Striping
                 if (rowIndex % 2 === 1) {
                     doc.fillColor('#f9f9f9').rect(startX, y, tableWidth, rowHeight).fill();
                 }
-                doc.fillColor('black');
+                doc.fillColor('black').fontSize(8); // Match header font size
 
                 let currentX = startX + 5;
                 
-                // Draw Cells
                 row.forEach((text, i) => {
-                    // Force text to stay on one line to avoid layout breaking
                     doc.text(text ? String(text) : '-', currentX, y + 6, { 
                         width: columnsWidth[i], 
                         align: 'left',
@@ -119,20 +123,22 @@ const generateReportPDF = async (req, res) => {
                 y += rowHeight;
             });
 
-            // Update doc cursor for next element
             doc.y = y + 20; 
         };
 
         // --- Sales Table ---
         if (data.sales.length > 0) {
-            const salesHeaders = ['Product Name', 'Category', 'Unit', 'Qty Sold'];
-            // Adjust widths to sum to approx 500
-            const salesWidths = [200, 120, 80, 100]; 
+            // Added Date/Time and adjusted widths to exactly 500
+            const salesHeaders = ['Product Name', 'Category', 'Date/Time', 'Sold', 'In Stock', 'Stock Val', 'Revenue'];
+            const salesWidths = [110, 70, 80, 40, 50, 70, 80]; 
             const salesRows = data.sales.map(s => [
                 s.product_name,
                 s.category_name,
-                s.unit_name,
-                formatNumber(s.total_quantity)
+                formatDate(s.transaction_date), // NEW DATA
+                `${formatNumber(s.total_quantity)}`,
+                `${formatNumber(s.current_stock)}`,
+                `Rs. ${formatNumber(s.current_stock_value)}`,
+                `Rs. ${formatNumber(s.actual_revenue || s.estimated_revenue)}` 
             ]);
             drawTable('Sales Report', salesHeaders, salesRows, salesWidths);
         } else {
@@ -142,20 +148,22 @@ const generateReportPDF = async (req, res) => {
 
         // --- Restock Table ---
         if (data.restocks.length > 0) {
-            const restockHeaders = ['Product Name', 'Supplier', 'Unit', 'Qty Added'];
-            const restockWidths = [200, 140, 60, 100];
+            const restockHeaders = ['Product Name', 'Supplier', 'Date/Time', 'Added', 'In Stock', 'Stock Val', 'Est. Cost'];
+            const restockWidths = [110, 70, 80, 40, 50, 70, 80]; 
             const restockRows = data.restocks.map(r => [
                 r.product_name,
                 r.supplier_name,
-                r.unit_name,
-                formatNumber(r.total_quantity)
+                formatDate(r.transaction_date), // NEW DATA
+                `${formatNumber(r.total_quantity)}`,
+                `${formatNumber(r.current_stock)}`,
+                `Rs. ${formatNumber(r.current_stock_value)}`,
+                `Rs. ${formatNumber(r.estimated_cost)}`
             ]);
             drawTable('Restock Report', restockHeaders, restockRows, restockWidths);
         } else {
             doc.fontSize(12).text('No restock data found for this period.');
         }
 
-        // Finalize
         doc.end();
 
     } catch (err) {

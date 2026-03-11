@@ -24,7 +24,7 @@ const AddProduct = () => {
         unit_id: '',
         sales_channel: 'Both',
         low_stock_threshold: 10,
-        opening_stock: 0,
+        available_quantity_in_hand: 0, // FIXED: Changed from opening_stock to match backend
         is_active: true,
         cost_price: '',
         retail_price: '',
@@ -61,11 +61,10 @@ const AddProduct = () => {
         }));
     };
 
-    // --- Supplier Row Logic (Modified) ---
+    // --- Supplier Row Logic ---
     const addSupplierRow = () => {
         setFormData(prev => ({
             ...prev,
-            // supply_price removed here, we only need ID now
             suppliers: [...prev.suppliers, { supplier_id: '' }]
         }));
     };
@@ -101,20 +100,28 @@ const AddProduct = () => {
                 setLoading(false);
                 return;
             }
+            const uniqueSupplierIds = Array.from(
+                new Set(
+                    formData.suppliers
+                        .filter(s => s.supplier_id)
+                        .map(s => parseInt(s.supplier_id, 10))
+                )
+            );
 
-            // Clean up payload
+            // FIXED: Clean up payload and ensure proper data types (Numbers vs Strings)
             const payload = {
                 ...formData,
-                category_id: formData.category_id || null,
-                unit_id: formData.unit_id || null,
-                retail_price: formData.retail_price || null,
-                wholesale_price: formData.wholesale_price || null,
-                // Ensure cost_price is sent as number
+                category_id: formData.category_id ? parseInt(formData.category_id, 10) : null,
+                unit_id: formData.unit_id ? parseInt(formData.unit_id, 10) : null,
                 cost_price: parseFloat(formData.cost_price),
-                // Filter out empty supplier rows
-                suppliers: formData.suppliers.filter(s => s.supplier_id)
+                retail_price: formData.retail_price ? parseFloat(formData.retail_price) : null,
+                wholesale_price: formData.wholesale_price ? parseFloat(formData.wholesale_price) : null,
+                low_stock_threshold: parseFloat(formData.low_stock_threshold) || 0,
+                available_quantity_in_hand: parseFloat(formData.available_quantity_in_hand) || 0, 
+                
+                // Map the cleaned, unique IDs back into the array of objects the backend expects
+                suppliers: uniqueSupplierIds.map(id => ({ supplier_id: id }))
             };
-
             await axios.post(`${API_URL}/products`, payload, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -192,7 +199,6 @@ const AddProduct = () => {
                 {/* Section: Pricing & Inventory */}
                 <div className="pf-card">
                     <h3 className="pf-card-title">Pricing & Stock</h3>
-                    {/* Highlighted Cost Price since it now drives supplier cost */}
                     <div className="pf-group" style={{backgroundColor: '#f8fafc', padding: '10px', borderRadius: '6px'}}>
                         <label style={{fontWeight: 600}}>Cost Price (Supply Price) <span className="pf-req">*</span></label>
                         <input type="number" step="0.01" name="cost_price" value={formData.cost_price} onChange={handleChange} required placeholder="0.00" />
@@ -213,7 +219,8 @@ const AddProduct = () => {
                     <div className="pf-row">
                         <div className="pf-group">
                             <label>Opening Stock</label>
-                            <input type="number" name="opening_stock" value={formData.opening_stock} onChange={handleChange} />
+                            {/* FIXED: Name property matched to state */}
+                            <input type="number" name="available_quantity_in_hand" value={formData.available_quantity_in_hand} onChange={handleChange} />
                         </div>
                         <div className="pf-group">
                             <label>Low Stock Alert</label>
@@ -234,7 +241,6 @@ const AddProduct = () => {
                     <div className="pf-suppliers-list">
                         {formData.suppliers.map((item, index) => (
                             <div key={index} className="pf-supplier-row slide-in" style={{ gridTemplateColumns: "1fr auto" }}>
-                                {/* REMOVED Supply Price Input */}
                                 <select 
                                     value={item.supplier_id} 
                                     onChange={(e) => handleSupplierChange(index, e.target.value)}

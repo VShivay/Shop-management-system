@@ -32,15 +32,21 @@ exports.searchProducts = async (req, res) => {
         const { query } = req.query;
         if (!query) return res.json([]);
 
-        // Joins to get Unit Name and Price details
+        // UPDATED: LEFT JOIN inventory, pull available_quantity_in_hand safely
         const sql = `
-            SELECT p.product_id, p.product_name, p.available_quantity, 
-                   u.unit_name, pr.wholesale_price, pr.cost_price
+            SELECT 
+                p.product_id, 
+                p.product_name, 
+                COALESCE(i.available_quantity_in_hand, 0) AS available_quantity_in_hand, 
+                COALESCE(u.unit_name, 'pcs') AS unit_name, 
+                pr.wholesale_price, 
+                pr.cost_price
             FROM products p
-            JOIN units u ON p.unit_id = u.unit_id
-            JOIN prices pr ON p.product_id = pr.product_id
+            LEFT JOIN inventory i ON p.product_id = i.product_id
+            LEFT JOIN units u ON p.unit_id = u.unit_id
+            LEFT JOIN prices pr ON p.product_id = pr.product_id AND pr.is_active = TRUE
             WHERE (p.product_name ILIKE $1 OR CAST(p.product_id AS TEXT) = $1)
-            AND pr.is_active = TRUE
+            AND pr.wholesale_price IS NOT NULL
             AND p.sales_channel IN ('Wholesale', 'Both')
             AND p.is_active = TRUE
             LIMIT 10
@@ -88,12 +94,14 @@ exports.createBill = async (req, res) => {
         const processedItems = [];
 
         for (const item of items) {
-            // Fetch current price and stock logic
+            // UPDATED: Fetch inventory safely with row locking on the inventory table
             const priceRes = await client.query(
-                `SELECT p.available_quantity, pr.wholesale_price, pr.cost_price 
+                `SELECT i.available_quantity_in_hand, pr.wholesale_price, pr.cost_price 
                  FROM products p 
-                 JOIN prices pr ON p.product_id = pr.product_id 
-                 WHERE p.product_id = $1 AND pr.is_active = TRUE`,
+                 JOIN prices pr ON p.product_id = pr.product_id AND pr.is_active = TRUE
+                 JOIN inventory i ON p.product_id = i.product_id
+                 WHERE p.product_id = $1
+                 FOR UPDATE OF i`,
                 [item.product_id]
             );
 
@@ -108,7 +116,7 @@ exports.createBill = async (req, res) => {
             const discount = parseFloat(item.discount_per_unit || 0);
 
             // Validation: Stock
-            if (parseFloat(productData.available_quantity) < quantity) {
+            if (parseFloat(productData.available_quantity_in_hand) < quantity) {
                 throw new Error(`Insufficient stock for Product ID ${item.product_id}`);
             }
 
@@ -124,9 +132,8 @@ exports.createBill = async (req, res) => {
             processedItems.push({
                 product_id: item.product_id,
                 quantity: quantity,
-                unit_price: wholesalePrice, // Storing original price
-                total_price: lineTotal,     // Storing final price (implicitly contains discount)
-                original_stock: parseFloat(productData.available_quantity)
+                unit_price: wholesalePrice, 
+                total_price: lineTotal
             });
         }
 
@@ -149,7 +156,7 @@ exports.createBill = async (req, res) => {
         );
         const billId = billRes.rows[0].wholesale_bill_id;
 
-        // D. Process Items: Insert Bill Items, Update Inventory, Log Changes
+        // D. Process Items: Insert Bill Items & Log into Ledger
         for (const item of processedItems) {
             // 1. Insert Item
             await client.query(
@@ -158,19 +165,17 @@ exports.createBill = async (req, res) => {
                 [billId, item.product_id, item.quantity, item.unit_price, item.total_price]
             );
 
-            // 2. Update Product Stock
-            const newStock = toDecimal(item.original_stock - item.quantity);
+            // 2. Ledger Transaction (Trigger updates stock automatically)
             await client.query(
-                `UPDATE products SET available_quantity = $1 WHERE product_id = $2`,
-                [newStock, item.product_id]
-            );
-
-            // 3. Inventory Log
-            await client.query(
-                `INSERT INTO inventory_logs 
-                (product_id, change_type, quantity_change, previous_quantity, new_quantity, performed_by)
-                VALUES ($1, 'sale', $2, $3, $4, $5)`,
-                [item.product_id, -item.quantity, item.original_stock, newStock, userId]
+                `INSERT INTO inventory_transactions 
+                (product_id, transaction_type, quantity, reference_id, reference_type, performed_by)
+                VALUES ($1, 'sale', $2, $3, 'wholesale_bill', $4)`,
+                [
+                    item.product_id, 
+                    item.quantity, // Positive number (Trigger handles deduction)
+                    billId, 
+                    userId
+                ]
             );
         }
 
@@ -212,7 +217,7 @@ exports.getBillDetails = async (req, res) => {
             SELECT wbi.*, p.product_name, un.unit_name
             FROM wholesale_bill_items wbi
             JOIN products p ON wbi.product_id = p.product_id
-            JOIN units un ON p.unit_id = un.unit_id
+            LEFT JOIN units un ON p.unit_id = un.unit_id
             WHERE wbi.wholesale_bill_id = $1
         `;
 
@@ -230,7 +235,6 @@ exports.getBillDetails = async (req, res) => {
     }
 };
 
-// 5. Generate PDF
 // 5. Generate PDF
 exports.generatePdf = async (req, res) => {
     const client = await db.pool.connect();

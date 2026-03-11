@@ -1,4 +1,3 @@
-// src/files/main/view_product_detail.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -9,7 +8,7 @@ import {
   PencilSquareIcon,
   TagIcon,
   GlobeAltIcon,
-  ClipboardDocumentListIcon // Added for logs
+  ClipboardDocumentListIcon 
 } from '@heroicons/react/24/outline';
 import './view_product_detail.css';
 
@@ -74,7 +73,7 @@ const ViewProductDetail = () => {
         </div>
       </div>
 
-      {/* Hero Card with Basic Info */}
+      {/* Hero Card */}
       <div className="vpd-header-card">
         <div className="vpd-title-section">
           <div className="vpd-badges">
@@ -104,10 +103,10 @@ const ViewProductDetail = () => {
         </div>
         
         {/* Stock Box */}
-        <div className={`vpd-stock-box ${product.available_quantity <= product.low_stock_threshold ? 'warning-bg' : ''}`}>
+        <div className={`vpd-stock-box ${product.available_quantity_in_hand <= product.low_stock_threshold ? 'warning-bg' : ''}`}>
           <div className="vpd-stock-label">Current Stock</div>
-          <div className={`vpd-stock-val ${product.available_quantity <= product.low_stock_threshold ? 'text-danger' : ''}`}>
-            {product.available_quantity}
+          <div className={`vpd-stock-val ${product.available_quantity_in_hand <= product.low_stock_threshold ? 'text-danger' : ''}`}>
+            {product.available_quantity_in_hand || 0}
           </div>
           <div className="vpd-stock-sub">Low Threshold: {product.low_stock_threshold}</div>
         </div>
@@ -139,7 +138,7 @@ const ViewProductDetail = () => {
           </div>
         </div>
 
-        {/* Suppliers Table Card */}
+        {/* Suppliers Card */}
         <div className="vpd-card slide-up" style={{ animationDelay: '0.2s' }}>
           <div className="vpd-card-head">
             <div className="icon-bg-purple"><TruckIcon className="vpd-card-icon" /></div>
@@ -158,9 +157,7 @@ const ViewProductDetail = () => {
                 <tbody>
                   {product.suppliers.map((s, idx) => (
                     <tr key={idx}>
-                      <td>
-                          <div className="supplier-name">{s.supplier_name}</div>
-                      </td>
+                      <td><div className="supplier-name">{s.supplier_name}</div></td>
                       <td className="text-muted">{s.contact_person || '-'}</td>
                       <td className="text-right font-mono">${parseFloat(s.supply_price || 0).toFixed(2)}</td>
                     </tr>
@@ -176,7 +173,7 @@ const ViewProductDetail = () => {
         </div>
       </div>
 
-      {/* NEW: Recent Logs Section */}
+      {/* Recent Logs Section */}
       <div className="vpd-full-width slide-up" style={{ animationDelay: '0.3s', marginTop: '20px' }}>
         <div className="vpd-card">
           <div className="vpd-card-head">
@@ -190,33 +187,31 @@ const ViewProductDetail = () => {
                   <tr>
                     <th>Date</th>
                     <th>Activity</th>
+                    <th>Reference</th>
                     <th>Supplier</th>
                     <th className="text-right">Change</th>
-                    <th className="text-right">New Qty</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {product.recent_logs.map((log, idx) => (
-                    <tr key={idx}>
-                      <td className="text-muted text-sm">{formatDate(log.change_date)}</td>
-                      <td>
-                        <span className={`log-badge ${log.change_type.toLowerCase().replace(' ', '-')}`}>
-                          {log.change_type}
-                        </span>
-                      </td>
-                      <td className="text-sm">
-                        {log.supplier_name ? (
-                           <span className="text-dark">{log.supplier_name}</span>
-                        ) : (
-                           <span className="text-muted">-</span>
-                        )}
-                      </td>
-                      <td className={`text-right font-bold ${log.quantity_change > 0 ? 'text-success' : 'text-danger'}`}>
-                        {log.quantity_change > 0 ? '+' : ''}{log.quantity_change}
-                      </td>
-                      <td className="text-right font-mono">{log.new_quantity}</td>
-                    </tr>
-                  ))}
+                  {product.recent_logs.map((log, idx) => {
+                    const type = log.transaction_type || 'Adjustment';
+                    const qty = parseFloat(log.quantity || 0);
+                    return (
+                      <tr key={idx}>
+                        <td className="text-muted text-sm">{formatDate(log.transaction_date)}</td>
+                        <td>
+                          <span className={`log-badge ${type.toLowerCase().replace(/\s+/g, '-')}`}>
+                            {type}
+                          </span>
+                        </td>
+                        <td className="text-sm text-muted">{log.reference_type || '-'}</td>
+                        <td className="text-sm">{log.supplier_name || '-'}</td>
+                        <td className={`text-right font-bold ${qty >= 0 ? 'text-success' : 'text-danger'}`}>
+                          {qty > 0 ? `+${qty}` : qty}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             ) : (
@@ -227,7 +222,6 @@ const ViewProductDetail = () => {
           </div>
         </div>
       </div>
-
     </div>
   );
 };
