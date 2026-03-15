@@ -148,6 +148,7 @@ const fetchReportData = async (queryFilters) => {
 };
 
 // API Endpoint: Get JSON Data
+// API Endpoint: Get JSON Data
 const getInventoryReports = async (req, res) => {
     try {
         const { error, value } = reportFilterSchema.validate(req.query);
@@ -155,10 +156,12 @@ const getInventoryReports = async (req, res) => {
 
         const data = await fetchReportData(value);
 
-        // Helper to format the exact date/time safely
+        // Safely parse the Postgres timestamp and convert to a standard ISO string
         const formatDate = (dateString) => {
             if (!dateString) return '-';
-            return format(new Date(dateString), 'dd MMM yyyy, hh:mm a'); // e.g., 09 Mar 2026, 04:15 PM
+            // This turns "2026-03-15 19:06:52.332224+05:30" into "2026-03-15T13:36:52.332Z"
+            const dateObj = new Date(dateString);
+            return isNaN(dateObj.getTime()) ? '-' : dateObj.toISOString(); 
         };
 
         // Format numbers and dates for JSON response
