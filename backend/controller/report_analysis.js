@@ -1,6 +1,16 @@
 const db = require('../db');
 const Joi = require('joi');
 const pdfService = require('../pdf/report_analysis_pdf');
+const { formatInTimeZone } = require('date-fns-tz'); // <-- Added import
+
+// --- HELPER: IST Date Formatting ---
+const formatDateToIST = (dateString) => {
+    if (!dateString) return '-';
+    const dateObj = new Date(dateString);
+    if (isNaN(dateObj.getTime())) return '-';
+    // Forces Indian Standard Time with 12-hour AM/PM format
+    return formatInTimeZone(dateObj, 'Asia/Kolkata', 'yyyy-MM-dd hh:mm:ss a');
+};
 
 // --- HELPER: Get Current Time in India (IST) ---
 const getIndiaDate = () => {
@@ -50,9 +60,6 @@ const getDateRange = (filterType, customStart, customEnd, specificMonth, specifi
             startDate.setDate(1); // 1st of current month
             startOfDay(startDate);
             endOfDay(endDate); // Today (or end of month if preferred, currently sets to 'now')
-            // If you want full month end:
-            // endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0);
-            // endOfDay(endDate);
             break;
 
         case 'month': 
@@ -191,8 +198,9 @@ const generateReport = async (req, res, tablePrefix) => {
             totalRecords: parseInt(rows[0].total_count) || 0
         } : { totalSales: 0, totalCost: 0, totalProfit: 0, totalRecords: 0 };
 
+        // <-- Apply Date Formatting Here -->
         const cleanedRows = rows.map(r => ({
-            bill_date: r.bill_date,
+            bill_date: formatDateToIST(r.bill_date),
             bill_number: r.bill_number,
             product_name: r.product_name,
             quantity: r.quantity,
@@ -203,6 +211,7 @@ const generateReport = async (req, res, tablePrefix) => {
         }));
 
         if (downloadPdf) {
+            // Passing the nicely formatted cleanedRows to your PDF generator!
             return pdfService.createReportPDF(res, cleanedRows, summary, tablePrefix, startDate, endDate);
         }
 
@@ -218,7 +227,7 @@ const generateReport = async (req, res, tablePrefix) => {
                 totalPages: Math.ceil(summary.totalRecords / limit) || 1,
                 ...summary
             },
-            data: cleanedRows
+            data: cleanedRows // <-- Return the formatted array
         });
 
     } catch (err) {
