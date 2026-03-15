@@ -1,6 +1,16 @@
 const db = require('../db');
 const Joi = require('joi');
 const pdfGenerator = require('../pdf/view_retail_bill_pdf');
+const { formatInTimeZone } = require('date-fns-tz'); // <-- Added import
+
+// --- Helper for IST Date Formatting ---
+const formatDateToIST = (dateString) => {
+    if (!dateString) return '-';
+    const dateObj = new Date(dateString);
+    if (isNaN(dateObj.getTime())) return '-';
+    // Forces Indian Standard Time with 12-hour AM/PM format
+    return formatInTimeZone(dateObj, 'Asia/Kolkata', 'yyyy-MM-dd hh:mm:ss a');
+};
 
 // Validation Schemas
 const fetchSchema = Joi.object({
@@ -143,8 +153,14 @@ exports.getRetailBills = async (req, res) => {
 
         const countResult = await db.query(adjustedCountSql, countParams);
 
+        // <-- Apply Date Formatting Here -->
+        const formattedData = result.rows.map(row => ({
+            ...row,
+            bill_date: formatDateToIST(row.bill_date)
+        }));
+
         res.json({
-            data: result.rows,
+            data: formattedData, // <-- Return formatted data
             pagination: {
                 total: parseInt(countResult.rows[0].total),
                 page,
