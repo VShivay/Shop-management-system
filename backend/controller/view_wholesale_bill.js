@@ -2,6 +2,20 @@
 const db = require('../db');
 const Joi = require('joi');
 const { buildWholesaleBillPDF } = require('../pdf/view_wholesale_bill_pdf');
+const { formatInTimeZone } = require('date-fns-tz'); 
+
+// --- Helper for IST Date Formatting ---
+const formatDateToIST = (dateString) => {
+    if (!dateString) return '-';
+    const dateObj = new Date(dateString);
+    if (isNaN(dateObj.getTime())) return '-';
+    
+    // Forces Indian Standard Time and returns a FULL timestamp 
+    // Example output: "2026-03-15 19:06:52"
+    // (If you also want milliseconds and the +05:30 timezone indicator, 
+    // change the pattern to: "yyyy-MM-dd'T'HH:mm:ss.SSSxxx")
+    return formatInTimeZone(dateObj, 'Asia/Kolkata', 'yyyy-MM-dd HH:mm:ss');
+};
 
 // --- Schemas ---
 const recordPaymentSchema = Joi.object({
@@ -112,11 +126,17 @@ exports.getWholesaleBills = async (req, res) => {
         params.push(limit, offset);
         const result = await db.query(dataSql, params);
 
+        // <-- Apply Date Formatting Here -->
+        const formattedData = result.rows.map(row => ({
+            ...row,
+            bill_date: formatDateToIST(row.bill_date) 
+        }));
+
         res.json({
             totalItems,
             totalPages: Math.ceil(totalItems / limit),
             currentPage: parseInt(page),
-            data: result.rows
+            data: formattedData // <-- Return the formatted array
         });
 
     } catch (err) {
@@ -202,6 +222,7 @@ exports.generateBillPDF = async (req, res) => {
         res.setHeader('Content-disposition', `attachment; filename="${filename}"`);
         res.setHeader('Content-type', 'application/pdf');
 
+        // Note: Formatting inside the PDF builder might still be required depending on how view_wholesale_bill_pdf.js is written.
         buildWholesaleBillPDF(
             { bill, items: itemsRes.rows, payments: payRes.rows },
             (chunk) => res.write(chunk),
@@ -241,9 +262,20 @@ exports.getBillDetails = async (req, res) => {
         `;
         const payRes = await db.query(paySql, [id]);
 
+        // <-- Apply Date Formatting Here -->
+        const formattedBill = {
+            ...billRes.rows[0],
+            bill_date: formatDateToIST(billRes.rows[0].bill_date)
+        };
+
+        const formattedPaymentHistory = payRes.rows.map(pay => ({
+            ...pay,
+            payment_date: formatDateToIST(pay.payment_date)
+        }));
+
         res.json({
-            bill: billRes.rows[0],
-            payment_history: payRes.rows
+            bill: formattedBill,
+            payment_history: formattedPaymentHistory
         });
 
     } catch (err) {
