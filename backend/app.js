@@ -1,10 +1,14 @@
-// index.js
+
+// Force Node.js to use India timezone
+process.env.TZ = "Asia/Kolkata";
+
 const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 const { format } = require('date-fns');
 require('dotenv').config();
 
+// Routes
 const loginRoutes = require('./route/login_route');
 const productRoutes = require('./route/manage_product_route');
 const supplierRoutes = require('./route/manage_supplier_route');
@@ -18,10 +22,6 @@ const ReStockRoute = require('./route/restock_product_route');
 const report = require('./route/report_analysis_route');
 const CRA = require('./route/customer_report_analysis_route');
 const IRA = require('./route/inventory_report_analysis_route');
-
-
-
-
 
 const app = express();
 
@@ -59,7 +59,7 @@ app.use('/api', loginRoutes);
 app.use('/api', productRoutes);
 app.use('/api/suppliers', supplierRoutes);
 app.use('/api/customers', customerRoutes);
-app.use('/api', retailBillRoutes); 
+app.use('/api', retailBillRoutes);
 app.use('/api/view-retail-bill', ViewBillRoutes);
 app.use('/api/create-bill', WholesaleBillRoutes);
 app.use('/api/view-wholesale-bill', ViewWholesaleBillRoutes);
@@ -69,8 +69,6 @@ app.use('/api/report-analysis', report);
 app.use('/api/CRA', CRA);
 app.use('/api/IRA', IRA);
 
-
-
 // Global Error Handler
 app.use((err, req, res, next) => {
     const errorTime = format(new Date(), 'dd/MM/yyyy - hh:mm a');
@@ -79,7 +77,9 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
     const serverTime = format(new Date(), 'dd/MM/yyyy - hh:mm a');
     console.log(`[${serverTime}] Server is running on port ${PORT}`);
 });
+

@@ -1,0 +1,771 @@
+2026-03-13 00:40:39,434 [INFO] ============================================================
+2026-03-13 00:40:39,435 [INFO] Starting database merge: shop3 → shop1
+2026-03-13 00:40:39,435 [INFO] ============================================================
+2026-03-13 00:40:39,506 [INFO] Disabling triggers on target tables...
+2026-03-13 00:40:39,515 [INFO] Merging roles...
+2026-03-13 00:40:39,518 [INFO]   [roles] 'shop owner' already exists → id 1
+2026-03-13 00:40:39,519 [INFO]   [roles] 'admin' already exists → id 2
+2026-03-13 00:40:39,519 [INFO]   [roles] 'cashier' already exists → id 3
+2026-03-13 00:40:39,527 [INFO]   [roles] 'staff' already exists → id 4
+2026-03-13 00:40:39,527 [INFO] Merging categories...
+2026-03-13 00:40:39,529 [INFO]   [categories] 'Pavda' already exists → id 2
+2026-03-13 00:40:39,530 [INFO]   [categories] 'Pavdi' already exists → id 3
+2026-03-13 00:40:39,530 [INFO]   [categories] 'Dhariya' already exists → id 4
+2026-03-13 00:40:39,530 [INFO]   [categories] 'Utility' already exists → id 5
+2026-03-13 00:40:39,530 [INFO]   [categories] 'Kabdi' already exists → id 1
+2026-03-13 00:40:39,530 [INFO]   [categories] 'Dasta' already exists → id 6
+2026-03-13 00:40:39,532 [INFO]   [categories] 'Kodha' already exists → id 7
+2026-03-13 00:40:39,532 [INFO]   [categories] 'Panjeti' already exists → id 8
+2026-03-13 00:40:39,532 [INFO]   [categories] 'Kodara' already exists → id 9
+2026-03-13 00:40:39,532 [INFO]   [categories] 'Datarda' already exists → id 10
+2026-03-13 00:40:39,533 [INFO]   [categories] 'Koita' already exists → id 11
+2026-03-13 00:40:39,533 [INFO]   [categories] 'Lodhi' already exists → id 12
+2026-03-13 00:40:39,533 [INFO] Merging units...
+2026-03-13 00:40:39,535 [INFO]   [units] 'kg' already exists → id 1
+2026-03-13 00:40:39,535 [INFO]   [units] 'pcs' already exists → id 2
+2026-03-13 00:40:39,536 [INFO]   [units] 'liters' already exists → id 3
+2026-03-13 00:40:39,536 [INFO]   [units] 'meters' already exists → id 4
+2026-03-13 00:40:39,536 [INFO] Merging payment_methods...
+2026-03-13 00:40:39,538 [INFO]   [payment_methods] 'Cash' already exists → id 1
+2026-03-13 00:40:39,538 [INFO]   [payment_methods] 'UPI' already exists → id 2
+2026-03-13 00:40:39,538 [INFO]   [payment_methods] 'Card' already exists → id 3
+2026-03-13 00:40:39,540 [INFO]   [payment_methods] 'Credit' already exists → id 4
+2026-03-13 00:40:39,540 [INFO] Merging expense_categories...
+2026-03-13 00:40:39,541 [INFO] Merging users...
+2026-03-13 00:40:39,543 [INFO]   [users] 'v@gmail.com' exists → id 1
+2026-03-13 00:40:39,544 [INFO]   [users] 'alice@shop.com' exists → id 2
+2026-03-13 00:40:39,544 [INFO]   [users] 'bob@shop.com' exists → id 3
+2026-03-13 00:40:39,544 [INFO] Merging suppliers...
+2026-03-13 00:40:39,548 [INFO] Merging customers...
+2026-03-13 00:40:39,552 [INFO]   [customers] 'Walk-in Customer' exists → id 1
+2026-03-13 00:40:39,552 [INFO]   [customers] 'Manav Patel' exists → id 18
+2026-03-13 00:40:39,553 [INFO]   [customers] 'Manisha Ben' exists → id 8
+2026-03-13 00:40:39,553 [INFO]   [customers] 'Bikha Bhai' exists → id 7
+2026-03-13 00:40:39,553 [INFO]   [customers] 'Priyanshu Biswas' exists → id 17
+2026-03-13 00:40:39,553 [INFO]   [customers] 'Vinit Panchal' exists → id 3
+2026-03-13 00:40:39,553 [INFO]   [customers] 'Mega Mart Wholesale' exists → id 2
+2026-03-13 00:40:39,554 [INFO]   [customers] 'Vinit' exists → id 21
+2026-03-13 00:40:39,554 [INFO]   [customers] 'Kesar Ben' exists → id 24
+2026-03-13 00:40:39,554 [INFO]   [customers] 'Tina Bhai' exists → id 5
+2026-03-13 00:40:39,554 [INFO]   [customers] 'Vishal Bhai' exists → id 25
+2026-03-13 00:40:39,554 [INFO]   [customers] 'Baka Bhai' exists → id 20
+2026-03-13 00:40:39,556 [INFO]   [customers] 'Laxman' exists → id 6
+2026-03-13 00:40:39,556 [INFO]   [customers] 'Kanu Kaka' exists → id 19
+2026-03-13 00:40:39,556 [INFO]   [customers] 'Bharat Bhai' exists → id 11
+2026-03-13 00:40:39,556 [INFO]   [customers] 'Mayur Luhar' exists → id 14
+2026-03-13 00:40:39,556 [INFO]   [customers] 'Chirag Bhai' exists → id 10
+2026-03-13 00:40:39,557 [INFO]   [customers] 'Gaurang Bhai' exists → id 26
+2026-03-13 00:40:39,557 [INFO]   [customers] 'Dinesh Luhar' exists → id 15
+2026-03-13 00:40:39,557 [INFO]   [customers] 'Melo' exists → id 22
+2026-03-13 00:40:39,557 [INFO]   [customers] 'Amit Bhai' exists → id 9
+2026-03-13 00:40:39,558 [INFO]   [customers] 'Dalsukh Panchal' exists → id 13
+2026-03-13 00:40:39,558 [INFO]   [customers] 'Irfan' exists → id 4
+2026-03-13 00:40:39,558 [INFO]   [customers] 'Atmaam Panchal' exists → id 12
+2026-03-13 00:40:39,558 [INFO]   [customers] 'Shanta Ben' exists → id 16
+2026-03-13 00:40:39,559 [INFO] Merging products...
+2026-03-13 00:40:39,560 [INFO]   [products] 'Podra Pavdi G' exists → id 5
+2026-03-13 00:40:39,561 [INFO]   [products] 'Farwa' exists → id 8
+2026-03-13 00:40:39,561 [INFO]   [products] 'Dhariya' exists → id 17
+2026-03-13 00:40:39,561 [INFO]   [products] 'Podra Pavdi SS' exists → id 20
+2026-03-13 00:40:39,561 [INFO]   [products] 'Podra Pavdi Black' exists → id 21
+2026-03-13 00:40:39,562 [INFO]   [products] 'Panjeti Black' exists → id 23
+2026-03-13 00:40:39,562 [INFO]   [products] 'Pavda Bhumi' exists → id 27
+2026-03-13 00:40:39,562 [INFO]   [products] 'Datarda' exists → id 28
+2026-03-13 00:40:39,562 [INFO]   [products] 'Pavda SS MK' exists → id 33
+2026-03-13 00:40:39,562 [INFO]   [products] 'Lodhi' exists → id 37
+2026-03-13 00:40:39,564 [INFO]   [products] 'Kodha 3' exists → id 47
+2026-03-13 00:40:39,564 [INFO]   [products] 'Kodha 5' exists → id 49
+2026-03-13 00:40:39,564 [INFO]   [products] 'Dhariya 6' exists → id 55
+2026-03-13 00:40:39,565 [INFO]   [products] 'Datarda' exists → id 28
+2026-03-13 00:40:39,565 [INFO]   [products] 'Pariya Dasta' exists → id 58
+2026-03-13 00:40:39,565 [INFO]   [products] 'Farsi' exists → id 76
+2026-03-13 00:40:39,565 [INFO]   [products] 'Kharpdi' exists → id 77
+2026-03-13 00:40:39,566 [INFO]   [products] 'Kata' exists → id 78
+2026-03-13 00:40:39,566 [INFO]   [products] 'Blue Pavdi' exists → id 4
+2026-03-13 00:40:39,566 [INFO]   [products] 'Khori' exists → id 10
+2026-03-13 00:40:39,566 [INFO]   [products] 'Kabdi' exists → id 12
+2026-03-13 00:40:39,567 [INFO]   [products] 'Kharpdi Dasta' exists → id 16
+2026-03-13 00:40:39,567 [INFO]   [products] 'Visal' exists → id 19
+2026-03-13 00:40:39,567 [INFO]   [products] 'Podra Pavdi Pipe' exists → id 22
+2026-03-13 00:40:39,567 [INFO]   [products] 'Panjeti Blue' exists → id 24
+2026-03-13 00:40:39,567 [INFO]   [products] 'Plate Panjeti' exists → id 25
+2026-03-13 00:40:39,568 [INFO]   [products] 'Kodara' exists → id 26
+2026-03-13 00:40:39,568 [INFO]   [products] 'Pavda Shree' exists → id 30
+2026-03-13 00:40:39,568 [INFO]   [products] 'Koita' exists → id 31
+2026-03-13 00:40:39,568 [INFO]   [products] 'Narmada Pavda B' exists → id 32
+2026-03-13 00:40:39,568 [INFO]   [products] 'Pasiya' exists → id 34
+2026-03-13 00:40:39,568 [INFO]   [products] 'Mudar' exists → id 35
+2026-03-13 00:40:39,569 [INFO]   [products] 'Ekko' exists → id 36
+2026-03-13 00:40:39,569 [INFO]   [products] 'Lodhi 1' exists → id 38
+2026-03-13 00:40:39,569 [INFO]   [products] 'Lodhi 2' exists → id 39
+2026-03-13 00:40:39,569 [INFO]   [products] 'Dhariya 1' exists → id 40
+2026-03-13 00:40:39,569 [INFO]   [products] 'Dhariya 2' exists → id 41
+2026-03-13 00:40:39,571 [INFO]   [products] 'Dhariya 3' exists → id 42
+2026-03-13 00:40:39,571 [INFO]   [products] 'Koita Doriya' exists → id 43
+2026-03-13 00:40:39,571 [INFO]   [products] 'Kodha 1' exists → id 44
+2026-03-13 00:40:39,571 [INFO]   [products] 'Kodha 2' exists → id 45
+2026-03-13 00:40:39,572 [INFO]   [products] 'Kodha 3' exists → id 47
+2026-03-13 00:40:39,572 [INFO]   [products] 'Kodha 4' exists → id 48
+2026-03-13 00:40:39,572 [INFO]   [products] 'Kodha 6' exists → id 50
+2026-03-13 00:40:39,572 [INFO]   [products] 'Farwa S' exists → id 51
+2026-03-13 00:40:39,572 [INFO]   [products] 'Dhariya 4' exists → id 53
+2026-03-13 00:40:39,573 [INFO]   [products] 'Dhariya 5' exists → id 54
+2026-03-13 00:40:39,573 [INFO]   [products] 'Pavdi 21' exists → id 59
+2026-03-13 00:40:39,573 [INFO]   [products] 'Kolsa' exists → id 60
+2026-03-13 00:40:39,573 [INFO]   [products] 'Dhariya 7' exists → id 61
+2026-03-13 00:40:39,574 [INFO]   [products] 'Kodara 3' exists → id 67
+2026-03-13 00:40:39,574 [INFO]   [products] 'Kodara 4' exists → id 68
+2026-03-13 00:40:39,574 [INFO]   [products] 'Kodara 6' exists → id 70
+2026-03-13 00:40:39,574 [INFO]   [products] 'Kodara 7' exists → id 71
+2026-03-13 00:40:39,575 [INFO]   [products] 'Dhariya 8' exists → id 72
+2026-03-13 00:40:39,575 [INFO]   [products] 'Dhariya 9' exists → id 73
+2026-03-13 00:40:39,575 [INFO]   [products] 'Kodha 7' exists → id 74
+2026-03-13 00:40:39,575 [INFO]   [products] 'Kodha 8' exists → id 75
+2026-03-13 00:40:39,575 [INFO]   [products] 'Dhariya Doriya' exists → id 7
+2026-03-13 00:40:39,576 [INFO]   [products] 'Pavda Regular' exists → id 9
+2026-03-13 00:40:39,576 [INFO]   [products] 'Pavda SS' exists → id 13
+2026-03-13 00:40:39,576 [INFO]   [products] 'Dasta' exists → id 14
+2026-03-13 00:40:39,576 [INFO]   [products] 'Pavda Dasta' exists → id 15
+2026-03-13 00:40:39,577 [INFO]   [products] 'Kodha' exists → id 18
+2026-03-13 00:40:39,577 [INFO]   [products] 'Kharpdi' exists → id 77
+2026-03-13 00:40:39,577 [INFO]   [products] 'Farwa Trackter' exists → id 52
+2026-03-13 00:40:39,577 [INFO]   [products] 'Lakdi' exists → id 57
+2026-03-13 00:40:39,578 [INFO]   [products] 'Pavda Plate' exists → id 64
+2026-03-13 00:40:39,578 [INFO]   [products] 'Kodara 1' exists → id 65
+2026-03-13 00:40:39,578 [INFO]   [products] 'Kodara 2' exists → id 66
+2026-03-13 00:40:39,578 [INFO]   [products] 'Kodara 5' exists → id 69
+2026-03-13 00:40:39,578 [INFO]   [products] 'Black Pavdi' exists → id 6
+2026-03-13 00:40:39,580 [INFO]   [products] 'Datarda 1' exists → id 82
+2026-03-13 00:40:39,580 [INFO]   [products] 'Rivet' exists → id 11
+2026-03-13 00:40:39,580 [INFO] Merging prices...
+2026-03-13 00:40:39,582 [INFO]   [prices] Active price for product_id 77 already exists, skipping.
+2026-03-13 00:40:39,582 [INFO]   [prices] Active price for product_id 78 already exists, skipping.
+2026-03-13 00:40:39,583 [INFO]   [prices] Active price for product_id 28 already exists, skipping.
+2026-03-13 00:40:39,583 [INFO]   [prices] Active price for product_id 28 already exists, skipping.
+2026-03-13 00:40:39,583 [INFO]   [prices] Active price for product_id 77 already exists, skipping.
+2026-03-13 00:40:39,584 [INFO]   [prices] Active price for product_id 52 already exists, skipping.
+2026-03-13 00:40:39,584 [INFO]   [prices] Active price for product_id 4 already exists, skipping.
+2026-03-13 00:40:39,584 [INFO]   [prices] Active price for product_id 4 already exists, skipping.
+2026-03-13 00:40:39,584 [INFO]   [prices] Active price for product_id 4 already exists, skipping.
+2026-03-13 00:40:39,585 [INFO]   [prices] Active price for product_id 5 already exists, skipping.
+2026-03-13 00:40:39,585 [INFO]   [prices] Active price for product_id 7 already exists, skipping.
+2026-03-13 00:40:39,585 [INFO]   [prices] Active price for product_id 8 already exists, skipping.
+2026-03-13 00:40:39,586 [INFO]   [prices] Active price for product_id 10 already exists, skipping.
+2026-03-13 00:40:39,586 [INFO]   [prices] Active price for product_id 9 already exists, skipping.
+2026-03-13 00:40:39,587 [INFO]   [prices] Active price for product_id 9 already exists, skipping.
+2026-03-13 00:40:39,587 [INFO]   [prices] Active price for product_id 13 already exists, skipping.
+2026-03-13 00:40:39,588 [INFO]   [prices] Active price for product_id 14 already exists, skipping.
+2026-03-13 00:40:39,588 [INFO]   [prices] Active price for product_id 15 already exists, skipping.
+2026-03-13 00:40:39,589 [INFO]   [prices] Active price for product_id 16 already exists, skipping.
+2026-03-13 00:40:39,589 [INFO]   [prices] Active price for product_id 17 already exists, skipping.
+2026-03-13 00:40:39,590 [INFO]   [prices] Active price for product_id 18 already exists, skipping.
+2026-03-13 00:40:39,590 [INFO]   [prices] Active price for product_id 19 already exists, skipping.
+2026-03-13 00:40:39,590 [INFO]   [prices] Active price for product_id 20 already exists, skipping.
+2026-03-13 00:40:39,590 [INFO]   [prices] Active price for product_id 21 already exists, skipping.
+2026-03-13 00:40:39,591 [INFO]   [prices] Active price for product_id 22 already exists, skipping.
+2026-03-13 00:40:39,591 [INFO]   [prices] Active price for product_id 23 already exists, skipping.
+2026-03-13 00:40:39,591 [INFO]   [prices] Active price for product_id 25 already exists, skipping.
+2026-03-13 00:40:39,592 [INFO]   [prices] Active price for product_id 26 already exists, skipping.
+2026-03-13 00:40:39,592 [INFO]   [prices] Active price for product_id 27 already exists, skipping.
+2026-03-13 00:40:39,593 [INFO]   [prices] Active price for product_id 30 already exists, skipping.
+2026-03-13 00:40:39,593 [INFO]   [prices] Active price for product_id 31 already exists, skipping.
+2026-03-13 00:40:39,593 [INFO]   [prices] Active price for product_id 32 already exists, skipping.
+2026-03-13 00:40:39,593 [INFO]   [prices] Active price for product_id 33 already exists, skipping.
+2026-03-13 00:40:39,594 [INFO]   [prices] Active price for product_id 34 already exists, skipping.
+2026-03-13 00:40:39,594 [INFO]   [prices] Active price for product_id 35 already exists, skipping.
+2026-03-13 00:40:39,594 [INFO]   [prices] Active price for product_id 36 already exists, skipping.
+2026-03-13 00:40:39,595 [INFO]   [prices] Active price for product_id 37 already exists, skipping.
+2026-03-13 00:40:39,595 [INFO]   [prices] Active price for product_id 39 already exists, skipping.
+2026-03-13 00:40:39,595 [INFO]   [prices] Active price for product_id 38 already exists, skipping.
+2026-03-13 00:40:39,596 [INFO]   [prices] Active price for product_id 38 already exists, skipping.
+2026-03-13 00:40:39,596 [INFO]   [prices] Active price for product_id 40 already exists, skipping.
+2026-03-13 00:40:39,596 [INFO]   [prices] Active price for product_id 41 already exists, skipping.
+2026-03-13 00:40:39,597 [INFO]   [prices] Active price for product_id 42 already exists, skipping.
+2026-03-13 00:40:39,597 [INFO]   [prices] Active price for product_id 43 already exists, skipping.
+2026-03-13 00:40:39,597 [INFO]   [prices] Active price for product_id 44 already exists, skipping.
+2026-03-13 00:40:39,599 [INFO]   [prices] Active price for product_id 45 already exists, skipping.
+2026-03-13 00:40:39,599 [INFO]   [prices] Active price for product_id 47 already exists, skipping.
+2026-03-13 00:40:39,599 [INFO]   [prices] Active price for product_id 47 already exists, skipping.
+2026-03-13 00:40:39,600 [INFO]   [prices] Active price for product_id 48 already exists, skipping.
+2026-03-13 00:40:39,600 [INFO]   [prices] Active price for product_id 49 already exists, skipping.
+2026-03-13 00:40:39,600 [INFO]   [prices] Active price for product_id 50 already exists, skipping.
+2026-03-13 00:40:39,601 [INFO]   [prices] Active price for product_id 51 already exists, skipping.
+2026-03-13 00:40:39,601 [INFO]   [prices] Active price for product_id 53 already exists, skipping.
+2026-03-13 00:40:39,601 [INFO]   [prices] Active price for product_id 54 already exists, skipping.
+2026-03-13 00:40:39,602 [INFO]   [prices] Active price for product_id 55 already exists, skipping.
+2026-03-13 00:40:39,602 [INFO]   [prices] Active price for product_id 24 already exists, skipping.
+2026-03-13 00:40:39,602 [INFO]   [prices] Active price for product_id 24 already exists, skipping.
+2026-03-13 00:40:39,603 [INFO]   [prices] Active price for product_id 57 already exists, skipping.
+2026-03-13 00:40:39,603 [INFO]   [prices] Active price for product_id 58 already exists, skipping.
+2026-03-13 00:40:39,603 [INFO]   [prices] Active price for product_id 58 already exists, skipping.
+2026-03-13 00:40:39,604 [INFO]   [prices] Active price for product_id 59 already exists, skipping.
+2026-03-13 00:40:39,604 [INFO]   [prices] Active price for product_id 59 already exists, skipping.
+2026-03-13 00:40:39,604 [INFO]   [prices] Active price for product_id 60 already exists, skipping.
+2026-03-13 00:40:39,605 [INFO]   [prices] Active price for product_id 61 already exists, skipping.
+2026-03-13 00:40:39,605 [INFO]   [prices] Active price for product_id 12 already exists, skipping.
+2026-03-13 00:40:39,605 [INFO]   [prices] Active price for product_id 12 already exists, skipping.
+2026-03-13 00:40:39,606 [INFO]   [prices] Active price for product_id 64 already exists, skipping.
+2026-03-13 00:40:39,606 [INFO]   [prices] Active price for product_id 65 already exists, skipping.
+2026-03-13 00:40:39,606 [INFO]   [prices] Active price for product_id 66 already exists, skipping.
+2026-03-13 00:40:39,607 [INFO]   [prices] Active price for product_id 67 already exists, skipping.
+2026-03-13 00:40:39,607 [INFO]   [prices] Active price for product_id 68 already exists, skipping.
+2026-03-13 00:40:39,607 [INFO]   [prices] Active price for product_id 69 already exists, skipping.
+2026-03-13 00:40:39,607 [INFO]   [prices] Active price for product_id 70 already exists, skipping.
+2026-03-13 00:40:39,608 [INFO]   [prices] Active price for product_id 71 already exists, skipping.
+2026-03-13 00:40:39,608 [INFO]   [prices] Active price for product_id 71 already exists, skipping.
+2026-03-13 00:40:39,608 [INFO]   [prices] Active price for product_id 71 already exists, skipping.
+2026-03-13 00:40:39,609 [INFO]   [prices] Active price for product_id 72 already exists, skipping.
+2026-03-13 00:40:39,609 [INFO]   [prices] Active price for product_id 73 already exists, skipping.
+2026-03-13 00:40:39,609 [INFO]   [prices] Active price for product_id 74 already exists, skipping.
+2026-03-13 00:40:39,611 [INFO]   [prices] Active price for product_id 75 already exists, skipping.
+2026-03-13 00:40:39,611 [INFO]   [prices] Active price for product_id 76 already exists, skipping.
+2026-03-13 00:40:39,611 [INFO]   [prices] Active price for product_id 6 already exists, skipping.
+2026-03-13 00:40:39,612 [INFO]   [prices] Active price for product_id 6 already exists, skipping.
+2026-03-13 00:40:39,612 [INFO]   [prices] Active price for product_id 6 already exists, skipping.
+2026-03-13 00:40:39,612 [INFO]   [prices] Active price for product_id 6 already exists, skipping.
+2026-03-13 00:40:39,613 [INFO]   [prices] Active price for product_id 6 already exists, skipping.
+2026-03-13 00:40:39,613 [INFO]   [prices] Active price for product_id 82 already exists, skipping.
+2026-03-13 00:40:39,613 [INFO]   [prices] Active price for product_id 11 already exists, skipping.
+2026-03-13 00:40:39,614 [INFO]   [prices] Active price for product_id 11 already exists, skipping.
+2026-03-13 00:40:39,614 [INFO] Merging product_suppliers...
+2026-03-13 00:40:39,625 [INFO] Merging retail_bills...
+2026-03-13 00:40:39,632 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000001' → mapped to existing id 2, skipped.
+2026-03-13 00:40:39,632 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000002' → mapped to existing id 3, skipped.
+2026-03-13 00:40:39,633 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000004' → mapped to existing id 5, skipped.
+2026-03-13 00:40:39,633 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000006' → mapped to existing id 7, skipped.
+2026-03-13 00:40:39,633 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000007' → mapped to existing id 8, skipped.
+2026-03-13 00:40:39,635 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000009' → mapped to existing id 10, skipped.
+2026-03-13 00:40:39,635 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000008' → mapped to existing id 9, skipped.
+2026-03-13 00:40:39,635 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000010' → mapped to existing id 11, skipped.
+2026-03-13 00:40:39,636 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000012' → mapped to existing id 13, skipped.
+2026-03-13 00:40:39,636 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000016' → mapped to existing id 17, skipped.
+2026-03-13 00:40:39,636 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000014' → mapped to existing id 15, skipped.
+2026-03-13 00:40:39,636 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000013' → mapped to existing id 14, skipped.
+2026-03-13 00:40:39,637 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000020' → mapped to existing id 21, skipped.
+2026-03-13 00:40:39,637 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000021' → mapped to existing id 22, skipped.
+2026-03-13 00:40:39,637 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000022' → mapped to existing id 23, skipped.
+2026-03-13 00:40:39,637 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000023' → mapped to existing id 24, skipped.
+2026-03-13 00:40:39,638 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000024' → mapped to existing id 25, skipped.
+2026-03-13 00:40:39,638 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000028' → mapped to existing id 29, skipped.
+2026-03-13 00:40:39,638 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000026' → mapped to existing id 27, skipped.
+2026-03-13 00:40:39,639 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000030' → mapped to existing id 31, skipped.
+2026-03-13 00:40:39,639 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000031' → mapped to existing id 32, skipped.
+2026-03-13 00:40:39,639 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000029' → mapped to existing id 30, skipped.
+2026-03-13 00:40:39,639 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000032' → mapped to existing id 33, skipped.
+2026-03-13 00:40:39,639 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000034' → mapped to existing id 35, skipped.
+2026-03-13 00:40:39,640 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000036' → mapped to existing id 37, skipped.
+2026-03-13 00:40:39,640 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000033' → mapped to existing id 34, skipped.
+2026-03-13 00:40:39,640 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000040' → mapped to existing id 41, skipped.
+2026-03-13 00:40:39,641 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000042' → mapped to existing id 43, skipped.
+2026-03-13 00:40:39,641 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000039' → mapped to existing id 40, skipped.
+2026-03-13 00:40:39,641 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000038' → mapped to existing id 39, skipped.
+2026-03-13 00:40:39,642 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000041' → mapped to existing id 42, skipped.
+2026-03-13 00:40:39,642 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000044' → mapped to existing id 45, skipped.
+2026-03-13 00:40:39,642 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000043' → mapped to existing id 44, skipped.
+2026-03-13 00:40:39,642 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000050' → mapped to existing id 51, skipped.
+2026-03-13 00:40:39,643 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000052' → mapped to existing id 53, skipped.
+2026-03-13 00:40:39,643 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000051' → mapped to existing id 52, skipped.
+2026-03-13 00:40:39,643 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000046' → mapped to existing id 47, skipped.
+2026-03-13 00:40:39,644 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000048' → mapped to existing id 49, skipped.
+2026-03-13 00:40:39,644 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000047' → mapped to existing id 48, skipped.
+2026-03-13 00:40:39,644 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000049' → mapped to existing id 50, skipped.
+2026-03-13 00:40:39,644 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000056' → mapped to existing id 57, skipped.
+2026-03-13 00:40:39,644 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000057' → mapped to existing id 58, skipped.
+2026-03-13 00:40:39,645 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000055' → mapped to existing id 56, skipped.
+2026-03-13 00:40:39,645 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000053' → mapped to existing id 54, skipped.
+2026-03-13 00:40:39,645 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000054' → mapped to existing id 55, skipped.
+2026-03-13 00:40:39,645 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000058' → mapped to existing id 59, skipped.
+2026-03-13 00:40:39,646 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000062' → mapped to existing id 63, skipped.
+2026-03-13 00:40:39,646 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000060' → mapped to existing id 61, skipped.
+2026-03-13 00:40:39,646 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000059' → mapped to existing id 60, skipped.
+2026-03-13 00:40:39,647 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000063' → mapped to existing id 64, skipped.
+2026-03-13 00:40:39,647 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000068' → mapped to existing id 69, skipped.
+2026-03-13 00:40:39,647 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000066' → mapped to existing id 67, skipped.
+2026-03-13 00:40:39,647 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000071' → mapped to existing id 72, skipped.
+2026-03-13 00:40:39,648 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000073' → mapped to existing id 74, skipped.
+2026-03-13 00:40:39,648 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000075' → mapped to existing id 76, skipped.
+2026-03-13 00:40:39,648 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000078' → mapped to existing id 79, skipped.
+2026-03-13 00:40:39,649 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000076' → mapped to existing id 77, skipped.
+2026-03-13 00:40:39,649 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000077' → mapped to existing id 78, skipped.
+2026-03-13 00:40:39,649 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000081' → mapped to existing id 82, skipped.
+2026-03-13 00:40:39,649 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000082' → mapped to existing id 83, skipped.
+2026-03-13 00:40:39,649 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000080' → mapped to existing id 81, skipped.
+2026-03-13 00:40:39,651 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000084' → mapped to existing id 85, skipped.
+2026-03-13 00:40:39,651 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000087' → mapped to existing id 88, skipped.
+2026-03-13 00:40:39,651 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000085' → mapped to existing id 86, skipped.
+2026-03-13 00:40:39,651 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000086' → mapped to existing id 87, skipped.
+2026-03-13 00:40:39,652 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000089' → mapped to existing id 90, skipped.
+2026-03-13 00:40:39,652 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000090' → mapped to existing id 91, skipped.
+2026-03-13 00:40:39,652 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000092' → mapped to existing id 93, skipped.
+2026-03-13 00:40:39,652 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000093' → mapped to existing id 94, skipped.
+2026-03-13 00:40:39,653 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000098' → mapped to existing id 99, skipped.
+2026-03-13 00:40:39,653 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000099' → mapped to existing id 100, skipped.
+2026-03-13 00:40:39,653 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000097' → mapped to existing id 98, skipped.
+2026-03-13 00:40:39,654 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000102' → mapped to existing id 103, skipped.
+2026-03-13 00:40:39,654 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000101' → mapped to existing id 102, skipped.
+2026-03-13 00:40:39,654 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000100' → mapped to existing id 101, skipped.
+2026-03-13 00:40:39,654 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000103' → mapped to existing id 104, skipped.
+2026-03-13 00:40:39,655 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000105' → mapped to existing id 106, skipped.
+2026-03-13 00:40:39,655 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000107' → mapped to existing id 108, skipped.
+2026-03-13 00:40:39,655 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000104' → mapped to existing id 105, skipped.
+2026-03-13 00:40:39,655 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000108' → mapped to existing id 109, skipped.
+2026-03-13 00:40:39,656 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000106' → mapped to existing id 107, skipped.
+2026-03-13 00:40:39,656 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000110' → mapped to existing id 111, skipped.
+2026-03-13 00:40:39,656 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000113' → mapped to existing id 114, skipped.
+2026-03-13 00:40:39,656 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000114' → mapped to existing id 115, skipped.
+2026-03-13 00:40:39,657 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000111' → mapped to existing id 112, skipped.
+2026-03-13 00:40:39,657 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000112' → mapped to existing id 113, skipped.
+2026-03-13 00:40:39,657 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000115' → mapped to existing id 116, skipped.
+2026-03-13 00:40:39,657 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000118' → mapped to existing id 119, skipped.
+2026-03-13 00:40:39,658 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000116' → mapped to existing id 117, skipped.
+2026-03-13 00:40:39,658 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000120' → mapped to existing id 121, skipped.
+2026-03-13 00:40:39,658 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000119' → mapped to existing id 120, skipped.
+2026-03-13 00:40:39,658 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000125' → mapped to existing id 126, skipped.
+2026-03-13 00:40:39,660 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000126' → mapped to existing id 127, skipped.
+2026-03-13 00:40:39,660 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000124' → mapped to existing id 125, skipped.
+2026-03-13 00:40:39,660 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000122' → mapped to existing id 123, skipped.
+2026-03-13 00:40:39,660 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000131' → mapped to existing id 132, skipped.
+2026-03-13 00:40:39,660 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000128' → mapped to existing id 129, skipped.
+2026-03-13 00:40:39,661 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000129' → mapped to existing id 130, skipped.
+2026-03-13 00:40:39,661 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000130' → mapped to existing id 131, skipped.
+2026-03-13 00:40:39,661 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000132' → mapped to existing id 133, skipped.
+2026-03-13 00:40:39,662 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000135' → mapped to existing id 136, skipped.
+2026-03-13 00:40:39,662 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000137' → mapped to existing id 138, skipped.
+2026-03-13 00:40:39,662 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000136' → mapped to existing id 137, skipped.
+2026-03-13 00:40:39,663 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000140' → mapped to existing id 141, skipped.
+2026-03-13 00:40:39,663 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000138' → mapped to existing id 139, skipped.
+2026-03-13 00:40:39,663 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000139' → mapped to existing id 140, skipped.
+2026-03-13 00:40:39,663 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000141' → mapped to existing id 142, skipped.
+2026-03-13 00:40:39,664 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000144' → mapped to existing id 145, skipped.
+2026-03-13 00:40:39,664 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000145' → mapped to existing id 146, skipped.
+2026-03-13 00:40:39,664 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000142' → mapped to existing id 143, skipped.
+2026-03-13 00:40:39,664 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000143' → mapped to existing id 144, skipped.
+2026-03-13 00:40:39,664 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000147' → mapped to existing id 148, skipped.
+2026-03-13 00:40:39,665 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000148' → mapped to existing id 149, skipped.
+2026-03-13 00:40:39,665 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000149' → mapped to existing id 150, skipped.
+2026-03-13 00:40:39,665 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000151' → mapped to existing id 152, skipped.
+2026-03-13 00:40:39,665 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000152' → mapped to existing id 153, skipped.
+2026-03-13 00:40:39,667 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000150' → mapped to existing id 151, skipped.
+2026-03-13 00:40:39,667 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000153' → mapped to existing id 154, skipped.
+2026-03-13 00:40:39,667 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000155' → mapped to existing id 156, skipped.
+2026-03-13 00:40:39,667 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000156' → mapped to existing id 157, skipped.
+2026-03-13 00:40:39,668 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000159' → mapped to existing id 160, skipped.
+2026-03-13 00:40:39,668 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000157' → mapped to existing id 158, skipped.
+2026-03-13 00:40:39,668 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000158' → mapped to existing id 159, skipped.
+2026-03-13 00:40:39,669 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000160' → mapped to existing id 161, skipped.
+2026-03-13 00:40:39,669 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000164' → mapped to existing id 165, skipped.
+2026-03-13 00:40:39,669 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000161' → mapped to existing id 162, skipped.
+2026-03-13 00:40:39,669 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000162' → mapped to existing id 163, skipped.
+2026-03-13 00:40:39,669 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000167' → mapped to existing id 168, skipped.
+2026-03-13 00:40:39,670 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000169' → mapped to existing id 170, skipped.
+2026-03-13 00:40:39,670 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000165' → mapped to existing id 166, skipped.
+2026-03-13 00:40:39,670 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000171' → mapped to existing id 172, skipped.
+2026-03-13 00:40:39,670 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000170' → mapped to existing id 171, skipped.
+2026-03-13 00:40:39,671 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000166' → mapped to existing id 167, skipped.
+2026-03-13 00:40:39,671 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000174' → mapped to existing id 175, skipped.
+2026-03-13 00:40:39,671 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000173' → mapped to existing id 174, skipped.
+2026-03-13 00:40:39,671 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000177' → mapped to existing id 178, skipped.
+2026-03-13 00:40:39,672 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000175' → mapped to existing id 176, skipped.
+2026-03-13 00:40:39,672 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000176' → mapped to existing id 177, skipped.
+2026-03-13 00:40:39,672 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000180' → mapped to existing id 181, skipped.
+2026-03-13 00:40:39,672 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000182' → mapped to existing id 183, skipped.
+2026-03-13 00:40:39,672 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000178' → mapped to existing id 179, skipped.
+2026-03-13 00:40:39,674 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000181' → mapped to existing id 182, skipped.
+2026-03-13 00:40:39,674 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000183' → mapped to existing id 184, skipped.
+2026-03-13 00:40:39,674 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000187' → mapped to existing id 188, skipped.
+2026-03-13 00:40:39,675 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000184' → mapped to existing id 185, skipped.
+2026-03-13 00:40:39,675 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000185' → mapped to existing id 186, skipped.
+2026-03-13 00:40:39,675 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000188' → mapped to existing id 189, skipped.
+2026-03-13 00:40:39,675 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000186' → mapped to existing id 187, skipped.
+2026-03-13 00:40:39,676 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000189' → mapped to existing id 190, skipped.
+2026-03-13 00:40:39,676 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000191' → mapped to existing id 192, skipped.
+2026-03-13 00:40:39,676 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000190' → mapped to existing id 191, skipped.
+2026-03-13 00:40:39,676 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000192' → mapped to existing id 193, skipped.
+2026-03-13 00:40:39,676 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000193' → mapped to existing id 194, skipped.
+2026-03-13 00:40:39,677 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000194' → mapped to existing id 195, skipped.
+2026-03-13 00:40:39,677 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000197' → mapped to existing id 198, skipped.
+2026-03-13 00:40:39,677 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000199' → mapped to existing id 200, skipped.
+2026-03-13 00:40:39,678 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000198' → mapped to existing id 199, skipped.
+2026-03-13 00:40:39,678 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000200' → mapped to existing id 201, skipped.
+2026-03-13 00:40:39,678 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000202' → mapped to existing id 203, skipped.
+2026-03-13 00:40:39,678 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000203' → mapped to existing id 204, skipped.
+2026-03-13 00:40:39,679 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000205' → mapped to existing id 206, skipped.
+2026-03-13 00:40:39,679 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000209' → mapped to existing id 210, skipped.
+2026-03-13 00:40:39,679 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000206' → mapped to existing id 207, skipped.
+2026-03-13 00:40:39,679 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000207' → mapped to existing id 208, skipped.
+2026-03-13 00:40:39,680 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000212' → mapped to existing id 213, skipped.
+2026-03-13 00:40:39,680 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000210' → mapped to existing id 211, skipped.
+2026-03-13 00:40:39,680 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000213' → mapped to existing id 214, skipped.
+2026-03-13 00:40:39,681 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000215' → mapped to existing id 216, skipped.
+2026-03-13 00:40:39,681 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000217' → mapped to existing id 218, skipped.
+2026-03-13 00:40:39,681 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000216' → mapped to existing id 217, skipped.
+2026-03-13 00:40:39,681 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000214' → mapped to existing id 215, skipped.
+2026-03-13 00:40:39,682 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000220' → mapped to existing id 221, skipped.
+2026-03-13 00:40:39,682 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000219' → mapped to existing id 220, skipped.
+2026-03-13 00:40:39,682 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000218' → mapped to existing id 219, skipped.
+2026-03-13 00:40:39,683 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000222' → mapped to existing id 223, skipped.
+2026-03-13 00:40:39,683 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000223' → mapped to existing id 224, skipped.
+2026-03-13 00:40:39,683 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000226' → mapped to existing id 227, skipped.
+2026-03-13 00:40:39,683 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000227' → mapped to existing id 228, skipped.
+2026-03-13 00:40:39,684 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000228' → mapped to existing id 229, skipped.
+2026-03-13 00:40:39,684 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000230' → mapped to existing id 231, skipped.
+2026-03-13 00:40:39,684 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000229' → mapped to existing id 230, skipped.
+2026-03-13 00:40:39,684 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000236' → mapped to existing id 237, skipped.
+2026-03-13 00:40:39,686 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000234' → mapped to existing id 235, skipped.
+2026-03-13 00:40:39,686 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000233' → mapped to existing id 234, skipped.
+2026-03-13 00:40:39,686 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000232' → mapped to existing id 233, skipped.
+2026-03-13 00:40:39,686 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000238' → mapped to existing id 239, skipped.
+2026-03-13 00:40:39,687 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000239' → mapped to existing id 240, skipped.
+2026-03-13 00:40:39,687 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000241' → mapped to existing id 242, skipped.
+2026-03-13 00:40:39,687 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000245' → mapped to existing id 246, skipped.
+2026-03-13 00:40:39,687 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000244' → mapped to existing id 245, skipped.
+2026-03-13 00:40:39,687 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000243' → mapped to existing id 244, skipped.
+2026-03-13 00:40:39,688 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000242' → mapped to existing id 243, skipped.
+2026-03-13 00:40:39,688 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000246' → mapped to existing id 247, skipped.
+2026-03-13 00:40:39,688 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000248' → mapped to existing id 249, skipped.
+2026-03-13 00:40:39,689 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000251' → mapped to existing id 252, skipped.
+2026-03-13 00:40:39,689 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000247' → mapped to existing id 248, skipped.
+2026-03-13 00:40:39,689 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000250' → mapped to existing id 251, skipped.
+2026-03-13 00:40:39,690 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000252' → mapped to existing id 253, skipped.
+2026-03-13 00:40:39,690 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000255' → mapped to existing id 256, skipped.
+2026-03-13 00:40:39,690 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000253' → mapped to existing id 254, skipped.
+2026-03-13 00:40:39,690 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000258' → mapped to existing id 259, skipped.
+2026-03-13 00:40:39,690 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000257' → mapped to existing id 258, skipped.
+2026-03-13 00:40:39,690 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000254' → mapped to existing id 255, skipped.
+2026-03-13 00:40:39,692 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000261' → mapped to existing id 262, skipped.
+2026-03-13 00:40:39,692 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000263' → mapped to existing id 264, skipped.
+2026-03-13 00:40:39,692 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000259' → mapped to existing id 260, skipped.
+2026-03-13 00:40:39,692 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000265' → mapped to existing id 266, skipped.
+2026-03-13 00:40:39,693 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000264' → mapped to existing id 265, skipped.
+2026-03-13 00:40:39,693 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-000266' → mapped to existing id 267, skipped.
+2026-03-13 00:40:39,693 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-1773043176956-397' → mapped to existing id 1, skipped.
+2026-03-13 00:40:39,693 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-1773054291163-294' → mapped to existing id 270, skipped.
+2026-03-13 00:40:39,694 [INFO]   [retail_bills] DUPLICATE (same bill_number + timestamp) 'RB-1773228527934-199' → mapped to existing id 271, skipped.
+2026-03-13 00:40:39,694 [INFO] Merging wholesale_bills...
+2026-03-13 00:40:39,697 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000001' → mapped to existing id 4, skipped.
+2026-03-13 00:40:39,697 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000003' → mapped to existing id 6, skipped.
+2026-03-13 00:40:39,698 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000004' → mapped to existing id 7, skipped.
+2026-03-13 00:40:39,698 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000002' → mapped to existing id 5, skipped.
+2026-03-13 00:40:39,698 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000005' → mapped to existing id 8, skipped.
+2026-03-13 00:40:39,698 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000006' → mapped to existing id 9, skipped.
+2026-03-13 00:40:39,699 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000007' → mapped to existing id 10, skipped.
+2026-03-13 00:40:39,699 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000009' → mapped to existing id 12, skipped.
+2026-03-13 00:40:39,699 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000010' → mapped to existing id 13, skipped.
+2026-03-13 00:40:39,699 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000008' → mapped to existing id 11, skipped.
+2026-03-13 00:40:39,700 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000012' → mapped to existing id 15, skipped.
+2026-03-13 00:40:39,700 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000011' → mapped to existing id 14, skipped.
+2026-03-13 00:40:39,700 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000013' → mapped to existing id 16, skipped.
+2026-03-13 00:40:39,700 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000015' → mapped to existing id 18, skipped.
+2026-03-13 00:40:39,701 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000016' → mapped to existing id 19, skipped.
+2026-03-13 00:40:39,701 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000014' → mapped to existing id 17, skipped.
+2026-03-13 00:40:39,701 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000018' → mapped to existing id 21, skipped.
+2026-03-13 00:40:39,703 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000019' → mapped to existing id 22, skipped.
+2026-03-13 00:40:39,703 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000017' → mapped to existing id 20, skipped.
+2026-03-13 00:40:39,703 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000021' → mapped to existing id 24, skipped.
+2026-03-13 00:40:39,703 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000020' → mapped to existing id 23, skipped.
+2026-03-13 00:40:39,704 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000023' → mapped to existing id 26, skipped.
+2026-03-13 00:40:39,704 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000022' → mapped to existing id 25, skipped.
+2026-03-13 00:40:39,704 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000024' → mapped to existing id 27, skipped.
+2026-03-13 00:40:39,705 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000026' → mapped to existing id 29, skipped.
+2026-03-13 00:40:39,705 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000025' → mapped to existing id 28, skipped.
+2026-03-13 00:40:39,705 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000028' → mapped to existing id 31, skipped.
+2026-03-13 00:40:39,705 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000027' → mapped to existing id 30, skipped.
+2026-03-13 00:40:39,706 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000030' → mapped to existing id 33, skipped.
+2026-03-13 00:40:39,706 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000029' → mapped to existing id 32, skipped.
+2026-03-13 00:40:39,706 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000031' → mapped to existing id 34, skipped.
+2026-03-13 00:40:39,706 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000033' → mapped to existing id 36, skipped.
+2026-03-13 00:40:39,706 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000032' → mapped to existing id 35, skipped.
+2026-03-13 00:40:39,707 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000034' → mapped to existing id 37, skipped.
+2026-03-13 00:40:39,707 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000035' → mapped to existing id 38, skipped.
+2026-03-13 00:40:39,707 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000037' → mapped to existing id 40, skipped.
+2026-03-13 00:40:39,707 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000036' → mapped to existing id 39, skipped.
+2026-03-13 00:40:39,708 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000038' → mapped to existing id 41, skipped.
+2026-03-13 00:40:39,708 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000040' → mapped to existing id 43, skipped.
+2026-03-13 00:40:39,708 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000039' → mapped to existing id 42, skipped.
+2026-03-13 00:40:39,708 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000041' → mapped to existing id 44, skipped.
+2026-03-13 00:40:39,709 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000042' → mapped to existing id 45, skipped.
+2026-03-13 00:40:39,709 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000044' → mapped to existing id 47, skipped.
+2026-03-13 00:40:39,709 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000043' → mapped to existing id 46, skipped.
+2026-03-13 00:40:39,709 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000045' → mapped to existing id 48, skipped.
+2026-03-13 00:40:39,710 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000046' → mapped to existing id 49, skipped.
+2026-03-13 00:40:39,710 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000047' → mapped to existing id 50, skipped.
+2026-03-13 00:40:39,710 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000048' → mapped to existing id 51, skipped.
+2026-03-13 00:40:39,711 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000050' → mapped to existing id 53, skipped.
+2026-03-13 00:40:39,711 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000049' → mapped to existing id 52, skipped.
+2026-03-13 00:40:39,711 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000051' → mapped to existing id 54, skipped.
+2026-03-13 00:40:39,711 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000052' → mapped to existing id 55, skipped.
+2026-03-13 00:40:39,712 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000058' → mapped to existing id 61, skipped.
+2026-03-13 00:40:39,712 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000055' → mapped to existing id 58, skipped.
+2026-03-13 00:40:39,712 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000053' → mapped to existing id 56, skipped.
+2026-03-13 00:40:39,712 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000054' → mapped to existing id 57, skipped.
+2026-03-13 00:40:39,713 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000057' → mapped to existing id 60, skipped.
+2026-03-13 00:40:39,713 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000056' → mapped to existing id 59, skipped.
+2026-03-13 00:40:39,713 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000060' → mapped to existing id 63, skipped.
+2026-03-13 00:40:39,713 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000059' → mapped to existing id 62, skipped.
+2026-03-13 00:40:39,714 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000061' → mapped to existing id 64, skipped.
+2026-03-13 00:40:39,714 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000062' → mapped to existing id 65, skipped.
+2026-03-13 00:40:39,714 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000063' → mapped to existing id 66, skipped.
+2026-03-13 00:40:39,714 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000065' → mapped to existing id 68, skipped.
+2026-03-13 00:40:39,716 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000064' → mapped to existing id 67, skipped.
+2026-03-13 00:40:39,716 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000066' → mapped to existing id 69, skipped.
+2026-03-13 00:40:39,716 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000067' → mapped to existing id 70, skipped.
+2026-03-13 00:40:39,716 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000071' → mapped to existing id 74, skipped.
+2026-03-13 00:40:39,716 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000070' → mapped to existing id 73, skipped.
+2026-03-13 00:40:39,717 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000069' → mapped to existing id 72, skipped.
+2026-03-13 00:40:39,717 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000068' → mapped to existing id 71, skipped.
+2026-03-13 00:40:39,717 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000072' → mapped to existing id 75, skipped.
+2026-03-13 00:40:39,717 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000073' → mapped to existing id 76, skipped.
+2026-03-13 00:40:39,718 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000074' → mapped to existing id 77, skipped.
+2026-03-13 00:40:39,718 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000075' → mapped to existing id 78, skipped.
+2026-03-13 00:40:39,718 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000079' → mapped to existing id 82, skipped.
+2026-03-13 00:40:39,718 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000076' → mapped to existing id 79, skipped.
+2026-03-13 00:40:39,719 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000077' → mapped to existing id 80, skipped.
+2026-03-13 00:40:39,719 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000078' → mapped to existing id 81, skipped.
+2026-03-13 00:40:39,719 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000081' → mapped to existing id 84, skipped.
+2026-03-13 00:40:39,719 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000082' → mapped to existing id 85, skipped.
+2026-03-13 00:40:39,720 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000080' → mapped to existing id 83, skipped.
+2026-03-13 00:40:39,720 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000085' → mapped to existing id 88, skipped.
+2026-03-13 00:40:39,720 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000083' → mapped to existing id 86, skipped.
+2026-03-13 00:40:39,721 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000084' → mapped to existing id 87, skipped.
+2026-03-13 00:40:39,721 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000086' → mapped to existing id 89, skipped.
+2026-03-13 00:40:39,721 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000088' → mapped to existing id 91, skipped.
+2026-03-13 00:40:39,721 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000087' → mapped to existing id 90, skipped.
+2026-03-13 00:40:39,722 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000092' → mapped to existing id 95, skipped.
+2026-03-13 00:40:39,722 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000091' → mapped to existing id 94, skipped.
+2026-03-13 00:40:39,722 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000090' → mapped to existing id 93, skipped.
+2026-03-13 00:40:39,722 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000089' → mapped to existing id 92, skipped.
+2026-03-13 00:40:39,723 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000093' → mapped to existing id 96, skipped.
+2026-03-13 00:40:39,723 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000094' → mapped to existing id 97, skipped.
+2026-03-13 00:40:39,723 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000096' → mapped to existing id 99, skipped.
+2026-03-13 00:40:39,723 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000097' → mapped to existing id 100, skipped.
+2026-03-13 00:40:39,723 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000095' → mapped to existing id 98, skipped.
+2026-03-13 00:40:39,725 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000099' → mapped to existing id 102, skipped.
+2026-03-13 00:40:39,725 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000098' → mapped to existing id 101, skipped.
+2026-03-13 00:40:39,725 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000100' → mapped to existing id 103, skipped.
+2026-03-13 00:40:39,726 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000101' → mapped to existing id 104, skipped.
+2026-03-13 00:40:39,726 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000102' → mapped to existing id 105, skipped.
+2026-03-13 00:40:39,726 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000103' → mapped to existing id 106, skipped.
+2026-03-13 00:40:39,726 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000105' → mapped to existing id 108, skipped.
+2026-03-13 00:40:39,727 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000104' → mapped to existing id 107, skipped.
+2026-03-13 00:40:39,727 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000107' → mapped to existing id 110, skipped.
+2026-03-13 00:40:39,727 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000106' → mapped to existing id 109, skipped.
+2026-03-13 00:40:39,727 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000109' → mapped to existing id 112, skipped.
+2026-03-13 00:40:39,728 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000111' → mapped to existing id 114, skipped.
+2026-03-13 00:40:39,728 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000108' → mapped to existing id 111, skipped.
+2026-03-13 00:40:39,728 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000110' → mapped to existing id 113, skipped.
+2026-03-13 00:40:39,728 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000112' → mapped to existing id 115, skipped.
+2026-03-13 00:40:39,729 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000113' → mapped to existing id 116, skipped.
+2026-03-13 00:40:39,729 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000114' → mapped to existing id 117, skipped.
+2026-03-13 00:40:39,729 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000115' → mapped to existing id 118, skipped.
+2026-03-13 00:40:39,729 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000117' → mapped to existing id 120, skipped.
+2026-03-13 00:40:39,730 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000116' → mapped to existing id 119, skipped.
+2026-03-13 00:40:39,730 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000118' → mapped to existing id 121, skipped.
+2026-03-13 00:40:39,730 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000119' → mapped to existing id 122, skipped.
+2026-03-13 00:40:39,730 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000123' → mapped to existing id 126, skipped.
+2026-03-13 00:40:39,731 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000122' → mapped to existing id 125, skipped.
+2026-03-13 00:40:39,731 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000120' → mapped to existing id 123, skipped.
+2026-03-13 00:40:39,731 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000121' → mapped to existing id 124, skipped.
+2026-03-13 00:40:39,732 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000125' → mapped to existing id 128, skipped.
+2026-03-13 00:40:39,732 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000124' → mapped to existing id 127, skipped.
+2026-03-13 00:40:39,732 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000126' → mapped to existing id 129, skipped.
+2026-03-13 00:40:39,732 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000127' → mapped to existing id 130, skipped.
+2026-03-13 00:40:39,733 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000128' → mapped to existing id 131, skipped.
+2026-03-13 00:40:39,733 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000130' → mapped to existing id 133, skipped.
+2026-03-13 00:40:39,733 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000129' → mapped to existing id 132, skipped.
+2026-03-13 00:40:39,733 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000132' → mapped to existing id 135, skipped.
+2026-03-13 00:40:39,733 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000131' → mapped to existing id 134, skipped.
+2026-03-13 00:40:39,735 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000135' → mapped to existing id 138, skipped.
+2026-03-13 00:40:39,735 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000137' → mapped to existing id 140, skipped.
+2026-03-13 00:40:39,735 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000134' → mapped to existing id 137, skipped.
+2026-03-13 00:40:39,735 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000133' → mapped to existing id 136, skipped.
+2026-03-13 00:40:39,736 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000136' → mapped to existing id 139, skipped.
+2026-03-13 00:40:39,736 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000139' → mapped to existing id 142, skipped.
+2026-03-13 00:40:39,736 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000138' → mapped to existing id 141, skipped.
+2026-03-13 00:40:39,736 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000141' → mapped to existing id 144, skipped.
+2026-03-13 00:40:39,736 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000140' → mapped to existing id 143, skipped.
+2026-03-13 00:40:39,737 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000142' → mapped to existing id 145, skipped.
+2026-03-13 00:40:39,737 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000143' → mapped to existing id 146, skipped.
+2026-03-13 00:40:39,737 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000144' → mapped to existing id 147, skipped.
+2026-03-13 00:40:39,738 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000145' → mapped to existing id 148, skipped.
+2026-03-13 00:40:39,738 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000146' → mapped to existing id 149, skipped.
+2026-03-13 00:40:39,738 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000147' → mapped to existing id 150, skipped.
+2026-03-13 00:40:39,738 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000148' → mapped to existing id 151, skipped.
+2026-03-13 00:40:39,738 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000149' → mapped to existing id 152, skipped.
+2026-03-13 00:40:39,739 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000151' → mapped to existing id 154, skipped.
+2026-03-13 00:40:39,739 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000150' → mapped to existing id 153, skipped.
+2026-03-13 00:40:39,739 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000152' → mapped to existing id 155, skipped.
+2026-03-13 00:40:39,739 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000153' → mapped to existing id 156, skipped.
+2026-03-13 00:40:39,741 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000154' → mapped to existing id 157, skipped.
+2026-03-13 00:40:39,741 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000155' → mapped to existing id 158, skipped.
+2026-03-13 00:40:39,741 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000156' → mapped to existing id 159, skipped.
+2026-03-13 00:40:39,741 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000159' → mapped to existing id 162, skipped.
+2026-03-13 00:40:39,742 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000157' → mapped to existing id 160, skipped.
+2026-03-13 00:40:39,742 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000158' → mapped to existing id 161, skipped.
+2026-03-13 00:40:39,742 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000160' → mapped to existing id 163, skipped.
+2026-03-13 00:40:39,742 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000161' → mapped to existing id 164, skipped.
+2026-03-13 00:40:39,742 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000162' → mapped to existing id 165, skipped.
+2026-03-13 00:40:39,743 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000163' → mapped to existing id 166, skipped.
+2026-03-13 00:40:39,743 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000164' → mapped to existing id 167, skipped.
+2026-03-13 00:40:39,743 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000165' → mapped to existing id 168, skipped.
+2026-03-13 00:40:39,744 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000166' → mapped to existing id 169, skipped.
+2026-03-13 00:40:39,744 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000167' → mapped to existing id 170, skipped.
+2026-03-13 00:40:39,744 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-000168' → mapped to existing id 171, skipped.
+2026-03-13 00:40:39,744 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-1773044031165-132' → mapped to existing id 1, skipped.
+2026-03-13 00:40:39,745 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-1773046020529-791' → mapped to existing id 2, skipped.
+2026-03-13 00:40:39,745 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-1773046043780-676' → mapped to existing id 3, skipped.
+2026-03-13 00:40:39,746 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-1773054186571-554' → mapped to existing id 172, skipped.
+2026-03-13 00:40:39,746 [INFO]   [wholesale_bills] DUPLICATE (same bill_number + timestamp) 'WB-1773208213557-910' → mapped to existing id 173, skipped.
+2026-03-13 00:40:39,746 [INFO] Merging customer_dues...
+2026-03-13 00:40:39,758 [INFO] Merging due_payment_history...
+2026-03-13 00:40:39,768 [INFO] Merging expenses...
+2026-03-13 00:40:39,769 [INFO] Merging inventory metadata (thresholds only - qty will be recalculated)...
+2026-03-13 00:40:39,782 [INFO] Merging inventory_transactions (full history)...
+2026-03-13 00:40:39,793 [WARNING]   [inv_txn] src txn_id=99: ref bill id=4 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,795 [WARNING]   [inv_txn] src txn_id=103: ref bill id=6 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,797 [WARNING]   [inv_txn] src txn_id=129: ref bill id=12 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,798 [WARNING]   [inv_txn] src txn_id=130: ref bill id=12 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,802 [WARNING]   [inv_txn] src txn_id=145: ref bill id=16 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,803 [WARNING]   [inv_txn] src txn_id=147: ref bill id=16 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,803 [WARNING]   [inv_txn] src txn_id=144: ref bill id=16 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,803 [WARNING]   [inv_txn] src txn_id=143: ref bill id=16 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,803 [WARNING]   [inv_txn] src txn_id=146: ref bill id=16 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,806 [WARNING]   [inv_txn] src txn_id=166: ref bill id=19 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,806 [WARNING]   [inv_txn] src txn_id=163: ref bill id=19 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,807 [WARNING]   [inv_txn] src txn_id=167: ref bill id=19 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,807 [WARNING]   [inv_txn] src txn_id=164: ref bill id=19 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,807 [WARNING]   [inv_txn] src txn_id=165: ref bill id=19 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,809 [WARNING]   [inv_txn] src txn_id=162: ref bill id=18 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,809 [WARNING]   [inv_txn] src txn_id=159: ref bill id=18 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,809 [WARNING]   [inv_txn] src txn_id=160: ref bill id=18 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,810 [WARNING]   [inv_txn] src txn_id=161: ref bill id=18 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,810 [WARNING]   [inv_txn] src txn_id=169: ref bill id=20 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,810 [WARNING]   [inv_txn] src txn_id=168: ref bill id=20 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,810 [WARNING]   [inv_txn] src txn_id=170: ref bill id=20 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,820 [WARNING]   [inv_txn] src txn_id=207: ref bill id=26 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,825 [WARNING]   [inv_txn] src txn_id=219: ref bill id=28 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,825 [WARNING]   [inv_txn] src txn_id=218: ref bill id=28 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,826 [WARNING]   [inv_txn] src txn_id=217: ref bill id=28 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,833 [WARNING]   [inv_txn] src txn_id=265: ref bill id=36 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,833 [WARNING]   [inv_txn] src txn_id=266: ref bill id=36 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,845 [WARNING]   [inv_txn] src txn_id=276: ref bill id=38 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,845 [WARNING]   [inv_txn] src txn_id=277: ref bill id=38 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,851 [WARNING]   [inv_txn] src txn_id=316: ref bill id=46 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,852 [WARNING]   [inv_txn] src txn_id=317: ref bill id=46 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,865 [WARNING]   [inv_txn] src txn_id=382: ref bill id=62 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,865 [WARNING]   [inv_txn] src txn_id=383: ref bill id=62 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,867 [WARNING]   [inv_txn] src txn_id=384: ref bill id=62 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,868 [WARNING]   [inv_txn] src txn_id=399: ref bill id=66 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,871 [WARNING]   [inv_txn] src txn_id=398: ref bill id=65 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,871 [WARNING]   [inv_txn] src txn_id=397: ref bill id=65 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,871 [WARNING]   [inv_txn] src txn_id=396: ref bill id=65 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,872 [WARNING]   [inv_txn] src txn_id=410: ref bill id=68 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,872 [WARNING]   [inv_txn] src txn_id=412: ref bill id=70 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,874 [WARNING]   [inv_txn] src txn_id=413: ref bill id=70 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,874 [WARNING]   [inv_txn] src txn_id=414: ref bill id=71 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,881 [WARNING]   [inv_txn] src txn_id=429: ref bill id=73 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,881 [WARNING]   [inv_txn] src txn_id=430: ref bill id=73 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,882 [WARNING]   [inv_txn] src txn_id=442: ref bill id=75 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,883 [WARNING]   [inv_txn] src txn_id=460: ref bill id=80 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,884 [WARNING]   [inv_txn] src txn_id=459: ref bill id=80 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,891 [WARNING]   [inv_txn] src txn_id=473: ref bill id=84 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,892 [WARNING]   [inv_txn] src txn_id=472: ref bill id=84 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,898 [WARNING]   [inv_txn] src txn_id=501: ref bill id=89 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,898 [WARNING]   [inv_txn] src txn_id=502: ref bill id=89 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,903 [WARNING]   [inv_txn] src txn_id=531: ref bill id=95 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,903 [WARNING]   [inv_txn] src txn_id=533: ref bill id=95 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,904 [WARNING]   [inv_txn] src txn_id=532: ref bill id=95 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,904 [WARNING]   [inv_txn] src txn_id=530: ref bill id=95 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,906 [WARNING]   [inv_txn] src txn_id=534: ref bill id=96 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,906 [WARNING]   [inv_txn] src txn_id=535: ref bill id=96 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,907 [WARNING]   [inv_txn] src txn_id=525: ref bill id=92 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,907 [WARNING]   [inv_txn] src txn_id=526: ref bill id=92 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,908 [WARNING]   [inv_txn] src txn_id=536: ref bill id=97 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,908 [WARNING]   [inv_txn] src txn_id=537: ref bill id=97 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,920 [WARNING]   [inv_txn] src txn_id=589: ref bill id=110 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,921 [WARNING]   [inv_txn] src txn_id=585: ref bill id=110 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,921 [WARNING]   [inv_txn] src txn_id=588: ref bill id=110 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,921 [WARNING]   [inv_txn] src txn_id=587: ref bill id=110 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,921 [WARNING]   [inv_txn] src txn_id=586: ref bill id=110 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,929 [WARNING]   [inv_txn] src txn_id=624: ref bill id=118 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,934 [WARNING]   [inv_txn] src txn_id=635: ref bill id=122 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,937 [WARNING]   [inv_txn] src txn_id=649: ref bill id=124 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,937 [WARNING]   [inv_txn] src txn_id=650: ref bill id=124 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,941 [WARNING]   [inv_txn] src txn_id=658: ref bill id=128 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,942 [WARNING]   [inv_txn] src txn_id=659: ref bill id=128 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,945 [WARNING]   [inv_txn] src txn_id=680: ref bill id=135 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,946 [WARNING]   [inv_txn] src txn_id=681: ref bill id=135 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,946 [WARNING]   [inv_txn] src txn_id=679: ref bill id=135 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,947 [WARNING]   [inv_txn] src txn_id=678: ref bill id=135 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,948 [WARNING]   [inv_txn] src txn_id=676: ref bill id=134 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,968 [WARNING]   [inv_txn] src txn_id=757: ref bill id=147 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,968 [WARNING]   [inv_txn] src txn_id=759: ref bill id=147 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,969 [WARNING]   [inv_txn] src txn_id=758: ref bill id=147 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,971 [WARNING]   [inv_txn] src txn_id=781: ref bill id=155 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,971 [WARNING]   [inv_txn] src txn_id=783: ref bill id=155 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,973 [WARNING]   [inv_txn] src txn_id=784: ref bill id=155 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,974 [WARNING]   [inv_txn] src txn_id=780: ref bill id=155 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,974 [WARNING]   [inv_txn] src txn_id=782: ref bill id=155 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,993 [WARNING]   [inv_txn] src txn_id=840: ref bill id=164 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,993 [WARNING]   [inv_txn] src txn_id=841: ref bill id=164 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,994 [WARNING]   [inv_txn] src txn_id=842: ref bill id=164 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:39,994 [WARNING]   [inv_txn] src txn_id=843: ref bill id=164 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,002 [WARNING]   [inv_txn] src txn_id=871: ref bill id=169 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,002 [WARNING]   [inv_txn] src txn_id=872: ref bill id=169 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,006 [WARNING]   [inv_txn] src txn_id=894: ref bill id=173 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,006 [WARNING]   [inv_txn] src txn_id=895: ref bill id=173 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,017 [WARNING]   [inv_txn] src txn_id=928: ref bill id=180 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,018 [WARNING]   [inv_txn] src txn_id=927: ref bill id=180 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,029 [WARNING]   [inv_txn] src txn_id=980: ref bill id=196 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,034 [WARNING]   [inv_txn] src txn_id=988: ref bill id=197 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,034 [WARNING]   [inv_txn] src txn_id=987: ref bill id=197 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,035 [WARNING]   [inv_txn] src txn_id=986: ref bill id=197 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,040 [WARNING]   [inv_txn] src txn_id=1015: ref bill id=202 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,045 [WARNING]   [inv_txn] src txn_id=1037: ref bill id=205 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,045 [WARNING]   [inv_txn] src txn_id=1033: ref bill id=205 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,046 [WARNING]   [inv_txn] src txn_id=1034: ref bill id=205 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,046 [WARNING]   [inv_txn] src txn_id=1035: ref bill id=205 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,046 [WARNING]   [inv_txn] src txn_id=1036: ref bill id=205 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,047 [WARNING]   [inv_txn] src txn_id=1046: ref bill id=209 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,047 [WARNING]   [inv_txn] src txn_id=1048: ref bill id=209 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,047 [WARNING]   [inv_txn] src txn_id=1047: ref bill id=209 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,055 [WARNING]   [inv_txn] src txn_id=1065: ref bill id=212 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,055 [WARNING]   [inv_txn] src txn_id=1062: ref bill id=212 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,055 [WARNING]   [inv_txn] src txn_id=1063: ref bill id=212 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,055 [WARNING]   [inv_txn] src txn_id=1064: ref bill id=212 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,065 [WARNING]   [inv_txn] src txn_id=1114: ref bill id=225 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,067 [WARNING]   [inv_txn] src txn_id=1108: ref bill id=222 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,067 [WARNING]   [inv_txn] src txn_id=1106: ref bill id=222 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,068 [WARNING]   [inv_txn] src txn_id=1107: ref bill id=222 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,068 [WARNING]   [inv_txn] src txn_id=1105: ref bill id=222 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,068 [WARNING]   [inv_txn] src txn_id=1104: ref bill id=222 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,071 [WARNING]   [inv_txn] src txn_id=1122: ref bill id=226 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,071 [WARNING]   [inv_txn] src txn_id=1123: ref bill id=226 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,072 [WARNING]   [inv_txn] src txn_id=1124: ref bill id=226 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,072 [WARNING]   [inv_txn] src txn_id=1125: ref bill id=226 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,077 [WARNING]   [inv_txn] src txn_id=1145: ref bill id=232 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,077 [WARNING]   [inv_txn] src txn_id=1144: ref bill id=232 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,078 [WARNING]   [inv_txn] src txn_id=1143: ref bill id=232 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,078 [WARNING]   [inv_txn] src txn_id=1142: ref bill id=232 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,082 [WARNING]   [inv_txn] src txn_id=1158: ref bill id=236 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,083 [WARNING]   [inv_txn] src txn_id=1157: ref bill id=236 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,083 [WARNING]   [inv_txn] src txn_id=1159: ref bill id=236 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,087 [WARNING]   [inv_txn] src txn_id=1174: ref bill id=241 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,087 [WARNING]   [inv_txn] src txn_id=1173: ref bill id=241 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,087 [WARNING]   [inv_txn] src txn_id=1172: ref bill id=241 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,087 [WARNING]   [inv_txn] src txn_id=1171: ref bill id=241 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,088 [WARNING]   [inv_txn] src txn_id=1167: ref bill id=238 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,094 [WARNING]   [inv_txn] src txn_id=1208: ref bill id=250 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,100 [WARNING]   [inv_txn] src txn_id=1230: ref bill id=257 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,105 [WARNING]   [inv_txn] src txn_id=1246: ref bill id=263 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,107 [WARNING]   [inv_txn] src txn_id=1244: ref bill id=263 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,107 [WARNING]   [inv_txn] src txn_id=1245: ref bill id=263 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,109 [WARNING]   [inv_txn] src txn_id=1242: ref bill id=261 (retail_bill) not in bill_map, inserting without reference.
+2026-03-13 00:40:40,213 [INFO]   [inventory_transactions] Inserted 444 | Skipped 979 (duplicates).
+2026-03-13 00:40:40,213 [INFO] Recalculating all inventory quantities from transaction history...
+2026-03-13 00:40:40,217 [INFO]   [inventory] Quantities recalculated from transactions.
+2026-03-13 00:40:40,218 [INFO]   [inventory] All inventory quantities consistent. Zero mismatches.
+2026-03-13 00:40:40,218 [INFO] Re-enabling triggers...
+2026-03-13 00:40:40,219 [INFO] Resetting sequences...
+2026-03-13 00:40:40,229 [INFO] ============================================================
+2026-03-13 00:40:40,229 [INFO] ✅ Merge completed successfully! All changes committed.
+2026-03-13 00:40:40,229 [INFO] ============================================================

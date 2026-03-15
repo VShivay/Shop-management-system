@@ -1,0 +1,574 @@
+2026-03-12 23:50:21,578 [INFO] ============================================================
+2026-03-12 23:50:21,600 [INFO] ============================================================
+2026-03-12 23:50:21,669 [INFO] Disabling triggers on target tables...
+2026-03-12 23:50:21,678 [INFO] Merging roles...
+2026-03-12 23:50:21,689 [INFO] Merging categories...
+2026-03-12 23:50:21,709 [INFO] Merging units...
+2026-03-12 23:50:21,719 [INFO] Merging payment_methods...
+2026-03-12 23:50:21,729 [INFO] Merging expense_categories...
+2026-03-12 23:50:21,732 [INFO] Merging users...
+2026-03-12 23:50:21,740 [INFO] Merging suppliers...
+2026-03-12 23:50:21,748 [INFO] Merging customers...
+2026-03-12 23:50:21,784 [INFO] Merging products...
+2026-03-12 23:50:21,879 [INFO] Merging prices...
+2026-03-12 23:50:21,884 [INFO]   [prices] Active price for product_id 77 already exists, skipping.
+2026-03-12 23:50:21,884 [INFO]   [prices] Active price for product_id 78 already exists, skipping.
+2026-03-12 23:50:21,884 [INFO]   [prices] Active price for product_id 28 already exists, skipping.
+2026-03-12 23:50:21,885 [INFO]   [prices] Active price for product_id 28 already exists, skipping.
+2026-03-12 23:50:21,885 [INFO]   [prices] Active price for product_id 77 already exists, skipping.
+2026-03-12 23:50:21,885 [INFO]   [prices] Active price for product_id 52 already exists, skipping.
+2026-03-12 23:50:21,885 [INFO]   [prices] Active price for product_id 4 already exists, skipping.
+2026-03-12 23:50:21,886 [INFO]   [prices] Active price for product_id 4 already exists, skipping.
+2026-03-12 23:50:21,886 [INFO]   [prices] Active price for product_id 4 already exists, skipping.
+2026-03-12 23:50:21,886 [INFO]   [prices] Active price for product_id 5 already exists, skipping.
+2026-03-12 23:50:21,886 [INFO]   [prices] Active price for product_id 7 already exists, skipping.
+2026-03-12 23:50:21,886 [INFO]   [prices] Active price for product_id 8 already exists, skipping.
+2026-03-12 23:50:21,886 [INFO]   [prices] Active price for product_id 10 already exists, skipping.
+2026-03-12 23:50:21,887 [INFO]   [prices] Active price for product_id 9 already exists, skipping.
+2026-03-12 23:50:21,887 [INFO]   [prices] Active price for product_id 9 already exists, skipping.
+2026-03-12 23:50:21,887 [INFO]   [prices] Active price for product_id 13 already exists, skipping.
+2026-03-12 23:50:21,887 [INFO]   [prices] Active price for product_id 14 already exists, skipping.
+2026-03-12 23:50:21,888 [INFO]   [prices] Active price for product_id 15 already exists, skipping.
+2026-03-12 23:50:21,888 [INFO]   [prices] Active price for product_id 16 already exists, skipping.
+2026-03-12 23:50:21,888 [INFO]   [prices] Active price for product_id 17 already exists, skipping.
+2026-03-12 23:50:21,888 [INFO]   [prices] Active price for product_id 18 already exists, skipping.
+2026-03-12 23:50:21,888 [INFO]   [prices] Active price for product_id 19 already exists, skipping.
+2026-03-12 23:50:21,889 [INFO]   [prices] Active price for product_id 20 already exists, skipping.
+2026-03-12 23:50:21,889 [INFO]   [prices] Active price for product_id 21 already exists, skipping.
+2026-03-12 23:50:21,889 [INFO]   [prices] Active price for product_id 22 already exists, skipping.
+2026-03-12 23:50:21,889 [INFO]   [prices] Active price for product_id 23 already exists, skipping.
+2026-03-12 23:50:21,891 [INFO]   [prices] Active price for product_id 25 already exists, skipping.
+2026-03-12 23:50:21,891 [INFO]   [prices] Active price for product_id 26 already exists, skipping.
+2026-03-12 23:50:21,891 [INFO]   [prices] Active price for product_id 27 already exists, skipping.
+2026-03-12 23:50:21,891 [INFO]   [prices] Active price for product_id 30 already exists, skipping.
+2026-03-12 23:50:21,892 [INFO]   [prices] Active price for product_id 31 already exists, skipping.
+2026-03-12 23:50:21,892 [INFO]   [prices] Active price for product_id 32 already exists, skipping.
+2026-03-12 23:50:21,892 [INFO]   [prices] Active price for product_id 33 already exists, skipping.
+2026-03-12 23:50:21,892 [INFO]   [prices] Active price for product_id 34 already exists, skipping.
+2026-03-12 23:50:21,893 [INFO]   [prices] Active price for product_id 35 already exists, skipping.
+2026-03-12 23:50:21,893 [INFO]   [prices] Active price for product_id 36 already exists, skipping.
+2026-03-12 23:50:21,893 [INFO]   [prices] Active price for product_id 37 already exists, skipping.
+2026-03-12 23:50:21,893 [INFO]   [prices] Active price for product_id 39 already exists, skipping.
+2026-03-12 23:50:21,894 [INFO]   [prices] Active price for product_id 38 already exists, skipping.
+2026-03-12 23:50:21,894 [INFO]   [prices] Active price for product_id 38 already exists, skipping.
+2026-03-12 23:50:21,894 [INFO]   [prices] Active price for product_id 40 already exists, skipping.
+2026-03-12 23:50:21,894 [INFO]   [prices] Active price for product_id 41 already exists, skipping.
+2026-03-12 23:50:21,894 [INFO]   [prices] Active price for product_id 42 already exists, skipping.
+2026-03-12 23:50:21,895 [INFO]   [prices] Active price for product_id 43 already exists, skipping.
+2026-03-12 23:50:21,895 [INFO]   [prices] Active price for product_id 44 already exists, skipping.
+2026-03-12 23:50:21,895 [INFO]   [prices] Active price for product_id 45 already exists, skipping.
+2026-03-12 23:50:21,895 [INFO]   [prices] Active price for product_id 47 already exists, skipping.
+2026-03-12 23:50:21,895 [INFO]   [prices] Active price for product_id 47 already exists, skipping.
+2026-03-12 23:50:21,896 [INFO]   [prices] Active price for product_id 48 already exists, skipping.
+2026-03-12 23:50:21,896 [INFO]   [prices] Active price for product_id 49 already exists, skipping.
+2026-03-12 23:50:21,896 [INFO]   [prices] Active price for product_id 50 already exists, skipping.
+2026-03-12 23:50:21,897 [INFO]   [prices] Active price for product_id 51 already exists, skipping.
+2026-03-12 23:50:21,897 [INFO]   [prices] Active price for product_id 53 already exists, skipping.
+2026-03-12 23:50:21,897 [INFO]   [prices] Active price for product_id 54 already exists, skipping.
+2026-03-12 23:50:21,897 [INFO]   [prices] Active price for product_id 55 already exists, skipping.
+2026-03-12 23:50:21,897 [INFO]   [prices] Active price for product_id 24 already exists, skipping.
+2026-03-12 23:50:21,898 [INFO]   [prices] Active price for product_id 24 already exists, skipping.
+2026-03-12 23:50:21,898 [INFO]   [prices] Active price for product_id 57 already exists, skipping.
+2026-03-12 23:50:21,898 [INFO]   [prices] Active price for product_id 58 already exists, skipping.
+2026-03-12 23:50:21,898 [INFO]   [prices] Active price for product_id 58 already exists, skipping.
+2026-03-12 23:50:21,898 [INFO]   [prices] Active price for product_id 59 already exists, skipping.
+2026-03-12 23:50:21,900 [INFO]   [prices] Active price for product_id 59 already exists, skipping.
+2026-03-12 23:50:21,900 [INFO]   [prices] Active price for product_id 60 already exists, skipping.
+2026-03-12 23:50:21,900 [INFO]   [prices] Active price for product_id 61 already exists, skipping.
+2026-03-12 23:50:21,900 [INFO]   [prices] Active price for product_id 12 already exists, skipping.
+2026-03-12 23:50:21,900 [INFO]   [prices] Active price for product_id 12 already exists, skipping.
+2026-03-12 23:50:21,901 [INFO]   [prices] Active price for product_id 64 already exists, skipping.
+2026-03-12 23:50:21,901 [INFO]   [prices] Active price for product_id 65 already exists, skipping.
+2026-03-12 23:50:21,901 [INFO]   [prices] Active price for product_id 66 already exists, skipping.
+2026-03-12 23:50:21,901 [INFO]   [prices] Active price for product_id 67 already exists, skipping.
+2026-03-12 23:50:21,901 [INFO]   [prices] Active price for product_id 68 already exists, skipping.
+2026-03-12 23:50:21,902 [INFO]   [prices] Active price for product_id 69 already exists, skipping.
+2026-03-12 23:50:21,902 [INFO]   [prices] Active price for product_id 70 already exists, skipping.
+2026-03-12 23:50:21,902 [INFO]   [prices] Active price for product_id 71 already exists, skipping.
+2026-03-12 23:50:21,902 [INFO]   [prices] Active price for product_id 71 already exists, skipping.
+2026-03-12 23:50:21,902 [INFO]   [prices] Active price for product_id 71 already exists, skipping.
+2026-03-12 23:50:21,903 [INFO]   [prices] Active price for product_id 72 already exists, skipping.
+2026-03-12 23:50:21,903 [INFO]   [prices] Active price for product_id 73 already exists, skipping.
+2026-03-12 23:50:21,903 [INFO]   [prices] Active price for product_id 74 already exists, skipping.
+2026-03-12 23:50:21,903 [INFO]   [prices] Active price for product_id 75 already exists, skipping.
+2026-03-12 23:50:21,905 [INFO]   [prices] Active price for product_id 76 already exists, skipping.
+2026-03-12 23:50:21,905 [INFO]   [prices] Active price for product_id 6 already exists, skipping.
+2026-03-12 23:50:21,905 [INFO]   [prices] Active price for product_id 6 already exists, skipping.
+2026-03-12 23:50:21,905 [INFO]   [prices] Active price for product_id 6 already exists, skipping.
+2026-03-12 23:50:21,906 [INFO]   [prices] Active price for product_id 6 already exists, skipping.
+2026-03-12 23:50:21,906 [INFO]   [prices] Active price for product_id 6 already exists, skipping.
+2026-03-12 23:50:21,906 [INFO]   [prices] Active price for product_id 82 already exists, skipping.
+2026-03-12 23:50:21,906 [INFO]   [prices] Active price for product_id 11 already exists, skipping.
+2026-03-12 23:50:21,907 [INFO]   [prices] Active price for product_id 11 already exists, skipping.
+2026-03-12 23:50:21,907 [INFO] Merging product_suppliers...
+2026-03-12 23:50:21,917 [INFO] Merging retail_bills...
+2026-03-12 23:50:21,924 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000001' exists with different timestamp. Inserting as 'RB-000001_changed'.
+2026-03-12 23:50:21,937 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000002' exists with different timestamp. Inserting as 'RB-000002_changed'.
+2026-03-12 23:50:21,940 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000004' exists with different timestamp. Inserting as 'RB-000004_changed'.
+2026-03-12 23:50:21,942 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000006' exists with different timestamp. Inserting as 'RB-000006_changed'.
+2026-03-12 23:50:21,945 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000007' exists with different timestamp. Inserting as 'RB-000007_changed'.
+2026-03-12 23:50:21,947 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000009' exists with different timestamp. Inserting as 'RB-000009_changed'.
+2026-03-12 23:50:21,950 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000008' exists with different timestamp. Inserting as 'RB-000008_changed'.
+2026-03-12 23:50:21,953 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000010' exists with different timestamp. Inserting as 'RB-000010_changed'.
+2026-03-12 23:50:21,955 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000012' exists with different timestamp. Inserting as 'RB-000012_changed'.
+2026-03-12 23:50:21,957 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000016' exists with different timestamp. Inserting as 'RB-000016_changed'.
+2026-03-12 23:50:21,960 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000014' exists with different timestamp. Inserting as 'RB-000014_changed'.
+2026-03-12 23:50:21,962 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000013' exists with different timestamp. Inserting as 'RB-000013_changed'.
+2026-03-12 23:50:21,963 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000020' exists with different timestamp. Inserting as 'RB-000020_changed'.
+2026-03-12 23:50:21,967 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000021' exists with different timestamp. Inserting as 'RB-000021_changed'.
+2026-03-12 23:50:21,969 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000022' exists with different timestamp. Inserting as 'RB-000022_changed'.
+2026-03-12 23:50:21,971 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000023' exists with different timestamp. Inserting as 'RB-000023_changed'.
+2026-03-12 23:50:21,973 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000024' exists with different timestamp. Inserting as 'RB-000024_changed'.
+2026-03-12 23:50:21,976 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000028' exists with different timestamp. Inserting as 'RB-000028_changed'.
+2026-03-12 23:50:21,978 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000026' exists with different timestamp. Inserting as 'RB-000026_changed'.
+2026-03-12 23:50:21,980 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000030' exists with different timestamp. Inserting as 'RB-000030_changed'.
+2026-03-12 23:50:21,983 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000031' exists with different timestamp. Inserting as 'RB-000031_changed'.
+2026-03-12 23:50:21,985 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000029' exists with different timestamp. Inserting as 'RB-000029_changed'.
+2026-03-12 23:50:21,988 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000032' exists with different timestamp. Inserting as 'RB-000032_changed'.
+2026-03-12 23:50:21,990 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000034' exists with different timestamp. Inserting as 'RB-000034_changed'.
+2026-03-12 23:50:21,993 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000036' exists with different timestamp. Inserting as 'RB-000036_changed'.
+2026-03-12 23:50:21,995 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000033' exists with different timestamp. Inserting as 'RB-000033_changed'.
+2026-03-12 23:50:21,998 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000040' exists with different timestamp. Inserting as 'RB-000040_changed'.
+2026-03-12 23:50:22,001 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000042' exists with different timestamp. Inserting as 'RB-000042_changed'.
+2026-03-12 23:50:22,003 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000039' exists with different timestamp. Inserting as 'RB-000039_changed'.
+2026-03-12 23:50:22,005 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000038' exists with different timestamp. Inserting as 'RB-000038_changed'.
+2026-03-12 23:50:22,008 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000041' exists with different timestamp. Inserting as 'RB-000041_changed'.
+2026-03-12 23:50:22,011 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000044' exists with different timestamp. Inserting as 'RB-000044_changed'.
+2026-03-12 23:50:22,013 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000043' exists with different timestamp. Inserting as 'RB-000043_changed'.
+2026-03-12 23:50:22,015 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000050' exists with different timestamp. Inserting as 'RB-000050_changed'.
+2026-03-12 23:50:22,018 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000052' exists with different timestamp. Inserting as 'RB-000052_changed'.
+2026-03-12 23:50:22,020 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000051' exists with different timestamp. Inserting as 'RB-000051_changed'.
+2026-03-12 23:50:22,023 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000046' exists with different timestamp. Inserting as 'RB-000046_changed'.
+2026-03-12 23:50:22,025 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000048' exists with different timestamp. Inserting as 'RB-000048_changed'.
+2026-03-12 23:50:22,027 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000047' exists with different timestamp. Inserting as 'RB-000047_changed'.
+2026-03-12 23:50:22,030 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000049' exists with different timestamp. Inserting as 'RB-000049_changed'.
+2026-03-12 23:50:22,032 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000056' exists with different timestamp. Inserting as 'RB-000056_changed'.
+2026-03-12 23:50:22,035 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000057' exists with different timestamp. Inserting as 'RB-000057_changed'.
+2026-03-12 23:50:22,037 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000055' exists with different timestamp. Inserting as 'RB-000055_changed'.
+2026-03-12 23:50:22,039 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000053' exists with different timestamp. Inserting as 'RB-000053_changed'.
+2026-03-12 23:50:22,041 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000054' exists with different timestamp. Inserting as 'RB-000054_changed'.
+2026-03-12 23:50:22,044 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000058' exists with different timestamp. Inserting as 'RB-000058_changed'.
+2026-03-12 23:50:22,046 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000062' exists with different timestamp. Inserting as 'RB-000062_changed'.
+2026-03-12 23:50:22,048 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000060' exists with different timestamp. Inserting as 'RB-000060_changed'.
+2026-03-12 23:50:22,051 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000059' exists with different timestamp. Inserting as 'RB-000059_changed'.
+2026-03-12 23:50:22,053 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000063' exists with different timestamp. Inserting as 'RB-000063_changed'.
+2026-03-12 23:50:22,056 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000068' exists with different timestamp. Inserting as 'RB-000068_changed'.
+2026-03-12 23:50:22,058 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000066' exists with different timestamp. Inserting as 'RB-000066_changed'.
+2026-03-12 23:50:22,060 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000071' exists with different timestamp. Inserting as 'RB-000071_changed'.
+2026-03-12 23:50:22,062 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000073' exists with different timestamp. Inserting as 'RB-000073_changed'.
+2026-03-12 23:50:22,065 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000075' exists with different timestamp. Inserting as 'RB-000075_changed'.
+2026-03-12 23:50:22,067 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000078' exists with different timestamp. Inserting as 'RB-000078_changed'.
+2026-03-12 23:50:22,069 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000076' exists with different timestamp. Inserting as 'RB-000076_changed'.
+2026-03-12 23:50:22,072 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000077' exists with different timestamp. Inserting as 'RB-000077_changed'.
+2026-03-12 23:50:22,074 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000081' exists with different timestamp. Inserting as 'RB-000081_changed'.
+2026-03-12 23:50:22,077 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000082' exists with different timestamp. Inserting as 'RB-000082_changed'.
+2026-03-12 23:50:22,080 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000080' exists with different timestamp. Inserting as 'RB-000080_changed'.
+2026-03-12 23:50:22,082 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000084' exists with different timestamp. Inserting as 'RB-000084_changed'.
+2026-03-12 23:50:22,084 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000087' exists with different timestamp. Inserting as 'RB-000087_changed'.
+2026-03-12 23:50:22,087 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000085' exists with different timestamp. Inserting as 'RB-000085_changed'.
+2026-03-12 23:50:22,089 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000086' exists with different timestamp. Inserting as 'RB-000086_changed'.
+2026-03-12 23:50:22,091 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000089' exists with different timestamp. Inserting as 'RB-000089_changed'.
+2026-03-12 23:50:22,093 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000090' exists with different timestamp. Inserting as 'RB-000090_changed'.
+2026-03-12 23:50:22,096 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000092' exists with different timestamp. Inserting as 'RB-000092_changed'.
+2026-03-12 23:50:22,098 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000093' exists with different timestamp. Inserting as 'RB-000093_changed'.
+2026-03-12 23:50:22,100 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000098' exists with different timestamp. Inserting as 'RB-000098_changed'.
+2026-03-12 23:50:22,103 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000099' exists with different timestamp. Inserting as 'RB-000099_changed'.
+2026-03-12 23:50:22,105 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000097' exists with different timestamp. Inserting as 'RB-000097_changed'.
+2026-03-12 23:50:22,106 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000102' exists with different timestamp. Inserting as 'RB-000102_changed'.
+2026-03-12 23:50:22,108 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000101' exists with different timestamp. Inserting as 'RB-000101_changed'.
+2026-03-12 23:50:22,112 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000100' exists with different timestamp. Inserting as 'RB-000100_changed'.
+2026-03-12 23:50:22,114 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000103' exists with different timestamp. Inserting as 'RB-000103_changed'.
+2026-03-12 23:50:22,117 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000105' exists with different timestamp. Inserting as 'RB-000105_changed'.
+2026-03-12 23:50:22,118 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000107' exists with different timestamp. Inserting as 'RB-000107_changed'.
+2026-03-12 23:50:22,121 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000104' exists with different timestamp. Inserting as 'RB-000104_changed'.
+2026-03-12 23:50:22,124 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000108' exists with different timestamp. Inserting as 'RB-000108_changed'.
+2026-03-12 23:50:22,126 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000106' exists with different timestamp. Inserting as 'RB-000106_changed'.
+2026-03-12 23:50:22,128 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000110' exists with different timestamp. Inserting as 'RB-000110_changed'.
+2026-03-12 23:50:22,130 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000113' exists with different timestamp. Inserting as 'RB-000113_changed'.
+2026-03-12 23:50:22,133 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000114' exists with different timestamp. Inserting as 'RB-000114_changed'.
+2026-03-12 23:50:22,135 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000111' exists with different timestamp. Inserting as 'RB-000111_changed'.
+2026-03-12 23:50:22,138 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000112' exists with different timestamp. Inserting as 'RB-000112_changed'.
+2026-03-12 23:50:22,140 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000115' exists with different timestamp. Inserting as 'RB-000115_changed'.
+2026-03-12 23:50:22,142 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000118' exists with different timestamp. Inserting as 'RB-000118_changed'.
+2026-03-12 23:50:22,144 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000116' exists with different timestamp. Inserting as 'RB-000116_changed'.
+2026-03-12 23:50:22,148 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000120' exists with different timestamp. Inserting as 'RB-000120_changed'.
+2026-03-12 23:50:22,150 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000119' exists with different timestamp. Inserting as 'RB-000119_changed'.
+2026-03-12 23:50:22,152 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000125' exists with different timestamp. Inserting as 'RB-000125_changed'.
+2026-03-12 23:50:22,154 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000126' exists with different timestamp. Inserting as 'RB-000126_changed'.
+2026-03-12 23:50:22,156 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000124' exists with different timestamp. Inserting as 'RB-000124_changed'.
+2026-03-12 23:50:22,158 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000122' exists with different timestamp. Inserting as 'RB-000122_changed'.
+2026-03-12 23:50:22,161 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000131' exists with different timestamp. Inserting as 'RB-000131_changed'.
+2026-03-12 23:50:22,163 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000128' exists with different timestamp. Inserting as 'RB-000128_changed'.
+2026-03-12 23:50:22,165 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000129' exists with different timestamp. Inserting as 'RB-000129_changed'.
+2026-03-12 23:50:22,169 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000130' exists with different timestamp. Inserting as 'RB-000130_changed'.
+2026-03-12 23:50:22,171 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000132' exists with different timestamp. Inserting as 'RB-000132_changed'.
+2026-03-12 23:50:22,174 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000135' exists with different timestamp. Inserting as 'RB-000135_changed'.
+2026-03-12 23:50:22,176 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000137' exists with different timestamp. Inserting as 'RB-000137_changed'.
+2026-03-12 23:50:22,178 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000136' exists with different timestamp. Inserting as 'RB-000136_changed'.
+2026-03-12 23:50:22,181 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000140' exists with different timestamp. Inserting as 'RB-000140_changed'.
+2026-03-12 23:50:22,183 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000138' exists with different timestamp. Inserting as 'RB-000138_changed'.
+2026-03-12 23:50:22,186 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000139' exists with different timestamp. Inserting as 'RB-000139_changed'.
+2026-03-12 23:50:22,188 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000141' exists with different timestamp. Inserting as 'RB-000141_changed'.
+2026-03-12 23:50:22,190 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000144' exists with different timestamp. Inserting as 'RB-000144_changed'.
+2026-03-12 23:50:22,193 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000145' exists with different timestamp. Inserting as 'RB-000145_changed'.
+2026-03-12 23:50:22,195 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000142' exists with different timestamp. Inserting as 'RB-000142_changed'.
+2026-03-12 23:50:22,198 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000143' exists with different timestamp. Inserting as 'RB-000143_changed'.
+2026-03-12 23:50:22,200 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000147' exists with different timestamp. Inserting as 'RB-000147_changed'.
+2026-03-12 23:50:22,203 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000148' exists with different timestamp. Inserting as 'RB-000148_changed'.
+2026-03-12 23:50:22,204 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000149' exists with different timestamp. Inserting as 'RB-000149_changed'.
+2026-03-12 23:50:22,207 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000151' exists with different timestamp. Inserting as 'RB-000151_changed'.
+2026-03-12 23:50:22,209 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000152' exists with different timestamp. Inserting as 'RB-000152_changed'.
+2026-03-12 23:50:22,210 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000150' exists with different timestamp. Inserting as 'RB-000150_changed'.
+2026-03-12 23:50:22,212 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000153' exists with different timestamp. Inserting as 'RB-000153_changed'.
+2026-03-12 23:50:22,215 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000155' exists with different timestamp. Inserting as 'RB-000155_changed'.
+2026-03-12 23:50:22,217 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000156' exists with different timestamp. Inserting as 'RB-000156_changed'.
+2026-03-12 23:50:22,219 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000159' exists with different timestamp. Inserting as 'RB-000159_changed'.
+2026-03-12 23:50:22,222 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000157' exists with different timestamp. Inserting as 'RB-000157_changed'.
+2026-03-12 23:50:22,224 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000158' exists with different timestamp. Inserting as 'RB-000158_changed'.
+2026-03-12 23:50:22,227 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000160' exists with different timestamp. Inserting as 'RB-000160_changed'.
+2026-03-12 23:50:22,229 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000164' exists with different timestamp. Inserting as 'RB-000164_changed'.
+2026-03-12 23:50:22,233 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000161' exists with different timestamp. Inserting as 'RB-000161_changed'.
+2026-03-12 23:50:22,234 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000162' exists with different timestamp. Inserting as 'RB-000162_changed'.
+2026-03-12 23:50:22,238 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000167' exists with different timestamp. Inserting as 'RB-000167_changed'.
+2026-03-12 23:50:22,240 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000169' exists with different timestamp. Inserting as 'RB-000169_changed'.
+2026-03-12 23:50:22,243 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000165' exists with different timestamp. Inserting as 'RB-000165_changed'.
+2026-03-12 23:50:22,245 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000171' exists with different timestamp. Inserting as 'RB-000171_changed'.
+2026-03-12 23:50:22,248 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000170' exists with different timestamp. Inserting as 'RB-000170_changed'.
+2026-03-12 23:50:22,250 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000166' exists with different timestamp. Inserting as 'RB-000166_changed'.
+2026-03-12 23:50:22,252 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000174' exists with different timestamp. Inserting as 'RB-000174_changed'.
+2026-03-12 23:50:22,256 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000173' exists with different timestamp. Inserting as 'RB-000173_changed'.
+2026-03-12 23:50:22,257 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000177' exists with different timestamp. Inserting as 'RB-000177_changed'.
+2026-03-12 23:50:22,260 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000175' exists with different timestamp. Inserting as 'RB-000175_changed'.
+2026-03-12 23:50:22,262 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000176' exists with different timestamp. Inserting as 'RB-000176_changed'.
+2026-03-12 23:50:22,265 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000180' exists with different timestamp. Inserting as 'RB-000180_changed'.
+2026-03-12 23:50:22,266 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000182' exists with different timestamp. Inserting as 'RB-000182_changed'.
+2026-03-12 23:50:22,268 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000178' exists with different timestamp. Inserting as 'RB-000178_changed'.
+2026-03-12 23:50:22,271 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000181' exists with different timestamp. Inserting as 'RB-000181_changed'.
+2026-03-12 23:50:22,274 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000183' exists with different timestamp. Inserting as 'RB-000183_changed'.
+2026-03-12 23:50:22,276 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000187' exists with different timestamp. Inserting as 'RB-000187_changed'.
+2026-03-12 23:50:22,278 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000184' exists with different timestamp. Inserting as 'RB-000184_changed'.
+2026-03-12 23:50:22,281 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000185' exists with different timestamp. Inserting as 'RB-000185_changed'.
+2026-03-12 23:50:22,283 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000188' exists with different timestamp. Inserting as 'RB-000188_changed'.
+2026-03-12 23:50:22,284 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000186' exists with different timestamp. Inserting as 'RB-000186_changed'.
+2026-03-12 23:50:22,288 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000189' exists with different timestamp. Inserting as 'RB-000189_changed'.
+2026-03-12 23:50:22,290 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000191' exists with different timestamp. Inserting as 'RB-000191_changed'.
+2026-03-12 23:50:22,292 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000190' exists with different timestamp. Inserting as 'RB-000190_changed'.
+2026-03-12 23:50:22,294 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000192' exists with different timestamp. Inserting as 'RB-000192_changed'.
+2026-03-12 23:50:22,296 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000193' exists with different timestamp. Inserting as 'RB-000193_changed'.
+2026-03-12 23:50:22,299 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000194' exists with different timestamp. Inserting as 'RB-000194_changed'.
+2026-03-12 23:50:22,301 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000197' exists with different timestamp. Inserting as 'RB-000197_changed'.
+2026-03-12 23:50:22,304 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000199' exists with different timestamp. Inserting as 'RB-000199_changed'.
+2026-03-12 23:50:22,306 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000198' exists with different timestamp. Inserting as 'RB-000198_changed'.
+2026-03-12 23:50:22,308 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000200' exists with different timestamp. Inserting as 'RB-000200_changed'.
+2026-03-12 23:50:22,310 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000202' exists with different timestamp. Inserting as 'RB-000202_changed'.
+2026-03-12 23:50:22,312 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000203' exists with different timestamp. Inserting as 'RB-000203_changed'.
+2026-03-12 23:50:22,314 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000205' exists with different timestamp. Inserting as 'RB-000205_changed'.
+2026-03-12 23:50:22,317 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000209' exists with different timestamp. Inserting as 'RB-000209_changed'.
+2026-03-12 23:50:22,319 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000206' exists with different timestamp. Inserting as 'RB-000206_changed'.
+2026-03-12 23:50:22,323 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000207' exists with different timestamp. Inserting as 'RB-000207_changed'.
+2026-03-12 23:50:22,325 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000212' exists with different timestamp. Inserting as 'RB-000212_changed'.
+2026-03-12 23:50:22,327 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000210' exists with different timestamp. Inserting as 'RB-000210_changed'.
+2026-03-12 23:50:22,329 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000213' exists with different timestamp. Inserting as 'RB-000213_changed'.
+2026-03-12 23:50:22,332 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000215' exists with different timestamp. Inserting as 'RB-000215_changed'.
+2026-03-12 23:50:22,334 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000217' exists with different timestamp. Inserting as 'RB-000217_changed'.
+2026-03-12 23:50:22,337 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000216' exists with different timestamp. Inserting as 'RB-000216_changed'.
+2026-03-12 23:50:22,339 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000214' exists with different timestamp. Inserting as 'RB-000214_changed'.
+2026-03-12 23:50:22,341 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000220' exists with different timestamp. Inserting as 'RB-000220_changed'.
+2026-03-12 23:50:22,343 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000219' exists with different timestamp. Inserting as 'RB-000219_changed'.
+2026-03-12 23:50:22,346 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000218' exists with different timestamp. Inserting as 'RB-000218_changed'.
+2026-03-12 23:50:22,349 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000222' exists with different timestamp. Inserting as 'RB-000222_changed'.
+2026-03-12 23:50:22,352 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000223' exists with different timestamp. Inserting as 'RB-000223_changed'.
+2026-03-12 23:50:22,354 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000226' exists with different timestamp. Inserting as 'RB-000226_changed'.
+2026-03-12 23:50:22,356 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000227' exists with different timestamp. Inserting as 'RB-000227_changed'.
+2026-03-12 23:50:22,359 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000228' exists with different timestamp. Inserting as 'RB-000228_changed'.
+2026-03-12 23:50:22,362 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000230' exists with different timestamp. Inserting as 'RB-000230_changed'.
+2026-03-12 23:50:22,364 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000229' exists with different timestamp. Inserting as 'RB-000229_changed'.
+2026-03-12 23:50:22,366 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000236' exists with different timestamp. Inserting as 'RB-000236_changed'.
+2026-03-12 23:50:22,367 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000234' exists with different timestamp. Inserting as 'RB-000234_changed'.
+2026-03-12 23:50:22,371 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000233' exists with different timestamp. Inserting as 'RB-000233_changed'.
+2026-03-12 23:50:22,373 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000232' exists with different timestamp. Inserting as 'RB-000232_changed'.
+2026-03-12 23:50:22,376 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000238' exists with different timestamp. Inserting as 'RB-000238_changed'.
+2026-03-12 23:50:22,377 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000239' exists with different timestamp. Inserting as 'RB-000239_changed'.
+2026-03-12 23:50:22,379 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000241' exists with different timestamp. Inserting as 'RB-000241_changed'.
+2026-03-12 23:50:22,382 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000245' exists with different timestamp. Inserting as 'RB-000245_changed'.
+2026-03-12 23:50:22,384 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000244' exists with different timestamp. Inserting as 'RB-000244_changed'.
+2026-03-12 23:50:22,387 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000243' exists with different timestamp. Inserting as 'RB-000243_changed'.
+2026-03-12 23:50:22,389 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000242' exists with different timestamp. Inserting as 'RB-000242_changed'.
+2026-03-12 23:50:22,392 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000246' exists with different timestamp. Inserting as 'RB-000246_changed'.
+2026-03-12 23:50:22,394 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000248' exists with different timestamp. Inserting as 'RB-000248_changed'.
+2026-03-12 23:50:22,397 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000251' exists with different timestamp. Inserting as 'RB-000251_changed'.
+2026-03-12 23:50:22,399 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000247' exists with different timestamp. Inserting as 'RB-000247_changed'.
+2026-03-12 23:50:22,401 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000250' exists with different timestamp. Inserting as 'RB-000250_changed'.
+2026-03-12 23:50:22,403 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000252' exists with different timestamp. Inserting as 'RB-000252_changed'.
+2026-03-12 23:50:22,406 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000255' exists with different timestamp. Inserting as 'RB-000255_changed'.
+2026-03-12 23:50:22,408 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000253' exists with different timestamp. Inserting as 'RB-000253_changed'.
+2026-03-12 23:50:22,409 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000258' exists with different timestamp. Inserting as 'RB-000258_changed'.
+2026-03-12 23:50:22,413 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000257' exists with different timestamp. Inserting as 'RB-000257_changed'.
+2026-03-12 23:50:22,414 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000254' exists with different timestamp. Inserting as 'RB-000254_changed'.
+2026-03-12 23:50:22,416 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000261' exists with different timestamp. Inserting as 'RB-000261_changed'.
+2026-03-12 23:50:22,418 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000263' exists with different timestamp. Inserting as 'RB-000263_changed'.
+2026-03-12 23:50:22,421 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000259' exists with different timestamp. Inserting as 'RB-000259_changed'.
+2026-03-12 23:50:22,422 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000265' exists with different timestamp. Inserting as 'RB-000265_changed'.
+2026-03-12 23:50:22,426 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000264' exists with different timestamp. Inserting as 'RB-000264_changed'.
+2026-03-12 23:50:22,428 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-000266' exists with different timestamp. Inserting as 'RB-000266_changed'.
+2026-03-12 23:50:22,431 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-1773043176956-397' exists with different timestamp. Inserting as 'RB-1773043176956-397_changed'.
+2026-03-12 23:50:22,433 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-1773054291163-294' exists with different timestamp. Inserting as 'RB-1773054291163-294_changed'.
+2026-03-12 23:50:22,435 [WARNING]   [retail_bills] CONFLICT: bill_number 'RB-1773228527934-199' exists with different timestamp. Inserting as 'RB-1773228527934-199_changed'.
+2026-03-12 23:50:22,437 [INFO] Merging wholesale_bills...
+2026-03-12 23:50:22,442 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000001' exists with different timestamp. Inserting as 'WB-000001_changed'.
+2026-03-12 23:50:22,456 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000003' exists with different timestamp. Inserting as 'WB-000003_changed'.
+2026-03-12 23:50:22,459 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000004' exists with different timestamp. Inserting as 'WB-000004_changed'.
+2026-03-12 23:50:22,461 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000002' exists with different timestamp. Inserting as 'WB-000002_changed'.
+2026-03-12 23:50:22,464 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000005' exists with different timestamp. Inserting as 'WB-000005_changed'.
+2026-03-12 23:50:22,466 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000006' exists with different timestamp. Inserting as 'WB-000006_changed'.
+2026-03-12 23:50:22,469 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000007' exists with different timestamp. Inserting as 'WB-000007_changed'.
+2026-03-12 23:50:22,471 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000009' exists with different timestamp. Inserting as 'WB-000009_changed'.
+2026-03-12 23:50:22,473 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000010' exists with different timestamp. Inserting as 'WB-000010_changed'.
+2026-03-12 23:50:22,477 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000008' exists with different timestamp. Inserting as 'WB-000008_changed'.
+2026-03-12 23:50:22,479 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000012' exists with different timestamp. Inserting as 'WB-000012_changed'.
+2026-03-12 23:50:22,482 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000011' exists with different timestamp. Inserting as 'WB-000011_changed'.
+2026-03-12 23:50:22,485 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000013' exists with different timestamp. Inserting as 'WB-000013_changed'.
+2026-03-12 23:50:22,488 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000015' exists with different timestamp. Inserting as 'WB-000015_changed'.
+2026-03-12 23:50:22,490 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000016' exists with different timestamp. Inserting as 'WB-000016_changed'.
+2026-03-12 23:50:22,493 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000014' exists with different timestamp. Inserting as 'WB-000014_changed'.
+2026-03-12 23:50:22,497 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000018' exists with different timestamp. Inserting as 'WB-000018_changed'.
+2026-03-12 23:50:22,499 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000019' exists with different timestamp. Inserting as 'WB-000019_changed'.
+2026-03-12 23:50:22,502 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000017' exists with different timestamp. Inserting as 'WB-000017_changed'.
+2026-03-12 23:50:22,504 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000021' exists with different timestamp. Inserting as 'WB-000021_changed'.
+2026-03-12 23:50:22,506 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000020' exists with different timestamp. Inserting as 'WB-000020_changed'.
+2026-03-12 23:50:22,510 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000023' exists with different timestamp. Inserting as 'WB-000023_changed'.
+2026-03-12 23:50:22,512 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000022' exists with different timestamp. Inserting as 'WB-000022_changed'.
+2026-03-12 23:50:22,515 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000024' exists with different timestamp. Inserting as 'WB-000024_changed'.
+2026-03-12 23:50:22,517 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000026' exists with different timestamp. Inserting as 'WB-000026_changed'.
+2026-03-12 23:50:22,519 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000025' exists with different timestamp. Inserting as 'WB-000025_changed'.
+2026-03-12 23:50:22,522 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000028' exists with different timestamp. Inserting as 'WB-000028_changed'.
+2026-03-12 23:50:22,524 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000027' exists with different timestamp. Inserting as 'WB-000027_changed'.
+2026-03-12 23:50:22,530 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000030' exists with different timestamp. Inserting as 'WB-000030_changed'.
+2026-03-12 23:50:22,534 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000029' exists with different timestamp. Inserting as 'WB-000029_changed'.
+2026-03-12 23:50:22,537 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000031' exists with different timestamp. Inserting as 'WB-000031_changed'.
+2026-03-12 23:50:22,541 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000033' exists with different timestamp. Inserting as 'WB-000033_changed'.
+2026-03-12 23:50:22,544 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000032' exists with different timestamp. Inserting as 'WB-000032_changed'.
+2026-03-12 23:50:22,548 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000034' exists with different timestamp. Inserting as 'WB-000034_changed'.
+2026-03-12 23:50:22,553 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000035' exists with different timestamp. Inserting as 'WB-000035_changed'.
+2026-03-12 23:50:22,556 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000037' exists with different timestamp. Inserting as 'WB-000037_changed'.
+2026-03-12 23:50:22,559 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000036' exists with different timestamp. Inserting as 'WB-000036_changed'.
+2026-03-12 23:50:22,563 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000038' exists with different timestamp. Inserting as 'WB-000038_changed'.
+2026-03-12 23:50:22,566 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000040' exists with different timestamp. Inserting as 'WB-000040_changed'.
+2026-03-12 23:50:22,570 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000039' exists with different timestamp. Inserting as 'WB-000039_changed'.
+2026-03-12 23:50:22,573 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000041' exists with different timestamp. Inserting as 'WB-000041_changed'.
+2026-03-12 23:50:22,575 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000042' exists with different timestamp. Inserting as 'WB-000042_changed'.
+2026-03-12 23:50:22,577 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000044' exists with different timestamp. Inserting as 'WB-000044_changed'.
+2026-03-12 23:50:22,580 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000043' exists with different timestamp. Inserting as 'WB-000043_changed'.
+2026-03-12 23:50:22,582 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000045' exists with different timestamp. Inserting as 'WB-000045_changed'.
+2026-03-12 23:50:22,585 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000046' exists with different timestamp. Inserting as 'WB-000046_changed'.
+2026-03-12 23:50:22,588 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000047' exists with different timestamp. Inserting as 'WB-000047_changed'.
+2026-03-12 23:50:22,592 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000048' exists with different timestamp. Inserting as 'WB-000048_changed'.
+2026-03-12 23:50:22,595 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000050' exists with different timestamp. Inserting as 'WB-000050_changed'.
+2026-03-12 23:50:22,597 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000049' exists with different timestamp. Inserting as 'WB-000049_changed'.
+2026-03-12 23:50:22,601 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000051' exists with different timestamp. Inserting as 'WB-000051_changed'.
+2026-03-12 23:50:22,603 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000052' exists with different timestamp. Inserting as 'WB-000052_changed'.
+2026-03-12 23:50:22,606 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000058' exists with different timestamp. Inserting as 'WB-000058_changed'.
+2026-03-12 23:50:22,609 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000055' exists with different timestamp. Inserting as 'WB-000055_changed'.
+2026-03-12 23:50:22,611 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000053' exists with different timestamp. Inserting as 'WB-000053_changed'.
+2026-03-12 23:50:22,615 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000054' exists with different timestamp. Inserting as 'WB-000054_changed'.
+2026-03-12 23:50:22,617 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000057' exists with different timestamp. Inserting as 'WB-000057_changed'.
+2026-03-12 23:50:22,619 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000056' exists with different timestamp. Inserting as 'WB-000056_changed'.
+2026-03-12 23:50:22,622 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000060' exists with different timestamp. Inserting as 'WB-000060_changed'.
+2026-03-12 23:50:22,625 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000059' exists with different timestamp. Inserting as 'WB-000059_changed'.
+2026-03-12 23:50:22,628 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000061' exists with different timestamp. Inserting as 'WB-000061_changed'.
+2026-03-12 23:50:22,630 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000062' exists with different timestamp. Inserting as 'WB-000062_changed'.
+2026-03-12 23:50:22,634 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000063' exists with different timestamp. Inserting as 'WB-000063_changed'.
+2026-03-12 23:50:22,636 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000065' exists with different timestamp. Inserting as 'WB-000065_changed'.
+2026-03-12 23:50:22,638 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000064' exists with different timestamp. Inserting as 'WB-000064_changed'.
+2026-03-12 23:50:22,641 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000066' exists with different timestamp. Inserting as 'WB-000066_changed'.
+2026-03-12 23:50:22,643 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000067' exists with different timestamp. Inserting as 'WB-000067_changed'.
+2026-03-12 23:50:22,645 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000071' exists with different timestamp. Inserting as 'WB-000071_changed'.
+2026-03-12 23:50:22,647 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000070' exists with different timestamp. Inserting as 'WB-000070_changed'.
+2026-03-12 23:50:22,649 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000069' exists with different timestamp. Inserting as 'WB-000069_changed'.
+2026-03-12 23:50:22,653 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000068' exists with different timestamp. Inserting as 'WB-000068_changed'.
+2026-03-12 23:50:22,655 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000072' exists with different timestamp. Inserting as 'WB-000072_changed'.
+2026-03-12 23:50:22,656 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000073' exists with different timestamp. Inserting as 'WB-000073_changed'.
+2026-03-12 23:50:22,659 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000074' exists with different timestamp. Inserting as 'WB-000074_changed'.
+2026-03-12 23:50:22,662 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000075' exists with different timestamp. Inserting as 'WB-000075_changed'.
+2026-03-12 23:50:22,664 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000079' exists with different timestamp. Inserting as 'WB-000079_changed'.
+2026-03-12 23:50:22,665 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000076' exists with different timestamp. Inserting as 'WB-000076_changed'.
+2026-03-12 23:50:22,669 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000077' exists with different timestamp. Inserting as 'WB-000077_changed'.
+2026-03-12 23:50:22,671 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000078' exists with different timestamp. Inserting as 'WB-000078_changed'.
+2026-03-12 23:50:22,673 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000081' exists with different timestamp. Inserting as 'WB-000081_changed'.
+2026-03-12 23:50:22,675 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000082' exists with different timestamp. Inserting as 'WB-000082_changed'.
+2026-03-12 23:50:22,678 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000080' exists with different timestamp. Inserting as 'WB-000080_changed'.
+2026-03-12 23:50:22,680 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000085' exists with different timestamp. Inserting as 'WB-000085_changed'.
+2026-03-12 23:50:22,682 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000083' exists with different timestamp. Inserting as 'WB-000083_changed'.
+2026-03-12 23:50:22,684 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000084' exists with different timestamp. Inserting as 'WB-000084_changed'.
+2026-03-12 23:50:22,686 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000086' exists with different timestamp. Inserting as 'WB-000086_changed'.
+2026-03-12 23:50:22,690 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000088' exists with different timestamp. Inserting as 'WB-000088_changed'.
+2026-03-12 23:50:22,692 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000087' exists with different timestamp. Inserting as 'WB-000087_changed'.
+2026-03-12 23:50:22,694 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000092' exists with different timestamp. Inserting as 'WB-000092_changed'.
+2026-03-12 23:50:22,697 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000091' exists with different timestamp. Inserting as 'WB-000091_changed'.
+2026-03-12 23:50:22,699 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000090' exists with different timestamp. Inserting as 'WB-000090_changed'.
+2026-03-12 23:50:22,701 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000089' exists with different timestamp. Inserting as 'WB-000089_changed'.
+2026-03-12 23:50:22,705 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000093' exists with different timestamp. Inserting as 'WB-000093_changed'.
+2026-03-12 23:50:22,707 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000094' exists with different timestamp. Inserting as 'WB-000094_changed'.
+2026-03-12 23:50:22,710 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000096' exists with different timestamp. Inserting as 'WB-000096_changed'.
+2026-03-12 23:50:22,713 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000097' exists with different timestamp. Inserting as 'WB-000097_changed'.
+2026-03-12 23:50:22,715 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000095' exists with different timestamp. Inserting as 'WB-000095_changed'.
+2026-03-12 23:50:22,717 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000099' exists with different timestamp. Inserting as 'WB-000099_changed'.
+2026-03-12 23:50:22,719 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000098' exists with different timestamp. Inserting as 'WB-000098_changed'.
+2026-03-12 23:50:22,724 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000100' exists with different timestamp. Inserting as 'WB-000100_changed'.
+2026-03-12 23:50:22,726 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000101' exists with different timestamp. Inserting as 'WB-000101_changed'.
+2026-03-12 23:50:22,728 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000102' exists with different timestamp. Inserting as 'WB-000102_changed'.
+2026-03-12 23:50:22,730 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000103' exists with different timestamp. Inserting as 'WB-000103_changed'.
+2026-03-12 23:50:22,733 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000105' exists with different timestamp. Inserting as 'WB-000105_changed'.
+2026-03-12 23:50:22,735 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000104' exists with different timestamp. Inserting as 'WB-000104_changed'.
+2026-03-12 23:50:22,738 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000107' exists with different timestamp. Inserting as 'WB-000107_changed'.
+2026-03-12 23:50:22,740 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000106' exists with different timestamp. Inserting as 'WB-000106_changed'.
+2026-03-12 23:50:22,743 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000109' exists with different timestamp. Inserting as 'WB-000109_changed'.
+2026-03-12 23:50:22,745 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000111' exists with different timestamp. Inserting as 'WB-000111_changed'.
+2026-03-12 23:50:22,748 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000108' exists with different timestamp. Inserting as 'WB-000108_changed'.
+2026-03-12 23:50:22,750 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000110' exists with different timestamp. Inserting as 'WB-000110_changed'.
+2026-03-12 23:50:22,754 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000112' exists with different timestamp. Inserting as 'WB-000112_changed'.
+2026-03-12 23:50:22,756 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000113' exists with different timestamp. Inserting as 'WB-000113_changed'.
+2026-03-12 23:50:22,758 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000114' exists with different timestamp. Inserting as 'WB-000114_changed'.
+2026-03-12 23:50:22,761 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000115' exists with different timestamp. Inserting as 'WB-000115_changed'.
+2026-03-12 23:50:22,763 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000117' exists with different timestamp. Inserting as 'WB-000117_changed'.
+2026-03-12 23:50:22,765 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000116' exists with different timestamp. Inserting as 'WB-000116_changed'.
+2026-03-12 23:50:22,767 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000118' exists with different timestamp. Inserting as 'WB-000118_changed'.
+2026-03-12 23:50:22,769 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000119' exists with different timestamp. Inserting as 'WB-000119_changed'.
+2026-03-12 23:50:22,772 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000123' exists with different timestamp. Inserting as 'WB-000123_changed'.
+2026-03-12 23:50:22,775 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000122' exists with different timestamp. Inserting as 'WB-000122_changed'.
+2026-03-12 23:50:22,777 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000120' exists with different timestamp. Inserting as 'WB-000120_changed'.
+2026-03-12 23:50:22,779 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000121' exists with different timestamp. Inserting as 'WB-000121_changed'.
+2026-03-12 23:50:22,781 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000125' exists with different timestamp. Inserting as 'WB-000125_changed'.
+2026-03-12 23:50:22,783 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000124' exists with different timestamp. Inserting as 'WB-000124_changed'.
+2026-03-12 23:50:22,785 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000126' exists with different timestamp. Inserting as 'WB-000126_changed'.
+2026-03-12 23:50:22,788 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000127' exists with different timestamp. Inserting as 'WB-000127_changed'.
+2026-03-12 23:50:22,791 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000128' exists with different timestamp. Inserting as 'WB-000128_changed'.
+2026-03-12 23:50:22,792 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000130' exists with different timestamp. Inserting as 'WB-000130_changed'.
+2026-03-12 23:50:22,795 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000129' exists with different timestamp. Inserting as 'WB-000129_changed'.
+2026-03-12 23:50:22,797 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000132' exists with different timestamp. Inserting as 'WB-000132_changed'.
+2026-03-12 23:50:22,798 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000131' exists with different timestamp. Inserting as 'WB-000131_changed'.
+2026-03-12 23:50:22,802 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000135' exists with different timestamp. Inserting as 'WB-000135_changed'.
+2026-03-12 23:50:22,804 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000137' exists with different timestamp. Inserting as 'WB-000137_changed'.
+2026-03-12 23:50:22,806 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000134' exists with different timestamp. Inserting as 'WB-000134_changed'.
+2026-03-12 23:50:22,809 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000133' exists with different timestamp. Inserting as 'WB-000133_changed'.
+2026-03-12 23:50:22,812 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000136' exists with different timestamp. Inserting as 'WB-000136_changed'.
+2026-03-12 23:50:22,813 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000139' exists with different timestamp. Inserting as 'WB-000139_changed'.
+2026-03-12 23:50:22,816 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000138' exists with different timestamp. Inserting as 'WB-000138_changed'.
+2026-03-12 23:50:22,819 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000141' exists with different timestamp. Inserting as 'WB-000141_changed'.
+2026-03-12 23:50:22,821 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000140' exists with different timestamp. Inserting as 'WB-000140_changed'.
+2026-03-12 23:50:22,823 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000142' exists with different timestamp. Inserting as 'WB-000142_changed'.
+2026-03-12 23:50:22,826 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000143' exists with different timestamp. Inserting as 'WB-000143_changed'.
+2026-03-12 23:50:22,828 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000144' exists with different timestamp. Inserting as 'WB-000144_changed'.
+2026-03-12 23:50:22,830 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000145' exists with different timestamp. Inserting as 'WB-000145_changed'.
+2026-03-12 23:50:22,832 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000146' exists with different timestamp. Inserting as 'WB-000146_changed'.
+2026-03-12 23:50:22,834 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000147' exists with different timestamp. Inserting as 'WB-000147_changed'.
+2026-03-12 23:50:22,837 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000148' exists with different timestamp. Inserting as 'WB-000148_changed'.
+2026-03-12 23:50:22,840 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000149' exists with different timestamp. Inserting as 'WB-000149_changed'.
+2026-03-12 23:50:22,841 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000151' exists with different timestamp. Inserting as 'WB-000151_changed'.
+2026-03-12 23:50:22,844 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000150' exists with different timestamp. Inserting as 'WB-000150_changed'.
+2026-03-12 23:50:22,846 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000152' exists with different timestamp. Inserting as 'WB-000152_changed'.
+2026-03-12 23:50:22,848 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000153' exists with different timestamp. Inserting as 'WB-000153_changed'.
+2026-03-12 23:50:22,850 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000154' exists with different timestamp. Inserting as 'WB-000154_changed'.
+2026-03-12 23:50:22,853 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000155' exists with different timestamp. Inserting as 'WB-000155_changed'.
+2026-03-12 23:50:22,854 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000156' exists with different timestamp. Inserting as 'WB-000156_changed'.
+2026-03-12 23:50:22,857 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000159' exists with different timestamp. Inserting as 'WB-000159_changed'.
+2026-03-12 23:50:22,859 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000157' exists with different timestamp. Inserting as 'WB-000157_changed'.
+2026-03-12 23:50:22,861 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000158' exists with different timestamp. Inserting as 'WB-000158_changed'.
+2026-03-12 23:50:22,863 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000160' exists with different timestamp. Inserting as 'WB-000160_changed'.
+2026-03-12 23:50:22,866 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000161' exists with different timestamp. Inserting as 'WB-000161_changed'.
+2026-03-12 23:50:22,868 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000162' exists with different timestamp. Inserting as 'WB-000162_changed'.
+2026-03-12 23:50:22,871 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000163' exists with different timestamp. Inserting as 'WB-000163_changed'.
+2026-03-12 23:50:22,873 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000164' exists with different timestamp. Inserting as 'WB-000164_changed'.
+2026-03-12 23:50:22,875 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000165' exists with different timestamp. Inserting as 'WB-000165_changed'.
+2026-03-12 23:50:22,877 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000166' exists with different timestamp. Inserting as 'WB-000166_changed'.
+2026-03-12 23:50:22,880 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000167' exists with different timestamp. Inserting as 'WB-000167_changed'.
+2026-03-12 23:50:22,883 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-000168' exists with different timestamp. Inserting as 'WB-000168_changed'.
+2026-03-12 23:50:22,885 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-1773044031165-132' exists with different timestamp. Inserting as 'WB-1773044031165-132_changed'.
+2026-03-12 23:50:22,888 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-1773046020529-791' exists with different timestamp. Inserting as 'WB-1773046020529-791_changed'.
+2026-03-12 23:50:22,890 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-1773046043780-676' exists with different timestamp. Inserting as 'WB-1773046043780-676_changed'.
+2026-03-12 23:50:22,892 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-1773054186571-554' exists with different timestamp. Inserting as 'WB-1773054186571-554_changed'.
+2026-03-12 23:50:22,894 [WARNING]   [wholesale_bills] CONFLICT: bill_number 'WB-1773208213557-910' exists with different timestamp. Inserting as 'WB-1773208213557-910_changed'.
+2026-03-12 23:50:22,896 [INFO] Merging customer_dues...
+2026-03-12 23:50:22,925 [INFO] Merging due_payment_history...
+2026-03-12 23:50:22,943 [INFO] Merging expenses...
+2026-03-12 23:50:22,944 [INFO] Merging inventory (summing quantities)...
+2026-03-12 23:50:22,948 [INFO]   [inventory] product_id 20: 26.00 + 26.00 = 52.00
+2026-03-12 23:50:22,949 [INFO]   [inventory] product_id 33: 70.00 + 70.00 = 140.00
+2026-03-12 23:50:22,949 [INFO]   [inventory] product_id 82: 86.00 + 86.00 = 172.00
+2026-03-12 23:50:22,949 [INFO]   [inventory] product_id 28: 8.00 + 107.00 = 115.00
+2026-03-12 23:50:22,950 [INFO]   [inventory] product_id 24: 132.00 + 132.00 = 264.00
+2026-03-12 23:50:22,950 [INFO]   [inventory] product_id 69: 126.00 + 126.00 = 252.00
+2026-03-12 23:50:22,951 [INFO]   [inventory] product_id 49: 3.00 + 3.00 = 6.00
+2026-03-12 23:50:22,951 [INFO]   [inventory] product_id 36: 107.00 + 107.00 = 214.00
+2026-03-12 23:50:22,951 [INFO]   [inventory] product_id 70: 127.00 + 127.00 = 254.00
+2026-03-12 23:50:22,952 [INFO]   [inventory] product_id 15: 140.00 + 140.00 = 280.00
+2026-03-12 23:50:22,952 [INFO]   [inventory] product_id 18: 74.95 + 82.00 = 156.95
+2026-03-12 23:50:22,952 [INFO]   [inventory] product_id 58: 2.00 + 2.00 = 4.00
+2026-03-12 23:50:22,953 [INFO]   [inventory] product_id 17: 62.15 + 69.00 = 131.15
+2026-03-12 23:50:22,953 [INFO]   [inventory] product_id 21: 15.00 + 15.00 = 30.00
+2026-03-12 23:50:22,954 [INFO]   [inventory] product_id 19: 97.00 + 98.00 = 195.00
+2026-03-12 23:50:22,954 [INFO]   [inventory] product_id 26: 74.00 + 74.00 = 148.00
+2026-03-12 23:50:22,954 [INFO]   [inventory] product_id 7: 110.15 + 112.00 = 222.15
+2026-03-12 23:50:22,955 [INFO]   [inventory] product_id 77: 40.00 + 7.00 = 47.00
+2026-03-12 23:50:22,955 [INFO]   [inventory] product_id 35: 94.00 + 94.00 = 188.00
+2026-03-12 23:50:22,956 [INFO]   [inventory] product_id 47: 12.00 + 87.00 = 99.00
+2026-03-12 23:50:22,956 [INFO]   [inventory] product_id 53: 11.00 + 11.00 = 22.00
+2026-03-12 23:50:22,956 [INFO]   [inventory] product_id 11: 74.00 + 74.00 = 148.00
+2026-03-12 23:50:22,958 [INFO]   [inventory] product_id 51: 124.00 + 124.00 = 248.00
+2026-03-12 23:50:22,958 [INFO]   [inventory] product_id 64: 4.00 + 4.00 = 8.00
+2026-03-12 23:50:22,958 [INFO]   [inventory] product_id 47: 99.00 + 12.00 = 111.00
+2026-03-12 23:50:22,958 [INFO]   [inventory] product_id 66: 2.00 + 2.00 = 4.00
+2026-03-12 23:50:22,959 [INFO]   [inventory] product_id 28: 115.00 + 11.00 = 126.00
+2026-03-12 23:50:22,959 [INFO]   [inventory] product_id 43: 69.00 + 73.00 = 142.00
+2026-03-12 23:50:22,960 [INFO]   [inventory] product_id 60: 9.00 + 9.00 = 18.00
+2026-03-12 23:50:22,960 [INFO]   [inventory] product_id 65: 3.00 + 3.00 = 6.00
+2026-03-12 23:50:22,961 [INFO]   [inventory] product_id 10: 132.00 + 132.00 = 264.00
+2026-03-12 23:50:22,961 [INFO]   [inventory] product_id 13: 87.00 + 90.00 = 177.00
+2026-03-12 23:50:22,961 [INFO]   [inventory] product_id 31: 76.00 + 76.00 = 152.00
+2026-03-12 23:50:22,962 [INFO]   [inventory] product_id 41: 135.00 + 135.00 = 270.00
+2026-03-12 23:50:22,962 [INFO]   [inventory] product_id 57: 13.00 + 13.00 = 26.00
+2026-03-12 23:50:22,962 [INFO]   [inventory] product_id 14: 149.00 + 149.00 = 298.00
+2026-03-12 23:50:22,963 [INFO]   [inventory] product_id 67: 40.00 + 40.00 = 80.00
+2026-03-12 23:50:22,963 [INFO]   [inventory] product_id 55: 12.00 + 12.00 = 24.00
+2026-03-12 23:50:22,963 [INFO]   [inventory] product_id 32: 72.00 + 72.00 = 144.00
+2026-03-12 23:50:22,965 [INFO]   [inventory] product_id 42: 121.00 + 121.00 = 242.00
+2026-03-12 23:50:22,965 [INFO]   [inventory] product_id 23: 151.00 + 151.00 = 302.00
+2026-03-12 23:50:22,965 [INFO]   [inventory] product_id 44: 66.00 + 66.00 = 132.00
+2026-03-12 23:50:22,966 [INFO]   [inventory] product_id 68: 7.00 + 7.00 = 14.00
+2026-03-12 23:50:22,966 [INFO]   [inventory] product_id 16: 314.00 + 414.00 = 728.00
+2026-03-12 23:50:22,967 [INFO]   [inventory] product_id 12: 80.00 + 80.00 = 160.00
+2026-03-12 23:50:22,968 [INFO]   [inventory] product_id 38: 67.00 + 67.00 = 134.00
+2026-03-12 23:50:22,968 [INFO]   [inventory] product_id 5: 71.00 + 71.00 = 142.00
+2026-03-12 23:50:22,968 [INFO]   [inventory] product_id 48: 11.00 + 11.00 = 22.00
+2026-03-12 23:50:22,969 [INFO]   [inventory] product_id 52: 186.00 + 186.00 = 372.00
+2026-03-12 23:50:22,969 [INFO]   [inventory] product_id 50: 103.00 + 103.00 = 206.00
+2026-03-12 23:50:22,969 [INFO]   [inventory] product_id 25: 139.00 + 139.00 = 278.00
+2026-03-12 23:50:22,970 [INFO]   [inventory] product_id 78: 558.00 + 48.00 = 606.00
+2026-03-12 23:50:22,970 [INFO]   [inventory] product_id 39: 27.00 + 27.00 = 54.00
+2026-03-12 23:50:22,971 [INFO]   [inventory] product_id 74: 87.00 + 87.00 = 174.00
+2026-03-12 23:50:22,971 [INFO]   [inventory] product_id 72: 46.00 + 46.00 = 92.00
+2026-03-12 23:50:22,972 [INFO]   [inventory] product_id 61: 72.00 + 72.00 = 144.00
+2026-03-12 23:50:22,972 [INFO]   [inventory] product_id 45: 9.00 + 9.00 = 18.00
+2026-03-12 23:50:22,972 [INFO]   [inventory] product_id 34: 126.00 + 126.00 = 252.00
+2026-03-12 23:50:22,973 [INFO]   [inventory] product_id 54: 5.00 + 5.00 = 10.00
+2026-03-12 23:50:22,973 [INFO]   [inventory] product_id 77: 47.00 + 40.00 = 87.00
+2026-03-12 23:50:22,974 [INFO]   [inventory] product_id 37: 27.00 + 27.00 = 54.00
+2026-03-12 23:50:22,974 [INFO]   [inventory] product_id 73: 5.00 + 5.00 = 10.00
+2026-03-12 23:50:22,974 [INFO]   [inventory] product_id 75: 59.00 + 59.00 = 118.00
+2026-03-12 23:50:22,975 [INFO]   [inventory] product_id 59: 53.00 + 53.00 = 106.00
+2026-03-12 23:50:22,975 [INFO]   [inventory] product_id 22: 66.00 + 66.00 = 132.00
+2026-03-12 23:50:22,976 [INFO]   [inventory] product_id 4: 66.00 + 67.00 = 133.00
+2026-03-12 23:50:22,976 [INFO]   [inventory] product_id 6: 38.00 + 38.00 = 76.00
+2026-03-12 23:50:22,976 [INFO]   [inventory] product_id 40: 115.00 + 115.00 = 230.00
+2026-03-12 23:50:22,977 [INFO]   [inventory] product_id 76: 86.00 + 86.00 = 172.00
+2026-03-12 23:50:22,977 [INFO]   [inventory] product_id 8: 92.00 + 92.00 = 184.00
+2026-03-12 23:50:22,977 [INFO]   [inventory] product_id 71: 9.00 + 9.00 = 18.00
+2026-03-12 23:50:22,979 [INFO]   [inventory] product_id 27: 42.00 + 42.00 = 84.00
+2026-03-12 23:50:22,979 [INFO]   [inventory] product_id 30: 76.00 + 76.00 = 152.00
+2026-03-12 23:50:22,979 [INFO]   [inventory] product_id 9: 14.00 + 18.00 = 32.00
+2026-03-12 23:50:22,979 [INFO] Merging inventory_transactions (full history)...
+2026-03-12 23:50:23,378 [INFO]   [inventory_transactions] Inserted 32 new transaction(s).
+2026-03-12 23:50:23,378 [INFO] Re-enabling triggers...
+2026-03-12 23:50:23,380 [INFO] Resetting sequences...
+2026-03-12 23:50:23,396 [INFO] ============================================================
+2026-03-12 23:50:23,397 [INFO] ============================================================
