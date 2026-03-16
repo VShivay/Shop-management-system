@@ -1,6 +1,16 @@
 // controller/manage_product.js
 const db = require('../db');
 const Joi = require('joi');
+const { formatInTimeZone } = require('date-fns-tz'); // <-- Added import
+
+// --- HELPER: IST Date Formatting ---
+const formatDateToIST = (dateString) => {
+    if (!dateString) return null;
+    const dateObj = new Date(dateString);
+    if (isNaN(dateObj.getTime())) return null;
+    // Forces Indian Standard Time with 12-hour AM/PM format
+    return formatInTimeZone(dateObj, 'Asia/Kolkata', 'yyyy-MM-dd hh:mm:ss a');
+};
 
 // Joi Schema for validating query filters
 const filterSchema = Joi.object({
@@ -208,13 +218,28 @@ const getProductDetails = async (req, res) => {
             return res.status(404).json({ error: 'Product not found' });
         }
 
-        res.status(200).json(result.rows[0]);
+        const product = result.rows[0];
+
+        // <-- Apply Date Formatting Here -->
+        const formattedProduct = {
+            ...product,
+            last_supplied_date: formatDateToIST(product.last_supplied_date),
+            created_at: formatDateToIST(product.created_at),
+            price_effective_date: formatDateToIST(product.price_effective_date),
+            recent_logs: (Array.isArray(product.recent_logs) ? product.recent_logs : []).map(log => ({
+                ...log,
+                transaction_date: formatDateToIST(log.transaction_date)
+            }))
+        };
+
+        res.status(200).json(formattedProduct);
 
     } catch (err) {
         console.error('Error fetching product details:', err);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
 /**
  * Fetch dropdown options for frontend filters/forms
  */
@@ -246,6 +271,7 @@ const getProductDropdowns = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
 const productWriteSchema = Joi.object({
     product_name: Joi.string().trim().max(100).required(),
     category_id: Joi.number().integer().allow(null).optional(),
@@ -280,7 +306,9 @@ const productWriteSchema = Joi.object({
 const productUpdateSchema = productWriteSchema.fork(
     ['available_quantity_in_hand', 'available_quantity'], 
     (schema) => schema.forbidden()
-);/**
+);
+
+/**
  * Add a new product
  * Transactional: Inserts into products, prices, product_suppliers, and inventory_logs
  */
@@ -379,6 +407,7 @@ const addProduct = async (req, res) => {
         client.release();
     }
 };
+
 /**
  * Update product details
  * Transactional: Updates info and handles Price History (Versioning)
@@ -482,6 +511,7 @@ const updateProduct = async (req, res) => {
         client.release();
     }
 };
+
 const archiveProduct = async (req, res) => {
     const client = await db.pool.connect();
     
@@ -567,6 +597,7 @@ const deleteProduct = async (req, res) => {
         client.release();
     }
 };
+
 module.exports = {
     getProducts,
     getProductDetails,
