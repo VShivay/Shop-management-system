@@ -1,20 +1,27 @@
 const db = require('../db');
 const Joi = require('joi');
+const { formatInTimeZone } = require('date-fns-tz'); // <-- Added import
 
 const querySchema = Joi.object({
     date: Joi.date().iso().optional(),
     graph_filter: Joi.string().valid('week', 'month').default('week')
 });
 
+// --- HELPER: Get Today in strict IST ---
+const getTodayIST = () => {
+    // Generates "YYYY-MM-DD" securely locked to Indian Standard Time
+    return formatInTimeZone(new Date(), 'Asia/Kolkata', 'yyyy-MM-dd');
+};
+
 const getTodayStatus = async (req, res) => {
     try {
         const { error, value } = querySchema.validate(req.query);
         if (error) return res.status(400).json({ error: error.details[0].message });
 
-        // 1. Setup Dates
+        // 1. Setup Dates (Now uses strict IST fallback)
         const queryDate = value.date 
             ? new Date(value.date).toISOString().split('T')[0] 
-            : new Date().toISOString().split('T')[0];
+            : getTodayIST();
 
         // Interval for graph (7 days or 30 days)
         const interval = value.graph_filter === 'month' ? '30 days' : '7 days';
@@ -53,16 +60,17 @@ const getTodayStatus = async (req, res) => {
 
         // =================================================================================
         // FIX 2: GRAPH QUERY (Strict Separation of Revenue & Cost CTEs)
+        // Changed CURRENT_DATE to $1::DATE to sync graph with explicit IST date
         // =================================================================================
         const graphQuery = `
             WITH date_series AS (
-                SELECT generate_series(CURRENT_DATE - INTERVAL '${interval}', CURRENT_DATE, '1 day'::interval)::date AS day
+                SELECT generate_series($1::DATE - INTERVAL '${interval}', $1::DATE, '1 day'::interval)::date AS day
             ),
             -- 1. Retail Revenue (Bills Table Only - No Join to Items)
             retail_rev AS (
                 SELECT DATE(bill_date) as day, SUM(total_amount) as amount 
                 FROM retail_bills 
-                WHERE bill_date >= CURRENT_DATE - INTERVAL '${interval}' 
+                WHERE DATE(bill_date) >= $1::DATE - INTERVAL '${interval}' AND DATE(bill_date) <= $1::DATE
                 GROUP BY 1
             ),
             -- 2. Retail Cost (Items Table Joined to Prices)
@@ -71,14 +79,14 @@ const getTodayStatus = async (req, res) => {
                 FROM retail_bill_items rbi
                 JOIN retail_bills rb ON rbi.retail_bill_id = rb.retail_bill_id
                 JOIN prices p ON rbi.product_id = p.product_id AND p.is_active = TRUE
-                WHERE rb.bill_date >= CURRENT_DATE - INTERVAL '${interval}'
+                WHERE DATE(rb.bill_date) >= $1::DATE - INTERVAL '${interval}' AND DATE(rb.bill_date) <= $1::DATE
                 GROUP BY 1
             ),
             -- 3. Wholesale Revenue (Bills Table Only)
             wholesale_rev AS (
                 SELECT DATE(bill_date) as day, SUM(total_amount) as amount 
                 FROM wholesale_bills 
-                WHERE bill_date >= CURRENT_DATE - INTERVAL '${interval}' 
+                WHERE DATE(bill_date) >= $1::DATE - INTERVAL '${interval}' AND DATE(bill_date) <= $1::DATE
                 GROUP BY 1
             ),
             -- 4. Wholesale Cost (Items Table Joined to Prices)
@@ -87,7 +95,7 @@ const getTodayStatus = async (req, res) => {
                 FROM wholesale_bill_items wbi
                 JOIN wholesale_bills wb ON wbi.wholesale_bill_id = wb.wholesale_bill_id
                 JOIN prices p ON wbi.product_id = p.product_id AND p.is_active = TRUE
-                WHERE wb.bill_date >= CURRENT_DATE - INTERVAL '${interval}'
+                WHERE DATE(wb.bill_date) >= $1::DATE - INTERVAL '${interval}' AND DATE(wb.bill_date) <= $1::DATE
                 GROUP BY 1
             )
             -- 5. Merge Everything on Date Series
@@ -130,10 +138,11 @@ const getTodayStatus = async (req, res) => {
         `;
 
         // Execute All in Parallel
+        // Notice we are passing [queryDate] to the graphQuery now too!
         const [retailRes, wholesaleRes, graphRes, topRetailRes, topWholesaleRes] = await Promise.all([
             db.query(retailStatsQuery, [queryDate]),
             db.query(wholesaleStatsQuery, [queryDate]),
-            db.query(graphQuery),
+            db.query(graphQuery, [queryDate]), 
             db.query(topRetailQuery, [queryDate]),
             db.query(topWholesaleQuery, [queryDate])
         ]);
