@@ -1,6 +1,16 @@
 // controller/manage_customer.js
 const db = require('../db');
 const Joi = require('joi');
+const { formatInTimeZone } = require('date-fns-tz'); // <-- Added import
+
+// --- HELPER: IST Date Formatting ---
+const formatDateToIST = (dateString) => {
+    if (!dateString) return '-';
+    const dateObj = new Date(dateString);
+    if (isNaN(dateObj.getTime())) return '-';
+    // Forces Indian Standard Time with 12-hour AM/PM format
+    return formatInTimeZone(dateObj, 'Asia/Kolkata', 'yyyy-MM-dd hh:mm:ss a');
+};
 
 // --- Validation Schemas ---
 
@@ -93,10 +103,17 @@ const getCustomers = async (req, res) => {
         const totalItems = parseInt(countResult.rows[0].count);
         const totalPages = Math.ceil(totalItems / limit);
 
+        // <-- Apply Date Formatting Here -->
+        const formattedData = dataResult.rows.map(row => ({
+            ...row,
+            created_at: formatDateToIST(row.created_at),
+            updated_at: formatDateToIST(row.updated_at)
+        }));
+
         // 4. Send Response
         res.status(200).json({
             success: true,
-            data: dataResult.rows,
+            data: formattedData,
             pagination: {
                 current_page: page,
                 items_per_page: limit,
@@ -110,6 +127,7 @@ const getCustomers = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
 /**
  * Fetch specific customer details including:
  * 1. Basic Profile
@@ -161,7 +179,8 @@ const getCustomerById = async (req, res) => {
                 cd.total_bill_amount, 
                 cd.total_paid,
                 cd.balance_due, 
-                cd.status 
+                cd.status,
+                cd.updated_at
             FROM customer_dues cd
             LEFT JOIN retail_bills rb ON cd.retail_bill_id = rb.retail_bill_id
             LEFT JOIN wholesale_bills wb ON cd.wholesale_bill_id = wb.wholesale_bill_id
@@ -207,26 +226,42 @@ const getCustomerById = async (req, res) => {
         }
 
         const customer = profileResult.rows[0];
-        const lastBill = lastBillResult.rows[0] || null; // Might be null if new customer
+        const lastBill = lastBillResult.rows[0] || null;
+
+        // --- APPLY DATE FORMATTING ---
+        const formattedProfile = {
+            ...customer,
+            credit_limit: parseFloat(customer.credit_limit), 
+            current_balance: parseFloat(customer.current_balance),
+            created_at: formatDateToIST(customer.created_at),
+            updated_at: formatDateToIST(customer.updated_at)
+        };
+
+        const formattedActiveDues = duesResult.rows.map(due => ({
+            ...due,
+            bill_date: formatDateToIST(due.bill_date),
+            updated_at: formatDateToIST(due.updated_at)
+        }));
+
+        const formattedHistory = historyResult.rows.map(tx => ({
+            ...tx,
+            payment_date: formatDateToIST(tx.payment_date)
+        }));
 
         // --- FORMAT RESPONSE ---
 
         res.status(200).json({
             success: true,
             data: {
-                profile: {
-                    ...customer,
-                    credit_limit: parseFloat(customer.credit_limit), // Ensure numbers aren't strings
-                    current_balance: parseFloat(customer.current_balance)
-                },
+                profile: formattedProfile,
                 metrics: {
                     last_bill_amount: lastBill ? parseFloat(lastBill.total_amount) : 0,
-                    last_bill_date: lastBill ? lastBill.bill_date : null,
+                    last_bill_date: lastBill ? formatDateToIST(lastBill.bill_date) : null,
                     last_bill_number: lastBill ? lastBill.bill_number : null,
                     total_active_dues_count: duesResult.rows.length
                 },
-                active_dues: duesResult.rows,       // List of unpaid/partial bills
-                transaction_history: historyResult.rows // List of recent payments
+                active_dues: formattedActiveDues,
+                transaction_history: formattedHistory 
             }
         });
 
@@ -235,6 +270,7 @@ const getCustomerById = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
 const createCustomerSchema = Joi.object({
     customer_name: Joi.string().min(3).max(150).required(),
     customer_type: Joi.string().valid('retail', 'wholesale').required(),
@@ -254,6 +290,7 @@ const updateCustomerSchema = Joi.object({
     credit_limit: Joi.number().min(0).optional(),
     is_active: Joi.boolean().optional()
 });
+
 /**
  * 1. Add New Customer
  */
@@ -266,7 +303,6 @@ const createCustomer = async (req, res) => {
         const { customer_name, customer_type, phone, email, address, credit_limit } = value;
 
         // Check Duplicates (Phone or Email)
-        // We use OR logic: if phone matches OR email matches, reject.
         const duplicateCheck = await db.query(
             `SELECT customer_id FROM customers WHERE (phone = $1 AND phone IS NOT NULL AND phone != '') OR (email = $2 AND email IS NOT NULL AND email != '')`,
             [phone, email]
@@ -285,10 +321,15 @@ const createCustomer = async (req, res) => {
 
         const result = await db.query(insertQuery, [customer_name, customer_type, phone, email, address, credit_limit]);
 
+        const formattedData = {
+            ...result.rows[0],
+            created_at: formatDateToIST(result.rows[0].created_at)
+        };
+
         res.status(201).json({
             success: true,
             message: 'Customer added successfully',
-            data: result.rows[0]
+            data: formattedData
         });
 
     } catch (err) {
@@ -330,10 +371,16 @@ const updateCustomer = async (req, res) => {
 
         const result = await db.query(query, params);
 
+        const formattedData = {
+            ...result.rows[0],
+            created_at: formatDateToIST(result.rows[0].created_at),
+            updated_at: formatDateToIST(result.rows[0].updated_at)
+        };
+
         res.status(200).json({
             success: true,
             message: 'Customer updated successfully',
-            data: result.rows[0]
+            data: formattedData
         });
 
     } catch (err) {
@@ -414,7 +461,6 @@ const hardDeleteCustomer = async (req, res) => {
     }
 };
 
-// ... (Export updated functions) ...
 module.exports = {
     getCustomers,
     getCustomerById,

@@ -2,29 +2,48 @@ const db = require('../db');
 const Joi = require('joi');
 const pdfService = require('../pdf/customer_report_analysis_pdf');
 const { formatCurrency } = require('../utils/formatters');
-const moment = require('moment');
+const { startOfMonth, endOfMonth, startOfYear, endOfYear, subYears, parse, isValid, startOfDay, endOfDay } = require('date-fns');
+const { formatInTimeZone } = require('date-fns-tz');
 
 const getDateRange = (dateFilter, customStart, customEnd) => {
     let start, end;
+    
+    // Get current time safely shifted to IST for accurate date math
+    const indiaTimeStr = new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
+    const istNow = new Date(indiaTimeStr);
+
     if (dateFilter && dateFilter !== 'custom') {
-        if (moment(dateFilter, "MMM YYYY", true).isValid()) {
-             start = moment(dateFilter, "MMM YYYY").startOf('month');
-             end = moment(dateFilter, "MMM YYYY").endOf('month');
+        // Try parsing "MMM YYYY" (e.g., "Mar 2026")
+        const parsedMonth = parse(dateFilter, 'MMM yyyy', istNow);
+        
+        if (isValid(parsedMonth) && dateFilter.trim().length > 3) {
+             start = startOfMonth(parsedMonth);
+             end = endOfMonth(parsedMonth);
         } else if (dateFilter.toLowerCase() === 'last year') {
-            start = moment().subtract(1, 'year').startOf('year');
-            end = moment().subtract(1, 'year').endOf('year');
+            const lastYear = subYears(istNow, 1);
+            start = startOfYear(lastYear);
+            end = endOfYear(lastYear);
         } else {
-             start = moment().startOf('month');
-             end = moment().endOf('month');
+             start = startOfMonth(istNow);
+             end = endOfMonth(istNow);
         }
     } else if (customStart && customEnd) {
-        start = moment(customStart);
-        end = moment(customEnd).endOf('day');
+        start = startOfDay(new Date(customStart));
+        end = endOfDay(new Date(customEnd));
     } else {
-        start = moment().startOf('month');
-        end = moment().endOf('month');
+        start = startOfMonth(istNow);
+        end = endOfMonth(istNow);
     }
-    return { start: start.format('YYYY-MM-DD HH:mm:ss'), end: end.format('YYYY-MM-DD HH:mm:ss') };
+
+    return { 
+        // 24-hour format strictly for the PostgreSQL BETWEEN query
+        sqlStart: formatInTimeZone(start, 'Asia/Kolkata', 'yyyy-MM-dd HH:mm:ss'), 
+        sqlEnd: formatInTimeZone(end, 'Asia/Kolkata', 'yyyy-MM-dd HH:mm:ss'),
+        
+        // 12-hour AM/PM format strictly for the Frontend UI
+        uiStart: formatInTimeZone(start, 'Asia/Kolkata', 'yyyy-MM-dd hh:mm:ss a'),
+        uiEnd: formatInTimeZone(end, 'Asia/Kolkata', 'yyyy-MM-dd hh:mm:ss a')
+    };
 };
 
 const getAnalysisData = async (req, res) => {
@@ -39,7 +58,8 @@ const getAnalysisData = async (req, res) => {
     if (error) return res.status(400).json({ error: error.details[0].message });
 
     try {
-        const { start, end } = getDateRange(value.dateFilter, value.startDate, value.endDate);
+        // Extract both SQL and UI formatted dates
+        const { sqlStart, sqlEnd, uiStart, uiEnd } = getDateRange(value.dateFilter, value.startDate, value.endDate);
 
         const summaryQuery = `
             SELECT 
@@ -80,16 +100,17 @@ const getAnalysisData = async (req, res) => {
             ORDER BY total_revenue DESC
         `;
 
+        // Execute queries using the strict 24-hour SQL dates
         const [summaryRes, customerRes, productRes] = await Promise.all([
-            db.query(summaryQuery, [start, end]),
-            db.query(customerQuery, [start, end]),
-            db.query(productQuery, [start, end])
+            db.query(summaryQuery, [sqlStart, sqlEnd]),
+            db.query(customerQuery, [sqlStart, sqlEnd]),
+            db.query(productQuery, [sqlStart, sqlEnd])
         ]);
 
         // CONSTRUCTION: Keep data as RAW NUMBERS for Frontend JSON
-        // Note: Postgres SUM() often returns strings, so we cast with Number()
         const rawData = {
-            dateRange: { start, end },
+            // Supply the 12-hour formatted dates to the frontend payload
+            dateRange: { start: uiStart, end: uiEnd }, 
             summary: {
                 grandTotalSales: Number(summaryRes.rows[0].grand_total_sales || 0),
                 totalBillsGenerated: Number(summaryRes.rows[0].total_bills || 0),

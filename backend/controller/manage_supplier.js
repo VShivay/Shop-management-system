@@ -1,6 +1,16 @@
 // controller/manage_supplier.js
 const db = require('../db');
 const Joi = require('joi');
+const { formatInTimeZone } = require('date-fns-tz'); // <-- Added import
+
+// --- HELPER: IST Date Formatting ---
+const formatDateToIST = (dateString) => {
+    if (!dateString) return null; // Using null for missing dates
+    const dateObj = new Date(dateString);
+    if (isNaN(dateObj.getTime())) return null;
+    // Forces Indian Standard Time with 12-hour AM/PM format
+    return formatInTimeZone(dateObj, 'Asia/Kolkata', 'yyyy-MM-dd hh:mm:ss a');
+};
 
 // ---------------------------------------------------------
 // Validation Schemas (Joi)
@@ -80,9 +90,16 @@ const getSuppliers = async (req, res) => {
         queryParams.push(limit, offset);
 
         const result = await db.query(sql, queryParams);
+
+        // <-- Apply Date Formatting Here -->
+        const formattedData = result.rows.map(row => ({
+            ...row,
+            created_at: formatDateToIST(row.created_at)
+        }));
+
         return res.status(200).json({
             message: 'Suppliers fetched successfully',
-            data: result.rows,
+            data: formattedData, // <-- Return Formatted Data
             pagination: { page, limit, count: result.rowCount }
         });
 
@@ -112,7 +129,7 @@ const getSupplierById = async (req, res) => {
                             'last_supplied_date', i.last_supplied_date
                         ) ORDER BY p.product_name ASC
                     ) FILTER (WHERE p.product_id IS NOT NULL), 
-                    '[]'
+                    '[]'::json
                 ) AS products
             FROM suppliers s
             LEFT JOIN product_suppliers ps ON s.supplier_id = ps.supplier_id
@@ -128,9 +145,22 @@ const getSupplierById = async (req, res) => {
             return res.status(404).json({ error: 'Supplier not found' });
         }
 
+        const supplier = result.rows[0];
+
+        // <-- Apply Date Formatting to Profile & Linked Products -->
+        const formattedSupplier = {
+            ...supplier,
+            created_at: formatDateToIST(supplier.created_at),
+            updated_at: formatDateToIST(supplier.updated_at),
+            products: (Array.isArray(supplier.products) ? supplier.products : []).map(p => ({
+                ...p,
+                last_supplied_date: formatDateToIST(p.last_supplied_date)
+            }))
+        };
+
         return res.status(200).json({
             message: 'Supplier details fetched successfully',
-            data: result.rows[0]
+            data: formattedSupplier
         });
 
     } catch (err) {
@@ -156,14 +186,19 @@ const addSupplier = async (req, res) => {
         const sql = `
             INSERT INTO suppliers (supplier_name, contact_person, phone, email, gst_number, address, is_active)
             VALUES ($1, $2, $3, $4, $5, $6, $7)
-            RETURNING supplier_id, supplier_name
+            RETURNING *
         `;
 
         const result = await db.query(sql, [supplier_name, contact_person, phone, email, gst_number, address, is_active]);
 
+        const formattedData = {
+            ...result.rows[0],
+            created_at: formatDateToIST(result.rows[0].created_at)
+        };
+
         return res.status(201).json({
             message: 'Supplier added successfully',
-            data: result.rows[0]
+            data: formattedData
         });
 
     } catch (err) {
@@ -204,9 +239,15 @@ const updateSupplier = async (req, res) => {
 
         if (result.rowCount === 0) return res.status(404).json({ error: 'Supplier not found' });
 
+        const formattedData = {
+            ...result.rows[0],
+            created_at: formatDateToIST(result.rows[0].created_at),
+            updated_at: formatDateToIST(result.rows[0].updated_at)
+        };
+
         return res.status(200).json({
             message: 'Supplier updated successfully',
-            data: result.rows[0]
+            data: formattedData
         });
 
     } catch (err) {
@@ -245,9 +286,14 @@ const linkProduct = async (req, res) => {
 
         const result = await db.query(sql, [product_id, supplierId, supply_price, last_supplied_date]);
 
+        const formattedData = {
+            ...result.rows[0],
+            last_supplied_date: formatDateToIST(result.rows[0].last_supplied_date)
+        };
+
         return res.status(200).json({
             message: 'Product linked successfully',
-            data: result.rows[0]
+            data: formattedData
         });
 
     } catch (err) {
@@ -285,6 +331,7 @@ const unlinkProduct = async (req, res) => {
         return res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
 // Validation Schema
 const querySchema1 = Joi.object({
     page: Joi.number().integer().min(1).default(1),
@@ -325,9 +372,16 @@ const getProducts = async (req, res) => {
         // 3. Execute
         const result = await db.query(sql, queryParams);
         
+        // <-- Apply Date Formatting Here -->
+        const formattedData = result.rows.map(row => ({
+            ...row,
+            created_at: formatDateToIST(row.created_at),
+            updated_at: formatDateToIST(row.updated_at)
+        }));
+        
         res.status(200).json({
             message: 'Products fetched successfully',
-            data: result.rows,
+            data: formattedData,
             pagination: { page, limit, count: result.rowCount }
         });
 
@@ -336,6 +390,7 @@ const getProducts = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
 module.exports = {
     getProducts,
     getSuppliers,
