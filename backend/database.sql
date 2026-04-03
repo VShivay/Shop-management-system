@@ -238,6 +238,9 @@ CREATE TABLE expenses (
     paid_by INT REFERENCES users(user_id),
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
+ALTER TABLE expenses 
+ADD COLUMN inventory_transaction_id INT REFERENCES inventory_transactions(transaction_id) ON DELETE SET NULL;
+
 
 -- 19. INVENTORY
 CREATE TABLE inventory (
@@ -466,6 +469,8 @@ BEGIN
     END IF;
 END;
 $$ LANGUAGE plpgsql;
+ALTER TABLE expenses 
+ADD COLUMN inventory_transaction_id INT REFERENCES inventory_transactions(transaction_id) ON DELETE SET NULL;
 
 
 
@@ -496,5 +501,3 @@ CREATE TRIGGER trg_sync_payments_to_bills
 AFTER INSERT ON due_payment_history
 FOR EACH ROW
 EXECUTE FUNCTION update_bill_and_dues_func();
-ALTER TABLE expenses 
-ADD COLUMN inventory_transaction_id INT REFERENCES inventory_transactions(transaction_id) ON DELETE SET NULL;
