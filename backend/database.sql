@@ -1,3 +1,7 @@
+ALTER DATABASE your_database_name SET timezone TO 'Asia/Kolkata';
+-- Enforce IST for the current session execution
+SET timezone = 'Asia/Kolkata';
+
 -- 1. ROLES
 CREATE TABLE roles (
     role_id SERIAL PRIMARY KEY,
@@ -8,7 +12,7 @@ CREATE TABLE roles (
 CREATE TABLE categories (
     category_id SERIAL PRIMARY KEY,
     category_name VARCHAR(100) NOT NULL UNIQUE, 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
 -- 3. UNITS
@@ -29,6 +33,7 @@ CREATE TABLE expense_categories (
     category_id SERIAL PRIMARY KEY,
     category_name VARCHAR(100) UNIQUE NOT NULL
 );
+
 -- 6. USERS
 CREATE TABLE users (
     user_id SERIAL PRIMARY KEY,
@@ -38,8 +43,8 @@ CREATE TABLE users (
     mobile VARCHAR(15) UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
 -- 7. SUPPLIERS
@@ -52,7 +57,7 @@ CREATE TABLE suppliers (
     gst_number VARCHAR(20) UNIQUE,
     address TEXT,
     is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
 -- 8. CUSTOMERS
@@ -66,9 +71,10 @@ CREATE TABLE customers (
     credit_limit NUMERIC(12, 2) DEFAULT 0,
     current_balance NUMERIC(12, 2) DEFAULT 0,
     is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
+
 -- 9. PRODUCTS
 CREATE TABLE products (
     product_id SERIAL PRIMARY KEY,
@@ -77,7 +83,7 @@ CREATE TABLE products (
     unit_id INT REFERENCES units(unit_id) ON DELETE SET NULL,
     sales_channel VARCHAR(20) DEFAULT 'Both' CHECK (sales_channel IN ('Retail', 'Wholesale', 'Both')),
     is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
 -- 10. PRICES
@@ -87,7 +93,7 @@ CREATE TABLE prices (
     retail_price NUMERIC(10,2), 
     wholesale_price NUMERIC(10,2),
     cost_price NUMERIC(10,2) NOT NULL,
-    effective_from TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    effective_from TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     is_active BOOLEAN DEFAULT TRUE,
     CONSTRAINT check_selling_price CHECK (retail_price IS NOT NULL OR wholesale_price IS NOT NULL)
 );
@@ -100,12 +106,13 @@ CREATE TABLE product_suppliers (
     supply_price NUMERIC(10,2),
     PRIMARY KEY (product_id, supplier_id)
 );
+
 -- 12. RETAIL BILLS
 CREATE TABLE retail_bills (
     retail_bill_id SERIAL PRIMARY KEY,
     bill_number VARCHAR(50) UNIQUE NOT NULL,
     customer_id INT REFERENCES customers(customer_id) ON DELETE SET NULL,
-    bill_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    bill_date TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     
     -- Financials
     subtotal NUMERIC(10,2) DEFAULT 0,
@@ -120,7 +127,7 @@ CREATE TABLE retail_bills (
     
     created_by INT REFERENCES users(user_id),
     remarks TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
 
     -- Logic Constraints
     CONSTRAINT chk_retail_payment_range CHECK (amount_paid >= 0 AND amount_paid <= total_amount),
@@ -147,7 +154,7 @@ CREATE TABLE wholesale_bills (
     wholesale_bill_id SERIAL PRIMARY KEY,
     customer_id INT NOT NULL REFERENCES customers(customer_id),
     bill_number VARCHAR(50) UNIQUE NOT NULL,
-    bill_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    bill_date TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     
     -- Financials
     total_amount NUMERIC(10,2) NOT NULL DEFAULT 0 CHECK (total_amount >= 0),
@@ -158,7 +165,7 @@ CREATE TABLE wholesale_bills (
     payment_status VARCHAR(20) CHECK (payment_status IN ('paid', 'partial', 'unpaid')) DEFAULT 'unpaid',
     
     created_by INT REFERENCES users(user_id),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
 
     -- Logic Constraints
     CONSTRAINT chk_wholesale_payment_range CHECK (amount_paid >= 0 AND amount_paid <= total_amount),
@@ -179,6 +186,7 @@ CREATE TABLE wholesale_bill_items (
     total_price NUMERIC(10,2) NOT NULL,
     CONSTRAINT uq_wholesale_bill_product UNIQUE (wholesale_bill_id, product_id)
 );
+
 -- 16. CUSTOMER DUES (Linked to Bills)
 CREATE TABLE customer_dues (
     due_id SERIAL PRIMARY KEY,
@@ -193,10 +201,10 @@ CREATE TABLE customer_dues (
     -- Balances
     total_bill_amount NUMERIC(12,2) NOT NULL,
     total_paid NUMERIC(12,2) DEFAULT 0,
-    balance_due NUMERIC(12,2) DEFAULT 0, -- Initially equals total_bill_amount
+    balance_due NUMERIC(12,2) DEFAULT 0, 
 
     status VARCHAR(20) CHECK (status IN ('pending', 'partial', 'cleared')) DEFAULT 'pending',
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT chk_balances_math CHECK (balance_due = total_bill_amount - total_paid),
     CONSTRAINT chk_no_overpayment CHECK (total_paid <= total_bill_amount),
@@ -215,7 +223,7 @@ CREATE TABLE due_payment_history (
     payment_id SERIAL PRIMARY KEY,
     due_id INT REFERENCES customer_dues(due_id) ON DELETE CASCADE,
     amount_paid NUMERIC(10,2) NOT NULL CHECK (amount_paid > 0),
-    payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    payment_date TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     payment_method_id INT REFERENCES payment_methods(payment_method_id),
     remarks TEXT
 );
@@ -226,64 +234,59 @@ CREATE TABLE expenses (
     category_id INT REFERENCES expense_categories(category_id) ON DELETE SET NULL,
     expense_name VARCHAR(150) NOT NULL,
     amount NUMERIC(12,2) NOT NULL CHECK (amount > 0),
-    expense_date DATE DEFAULT CURRENT_DATE,
+    expense_date DATE DEFAULT CURRENT_DATE, -- CURRENT_DATE will sync with Asia/Kolkata
     paid_by INT REFERENCES users(user_id),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 19. INVENTORY
 CREATE TABLE inventory (
     inventory_id SERIAL PRIMARY KEY,
     product_id INT UNIQUE REFERENCES products(product_id) ON DELETE CASCADE,
-    available_quantity_in_hand NUMERIC(10,2) DEFAULT 0, -- Updated name
+    available_quantity_in_hand NUMERIC(10,2) DEFAULT 0,
     reserved_quantity NUMERIC(10,2) DEFAULT 0,
     low_stock_threshold NUMERIC(10,2) DEFAULT 10,
-    last_supplied_date TIMESTAMP,
-    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    last_supplied_date TIMESTAMPTZ,
+    last_updated TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
+
+-- 20. INVENTORY TRANSACTIONS
 CREATE TABLE inventory_transactions (
     transaction_id SERIAL PRIMARY KEY,
     product_id INT REFERENCES products(product_id) ON DELETE CASCADE,
     
-    -- transaction_type determines if stock goes UP or DOWN
     transaction_type VARCHAR(20) CHECK (
         transaction_type IN ('restock', 'sale', 'return', 'damage', 'initial_stock', 'adjustment')
     ),
-    
-    -- Always use a positive number here. The trigger will handle the math based on transaction_type.
     quantity NUMERIC(10,2) NOT NULL CHECK (quantity > 0),
-    
-    -- Context: Where did this transaction come from?
-    reference_id INT, -- e.g., retail_bill_id, wholesale_bill_id, or supplier_invoice_id
-    reference_type VARCHAR(50), -- e.g., 'retail_bill', 'wholesale_bill', 'supplier_purchase'
+    reference_id INT, 
+    reference_type VARCHAR(50), 
     
     supplier_id INT REFERENCES suppliers(supplier_id) ON DELETE SET NULL,
     performed_by INT REFERENCES users(user_id) ON DELETE SET NULL,
-    transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    transaction_date TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     remarks TEXT
 );
 
+-- FUNCTIONS AND TRIGGERS
+
 CREATE OR REPLACE FUNCTION auto_create_due_record_func()
 RETURNS TRIGGER AS $$
-
 DECLARE
     v_balance NUMERIC;
     v_due_status VARCHAR(20);
-    v_new_due_id INT; -- Variable to capture the new Due ID
+    v_new_due_id INT; 
 BEGIN
-    -- 1. Calculate Balance
     v_balance := NEW.total_amount - NEW.amount_paid;
 
-    -- 2. ONLY proceed if there is debt (Balance > 0) AND a valid customer
     IF v_balance > 0 AND NEW.customer_id IS NOT NULL THEN
 
-        -- Map Bill Status to Due Status
         IF NEW.payment_status = 'unpaid' THEN
             v_due_status := 'pending';
         ELSE
             v_due_status := 'partial';
         END IF;
 
-        -- 3. Insert into Customer Dues AND capture the ID
         IF TG_TABLE_NAME = 'wholesale_bills' THEN
             INSERT INTO customer_dues (
                 wholesale_bill_id, retail_bill_id, bill_type, 
@@ -293,7 +296,7 @@ BEGIN
                 NEW.wholesale_bill_id, NULL, 'wholesale',
                 NEW.customer_id, NEW.total_amount, NEW.amount_paid,
                 v_balance, v_due_status
-            ) RETURNING due_id INTO v_new_due_id; -- <--- Capture ID here
+            ) RETURNING due_id INTO v_new_due_id; 
             
         ELSIF TG_TABLE_NAME = 'retail_bills' THEN
             INSERT INTO customer_dues (
@@ -304,22 +307,14 @@ BEGIN
                 NULL, NEW.retail_bill_id, 'retail',
                 NEW.customer_id, NEW.total_amount, NEW.amount_paid,
                 v_balance, v_due_status
-            ) RETURNING due_id INTO v_new_due_id; -- <--- Capture ID here
+            ) RETURNING due_id INTO v_new_due_id; 
         END IF;
 
-        -- 4. CRITICAL FIX: Log the Initial Payment in History
-        -- This ensures the history table starts with the down payment (e.g., 3000)
         IF NEW.amount_paid > 0 THEN
             INSERT INTO due_payment_history (
-                due_id, 
-                amount_paid, 
-                payment_method_id, 
-                remarks
+                due_id, amount_paid, payment_method_id, remarks
             ) VALUES (
-                v_new_due_id, 
-                NEW.amount_paid, 
-                NEW.payment_method_id, 
-                'Initial Payment at Bill Creation'
+                v_new_due_id, NEW.amount_paid, NEW.payment_method_id, 'Initial Payment at Bill Creation'
             );
         END IF;
 
@@ -327,19 +322,11 @@ BEGIN
 
     RETURN NEW;
 END;
-
 $$ LANGUAGE plpgsql;
 
--- Attach Triggers for Auto Creation
-CREATE TRIGGER trg_auto_create_wholesale_due
-AFTER INSERT ON wholesale_bills
-FOR EACH ROW
-EXECUTE FUNCTION auto_create_due_record_func();
 
-CREATE TRIGGER trg_auto_create_retail_due
-AFTER INSERT ON retail_bills
-FOR EACH ROW
-EXECUTE FUNCTION auto_create_due_record_func();
+
+
 CREATE OR REPLACE FUNCTION update_bill_and_dues_func()
 RETURNS TRIGGER AS $$
 DECLARE
@@ -351,26 +338,22 @@ DECLARE
     v_bill_type VARCHAR(20);
     v_new_status VARCHAR(20);
 BEGIN
-    -- Get Context
     SELECT total_bill_amount, retail_bill_id, wholesale_bill_id, bill_type
     INTO v_total_bill, v_retail_id, v_wholesale_id, v_bill_type
     FROM customer_dues
     WHERE due_id = NEW.due_id;
 
-    -- Calculate Totals
     SELECT COALESCE(SUM(amount_paid), 0) INTO v_current_total_paid
     FROM due_payment_history
     WHERE due_id = NEW.due_id;
 
     v_new_balance := v_total_bill - v_current_total_paid;
 
-    -- Validation
     IF v_new_balance < 0 THEN
         RAISE EXCEPTION 'Payment rejected: Amount % exceeds remaining balance of %', 
         NEW.amount_paid, (v_total_bill - (v_current_total_paid - NEW.amount_paid));
     END IF;
 
-    -- Determine Status
     IF v_new_balance = 0 THEN
         v_new_status := 'paid';
     ELSIF v_new_balance = v_total_bill THEN
@@ -379,7 +362,6 @@ BEGIN
         v_new_status := 'partial';
     END IF;
 
-    -- UPDATE 1: Customer Dues
     UPDATE customer_dues
     SET 
         total_paid = v_current_total_paid,
@@ -388,7 +370,6 @@ BEGIN
         updated_at = CURRENT_TIMESTAMP
     WHERE due_id = NEW.due_id;
 
-    -- UPDATE 2: Original Bill (Retail or Wholesale)
     IF v_bill_type = 'wholesale' THEN
         UPDATE wholesale_bills
         SET amount_paid = v_current_total_paid, payment_status = v_new_status
@@ -403,18 +384,15 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Attach Trigger for Payment Sync
-CREATE TRIGGER trg_sync_payments_to_bills
-AFTER INSERT ON due_payment_history
-FOR EACH ROW
-EXECUTE FUNCTION update_bill_and_dues_func();
+
+
+
 CREATE OR REPLACE FUNCTION process_inventory_transaction_func()
 RETURNS TRIGGER AS $$
 DECLARE
     v_multiplier INT;
-    v_new_supplied_date TIMESTAMP := NULL;
+    v_new_supplied_date TIMESTAMPTZ := NULL; -- Changed to TIMESTAMPTZ
 BEGIN
-    -- 1. Determine stock direction
     IF NEW.transaction_type IN ('restock', 'initial_stock', 'return') THEN
         v_multiplier := 1;
     ELSIF NEW.transaction_type IN ('sale', 'damage') THEN
@@ -423,28 +401,18 @@ BEGIN
         v_multiplier := 1; 
     END IF;
 
-    -- 2. Capture supplied date if it's a restock or initial stock
     IF NEW.transaction_type IN ('restock', 'initial_stock') THEN
         v_new_supplied_date := NEW.transaction_date;
     END IF;
 
-    -- 3. Safely UPSERT into the inventory table
     INSERT INTO inventory (
-        product_id, 
-        available_quantity_in_hand, 
-        last_supplied_date, 
-        last_updated
+        product_id, available_quantity_in_hand, last_supplied_date, last_updated
     )
     VALUES (
-        NEW.product_id, 
-        (NEW.quantity * v_multiplier), 
-        v_new_supplied_date, 
-        CURRENT_TIMESTAMP
+        NEW.product_id, (NEW.quantity * v_multiplier), v_new_supplied_date, CURRENT_TIMESTAMP
     )
     ON CONFLICT (product_id) 
     DO UPDATE SET 
-        -- COALESCE prevents math from failing if a value is currently NULL
-        -- EXCLUDED grabs the exact value we attempted to insert above
         available_quantity_in_hand = COALESCE(inventory.available_quantity_in_hand, 0) + EXCLUDED.available_quantity_in_hand,
         last_supplied_date = COALESCE(EXCLUDED.last_supplied_date, inventory.last_supplied_date),
         last_updated = CURRENT_TIMESTAMP;
@@ -452,33 +420,32 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
+
+
 CREATE OR REPLACE FUNCTION update_customer_balance_func()
 RETURNS TRIGGER AS $$
 DECLARE
     v_customer_id INT;
     v_total_balance NUMERIC(12,2);
 BEGIN
-    -- 1. Determine which customer to update based on the trigger action
     IF TG_OP = 'DELETE' THEN
         v_customer_id := OLD.customer_id;
     ELSE
         v_customer_id := NEW.customer_id;
     END IF;
 
-    -- 2. Calculate the exact current balance from the customer_dues table
     SELECT COALESCE(SUM(balance_due), 0)
     INTO v_total_balance
     FROM customer_dues
     WHERE customer_id = v_customer_id;
 
-    -- 3. Update the customer's record
     UPDATE customers
     SET 
         current_balance = v_total_balance,
         updated_at = CURRENT_TIMESTAMP
     WHERE customer_id = v_customer_id;
 
-    -- 4. Edge Case: If a due was reassigned to a different customer during an UPDATE
     IF TG_OP = 'UPDATE' AND OLD.customer_id IS DISTINCT FROM NEW.customer_id THEN
         SELECT COALESCE(SUM(balance_due), 0)
         INTO v_total_balance
@@ -492,7 +459,6 @@ BEGIN
         WHERE customer_id = OLD.customer_id;
     END IF;
 
-    -- 5. Return the appropriate record
     IF TG_OP = 'DELETE' THEN
         RETURN OLD;
     ELSE
@@ -500,3 +466,35 @@ BEGIN
     END IF;
 END;
 $$ LANGUAGE plpgsql;
+
+
+
+
+
+CREATE TRIGGER trg_auto_create_wholesale_due
+AFTER INSERT ON wholesale_bills
+FOR EACH ROW
+EXECUTE FUNCTION auto_create_due_record_func();
+
+CREATE TRIGGER trg_auto_create_retail_due
+AFTER INSERT ON retail_bills
+FOR EACH ROW
+EXECUTE FUNCTION auto_create_due_record_func();
+
+CREATE TRIGGER trg_update_customer_balance
+AFTER INSERT OR UPDATE OR DELETE ON customer_dues
+FOR EACH ROW
+EXECUTE FUNCTION update_customer_balance_func();
+
+
+CREATE TRIGGER trg_process_inventory
+AFTER INSERT ON inventory_transactions
+FOR EACH ROW
+EXECUTE FUNCTION process_inventory_transaction_func();
+
+CREATE TRIGGER trg_sync_payments_to_bills
+AFTER INSERT ON due_payment_history
+FOR EACH ROW
+EXECUTE FUNCTION update_bill_and_dues_func();
+ALTER TABLE expenses 
+ADD COLUMN inventory_transaction_id INT REFERENCES inventory_transactions(transaction_id) ON DELETE SET NULL;

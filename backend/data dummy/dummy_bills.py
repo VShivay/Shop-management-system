@@ -1,382 +1,457 @@
 """
-Dummy Bills Insertion Script
-Date Range: 01/01/2026 to 14/03/2026
-- Retail & Wholesale bills with inventory management
-- Revenue targets: Wholesale high days >=50000, normal 15000-20000
--                  Retail high days >=10000, normal 5000-7000
-- Amounts are rounded to nearest 10 (no decimals)
-- Proper dues management for partial/unpaid bills
+Dummy Bills Inserter for Retail & Wholesale Billing System
+Date Range: 01/01/2026 to 28/03/2026
+Timezone: Asia/Kolkata (IST)
 """
 
 import psycopg2
-import psycopg2.extras
 import random
-from datetime import date, timedelta, datetime
+from datetime import datetime, date, timedelta
+import pytz
 
-# ─── DB CONFIG ────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────
+# DB CONFIG — update these
+# ─────────────────────────────────────────────
 DB_CONFIG = {
     "host": "localhost",
     "port": 5432,
-    "dbname": "shop2",
-    "user": "postgres",
-    "password": "panchal2004",
+    "database": "shop3",   # <-- change this
+    "user": "postgres",                 # <-- change this
+    "password": "panchal2004",         # <-- change this
 }
 
-# ─── HELPERS ──────────────────────────────────────────────────────────────────
+IST = pytz.timezone("Asia/Kolkata")
+START_DATE = date(2026, 1, 1)
+END_DATE   = date(2026, 3, 28)
 
-def round10(val):
-    """Round to nearest 10, no decimals."""
-    return int(round(val / 10) * 10)
+# Revenue targets (per day)
+WS_HIGH_DAY   = 50000   # wholesale high-revenue day target
+WS_NORMAL_MIN = 15000
+WS_NORMAL_MAX = 20000
+WS_HIGH_DAYS_PER_MONTH = 5
 
-def connect():
-    return psycopg2.connect(**DB_CONFIG)
+RT_HIGH_DAY   = 10000   # retail high-revenue day target
+RT_NORMAL_MIN = 4000
+RT_NORMAL_MAX = 6000
+RT_HIGH_DAYS_PER_MONTH = 5
 
-def fetch_data(conn):
-    cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+BILL_HOUR_START = 8
+BILL_HOUR_END   = 18   # 6 PM
 
-    # Retail or Both products
+
+# ─────────────────────────────────────────────
+# HELPERS
+# ─────────────────────────────────────────────
+
+def round_to_tens(value: float) -> int:
+    """Round to nearest 10 so totals are never decimal."""
+    return int(round(value / 10) * 10)
+
+def rand_bill_time(day: date) -> datetime:
+    """Random datetime between 8:00 and 18:00 IST for a given date."""
+    hour   = random.randint(BILL_HOUR_START, BILL_HOUR_END - 1)
+    minute = random.randint(0, 59)
+    second = random.randint(0, 59)
+    naive  = datetime(day.year, day.month, day.day, hour, minute, second)
+    return IST.localize(naive)
+
+def get_all_dates(start: date, end: date):
+    current = start
+    while current <= end:
+        yield current
+        current += timedelta(days=1)
+
+def determine_high_days(all_dates):
+    """Pick 5 high-revenue days per month for each channel."""
+    from collections import defaultdict
+    by_month = defaultdict(list)
+    for d in all_dates:
+        by_month[(d.year, d.month)].append(d)
+
+    ws_high, rt_high = set(), set()
+    for dates_in_month in by_month.values():
+        if len(dates_in_month) >= WS_HIGH_DAYS_PER_MONTH:
+            ws_high.update(random.sample(dates_in_month, WS_HIGH_DAYS_PER_MONTH))
+            rt_high.update(random.sample(dates_in_month, RT_HIGH_DAYS_PER_MONTH))
+        else:
+            ws_high.update(dates_in_month)
+            rt_high.update(dates_in_month)
+    return ws_high, rt_high
+
+
+# ─────────────────────────────────────────────
+# DATA FETCHERS
+# ─────────────────────────────────────────────
+
+def fetch_products(cur, channel_filter):
+    """
+    channel_filter: 'retail'    → sales_channel IN ('Retail','Both')
+                    'wholesale' → sales_channel IN ('Wholesale','Both')
+    """
+    if channel_filter == "retail":
+        channels = ("Retail", "Both")
+    else:
+        channels = ("Wholesale", "Both")
+
     cur.execute("""
-        SELECT p.product_id, p.product_name, pr.retail_price, pr.cost_price
+        SELECT p.product_id, p.product_name,
+               pr.retail_price, pr.wholesale_price, pr.cost_price
         FROM products p
         JOIN prices pr ON pr.product_id = p.product_id AND pr.is_active = TRUE
         WHERE p.is_active = TRUE
-          AND p.sales_channel IN ('Retail', 'Both')
-          AND pr.retail_price IS NOT NULL
-    """)
-    retail_products = cur.fetchall()
+          AND p.sales_channel = ANY(%s)
+    """, (list(channels),))
+    rows = cur.fetchall()
+    return [
+        {
+            "product_id": r[0],
+            "product_name": r[1],
+            "retail_price": float(r[2]) if r[2] else None,
+            "wholesale_price": float(r[3]) if r[3] else None,
+            "cost_price": float(r[4]),
+        }
+        for r in rows
+    ]
 
-    # Wholesale or Both products
+def fetch_customers(cur, customer_type):
+    """customer_type: 'retail' or 'wholesale'"""
     cur.execute("""
-        SELECT p.product_id, p.product_name, pr.wholesale_price, pr.cost_price
-        FROM products p
-        JOIN prices pr ON pr.product_id = p.product_id AND pr.is_active = TRUE
-        WHERE p.is_active = TRUE
-          AND p.sales_channel IN ('Wholesale', 'Both')
-          AND pr.wholesale_price IS NOT NULL
-    """)
-    wholesale_products = cur.fetchall()
+        SELECT customer_id FROM customers
+        WHERE is_active = TRUE AND customer_type = %s
+    """, (customer_type,))
+    return [r[0] for r in cur.fetchall()]
 
-    # Retail customers only (needed for partial/unpaid retail bills)
-    cur.execute("""
-        SELECT customer_id, customer_name FROM customers
-        WHERE is_active = TRUE AND customer_type = 'retail'
-    """)
-    retail_customers = cur.fetchall()
-
-    # Wholesale customers only
-    cur.execute("""
-        SELECT customer_id, customer_name FROM customers
-        WHERE is_active = TRUE AND customer_type = 'wholesale'
-    """)
-    wholesale_customers = cur.fetchall()
-
-    # Payment methods
+def fetch_payment_methods(cur):
     cur.execute("SELECT payment_method_id FROM payment_methods WHERE is_active = TRUE")
-    payment_methods = [r["payment_method_id"] for r in cur.fetchall()]
+    return [r[0] for r in cur.fetchall()]
 
-    # Users
-    cur.execute("SELECT user_id FROM users WHERE is_active = TRUE")
-    users = [r["user_id"] for r in cur.fetchall()]
+def fetch_inventory(cur):
+    cur.execute("SELECT product_id, available_quantity_in_hand FROM inventory")
+    return {r[0]: float(r[1]) for r in cur.fetchall()}
 
-    cur.close()
-    return retail_products, wholesale_products, retail_customers, wholesale_customers, payment_methods, users
-
-def get_inventory(conn, product_id):
-    cur = conn.cursor()
-    cur.execute(
-        "SELECT available_quantity_in_hand FROM inventory WHERE product_id = %s",
-        (product_id,)
-    )
+def fetch_supplier_for_product(cur, product_id):
+    cur.execute("""
+        SELECT supplier_id FROM product_suppliers WHERE product_id = %s LIMIT 1
+    """, (product_id,))
     row = cur.fetchone()
-    cur.close()
-    return float(row[0]) if row else 0.0
+    return row[0] if row else None
 
-def restock_product(conn, product_id, quantity, user_id, bill_date):
-    cur = conn.cursor()
+def fetch_any_user(cur):
+    cur.execute("SELECT user_id FROM users WHERE is_active = TRUE LIMIT 1")
+    row = cur.fetchone()
+    return row[0] if row else None
+
+def next_bill_number(cur, prefix):
     cur.execute("""
-        INSERT INTO inventory_transactions
-            (product_id, transaction_type, quantity, reference_type, performed_by, transaction_date, remarks)
-        VALUES (%s, 'restock', %s, 'auto_restock', %s, %s, 'Auto restock before sale')
-    """, (product_id, quantity, user_id, bill_date))
-    cur.close()
-
-def deduct_inventory(conn, product_id, quantity, ref_id, ref_type, user_id, bill_date):
-    cur = conn.cursor()
-    cur.execute("""
-        INSERT INTO inventory_transactions
-            (product_id, transaction_type, quantity, reference_id, reference_type, performed_by, transaction_date)
-        VALUES (%s, 'sale', %s, %s, %s, %s, %s)
-    """, (product_id, quantity, ref_id, ref_type, user_id, bill_date))
-    cur.close()
-
-def next_bill_number(conn, prefix):
-    cur = conn.cursor()
-    if prefix == "RB":
-        cur.execute("SELECT COUNT(*) FROM retail_bills")
-    else:
-        cur.execute("SELECT COUNT(*) FROM wholesale_bills")
+        SELECT COUNT(*) FROM (
+            SELECT bill_number FROM retail_bills WHERE bill_number LIKE %s
+            UNION ALL
+            SELECT bill_number FROM wholesale_bills WHERE bill_number LIKE %s
+        ) t
+    """, (f"{prefix}%", f"{prefix}%"))
     count = cur.fetchone()[0]
-    cur.close()
-    return f"{prefix}-{str(count + 1).zfill(6)}"
+    return f"{prefix}{count + 1:06d}"
 
-# ─── BILL CREATORS ────────────────────────────────────────────────────────────
 
-def create_retail_bill(conn, products, retail_customers, payment_methods, users, bill_date):
-    """
-    Retail bill rules:
-      - paid   (70%) => customer_id = NULL
-      - partial(15%) => retail customer required
-      - unpaid (15%) => retail customer required
-    """
-    cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    user_id = random.choice(users)
-    pm_id   = random.choice(payment_methods)
+# ─────────────────────────────────────────────
+# INVENTORY MANAGEMENT
+# ─────────────────────────────────────────────
 
-    n       = min(random.randint(1, 5), len(products))
-    chosen  = random.sample(products, n)
-
-    items    = []
-    subtotal = 0
-
-    for prod in chosen:
-        pid   = prod["product_id"]
-        price = round10(float(prod["retail_price"]))
-        if price == 0:
-            price = 10
-        qty   = random.randint(1, 10)
-
-        avail = get_inventory(conn, pid)
-        if avail < qty:
-            restock_product(conn, pid, qty + random.randint(20, 50), user_id, bill_date)
-
-        line_total = round10(price * qty)
-        items.append({"product_id": pid, "quantity": qty, "unit_price": price, "total_price": line_total})
-        subtotal += line_total
-
-    subtotal     = round10(subtotal) or 10
-    total_amount = subtotal
-
-    pay_chance = random.random()
-    if pay_chance < 0.70 or not retail_customers:
-        # Fully paid — no customer needed
-        amount_paid    = total_amount
-        payment_status = "paid"
-        customer_id    = None
-    elif pay_chance < 0.85:
-        # Partial — retail customer required
-        raw            = round10(total_amount * random.uniform(0.3, 0.8))
-        amount_paid    = max(10, min(raw, total_amount - 10))
-        payment_status = "partial"
-        customer_id    = random.choice(retail_customers)["customer_id"]
-    else:
-        # Unpaid — retail customer required
-        amount_paid    = 0
-        payment_status = "unpaid"
-        customer_id    = random.choice(retail_customers)["customer_id"]
-
-    bill_number = next_bill_number(conn, "RB")
-
-    cur.execute("""
-        INSERT INTO retail_bills
-            (bill_number, customer_id, bill_date, subtotal, tax_amount, discount_amount,
-             total_amount, amount_paid, payment_method_id, payment_status, created_by)
-        VALUES (%s, %s, %s, %s, 0, 0, %s, %s, %s, %s, %s)
-        RETURNING retail_bill_id
-    """, (bill_number, customer_id, bill_date, subtotal,
-          total_amount, amount_paid, pm_id, payment_status, user_id))
-
-    bill_id = cur.fetchone()["retail_bill_id"]
-
-    for item in items:
+def ensure_stock(cur, product_id, qty_needed, inventory_cache, user_id):
+    """Restock if not enough inventory. Updates cache in-place."""
+    available = inventory_cache.get(product_id, 0)
+    if available < qty_needed:
+        restock_qty = max(qty_needed * 3, 100)  # restock generously
+        supplier_id = fetch_supplier_for_product(cur, product_id)
         cur.execute("""
-            INSERT INTO retail_bill_items
-                (retail_bill_id, product_id, quantity, unit_price, total_price)
-            VALUES (%s, %s, %s, %s, %s)
-        """, (bill_id, item["product_id"], item["quantity"],
-              item["unit_price"], item["total_price"]))
-        deduct_inventory(conn, item["product_id"], item["quantity"],
-                         bill_id, "retail_bill", user_id, bill_date)
+            INSERT INTO inventory_transactions
+              (product_id, transaction_type, quantity, supplier_id,
+               performed_by, transaction_date, remarks)
+            VALUES (%s, 'restock', %s, %s, %s, %s, 'Auto-restock for dummy data')
+        """, (product_id, restock_qty, supplier_id, user_id,
+              IST.localize(datetime(2025, 12, 31, 7, 0, 0))))
+        inventory_cache[product_id] = available + restock_qty
 
-    cur.close()
-    return total_amount
+def deduct_stock(inventory_cache, product_id, qty):
+    inventory_cache[product_id] = inventory_cache.get(product_id, 0) - qty
+
+def record_sale_transaction(cur, product_id, qty, reference_id, ref_type, user_id, bill_time):
+    cur.execute("""
+        INSERT INTO inventory_transactions
+          (product_id, transaction_type, quantity, reference_id,
+           reference_type, performed_by, transaction_date)
+        VALUES (%s, 'sale', %s, %s, %s, %s, %s)
+    """, (product_id, qty, reference_id, ref_type, user_id, bill_time))
 
 
-def create_wholesale_bill(conn, products, wholesale_customers, payment_methods, users, bill_date):
+# ─────────────────────────────────────────────
+# BILL BUILDERS
+# ─────────────────────────────────────────────
+
+def build_items_for_target(products, target_revenue, price_key, inventory_cache, cur, user_id):
     """
-    Wholesale bill rules:
-      - Always requires a wholesale customer
-      - paid (50%) / partial (30%) / unpaid (20%)
+    Choose random products and quantities so total ≈ target_revenue.
+    Returns list of dicts: {product_id, quantity, unit_price, total_price}
+    Also ensures stock exists.
     """
-    cur         = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    user_id     = random.choice(users)
-    pm_id       = random.choice(payment_methods)
-    customer_id = random.choice(wholesale_customers)["customer_id"]
+    items   = []
+    running = 0
+    shuffled = products[:]
+    random.shuffle(shuffled)
 
-    n      = min(random.randint(2, 8), len(products))
-    chosen = random.sample(products, n)
+    for prod in shuffled:
+        if running >= target_revenue:
+            break
+        price = prod.get(price_key)
+        if not price or price <= 0:
+            continue
 
-    items        = []
-    total_amount = 0
+        remaining = target_revenue - running
+        max_qty = max(1, int(remaining / price))
+        qty = random.randint(1, min(max_qty, 50))
 
-    for prod in chosen:
-        pid   = prod["product_id"]
-        price = round10(float(prod["wholesale_price"]))
-        if price == 0:
-            price = 10
-        qty   = random.randint(5, 50)
+        ensure_stock(cur, prod["product_id"], qty, inventory_cache, user_id)
+        unit_price  = round_to_tens(price)
+        total_price = unit_price * qty
+        items.append({
+            "product_id": prod["product_id"],
+            "quantity": qty,
+            "unit_price": unit_price,
+            "total_price": total_price,
+        })
+        running += total_price
 
-        avail = get_inventory(conn, pid)
-        if avail < qty:
-            restock_product(conn, pid, qty + random.randint(50, 200), user_id, bill_date)
+    return items
 
-        line_total = round10(price * qty)
-        items.append({"product_id": pid, "quantity": qty, "unit_price": price, "total_price": line_total})
-        total_amount += line_total
-
-    total_amount = round10(total_amount) or 10
-
-    pay_chance = random.random()
-    if pay_chance < 0.50:
-        amount_paid    = total_amount
-        payment_status = "paid"
-    elif pay_chance < 0.80:
-        raw            = round10(total_amount * random.uniform(0.3, 0.7))
-        amount_paid    = max(10, min(raw, total_amount - 10))
-        payment_status = "partial"
+def determine_payment(total):
+    """Returns (payment_status, amount_paid)"""
+    r = random.random()
+    if r < 0.55:
+        return "paid", total
+    elif r < 0.80:
+        partial = round_to_tens(total * random.uniform(0.2, 0.8))
+        partial = max(10, min(partial, total - 10))
+        return "partial", partial
     else:
-        amount_paid    = 0
-        payment_status = "unpaid"
+        return "unpaid", 0
 
-    bill_number = next_bill_number(conn, "WB")
+
+# ─────────────────────────────────────────────
+# INSERT WHOLESALE BILL
+# ─────────────────────────────────────────────
+
+def insert_wholesale_bill(cur, bill_time, products, customers, payment_methods,
+                           inventory_cache, user_id, target):
+    if not products or not customers:
+        return
+
+    items = build_items_for_target(
+        products, target, "wholesale_price", inventory_cache, cur, user_id
+    )
+    if not items:
+        return
+
+    total = round_to_tens(sum(i["total_price"] for i in items))
+    if total <= 0:
+        return
+
+    payment_status, amount_paid = determine_payment(total)
+    customer_id   = random.choice(customers)
+    pay_method_id = random.choice(payment_methods)
+    bill_number   = next_bill_number(cur, "WB")
 
     cur.execute("""
         INSERT INTO wholesale_bills
-            (customer_id, bill_number, bill_date, total_amount, amount_paid,
-             payment_method_id, payment_status, created_by)
+          (customer_id, bill_number, bill_date, total_amount,
+           amount_paid, payment_method_id, payment_status, created_by)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         RETURNING wholesale_bill_id
-    """, (customer_id, bill_number, bill_date,
-          total_amount, amount_paid, pm_id, payment_status, user_id))
-
-    bill_id = cur.fetchone()["wholesale_bill_id"]
+    """, (customer_id, bill_number, bill_time, total,
+          amount_paid, pay_method_id, payment_status, user_id))
+    bill_id = cur.fetchone()[0]
 
     for item in items:
         cur.execute("""
             INSERT INTO wholesale_bill_items
-                (wholesale_bill_id, product_id, quantity, unit_price, total_price)
+              (wholesale_bill_id, product_id, quantity, unit_price, total_price)
             VALUES (%s, %s, %s, %s, %s)
         """, (bill_id, item["product_id"], item["quantity"],
               item["unit_price"], item["total_price"]))
-        deduct_inventory(conn, item["product_id"], item["quantity"],
-                         bill_id, "wholesale_bill", user_id, bill_date)
+        record_sale_transaction(cur, item["product_id"], item["quantity"],
+                                bill_id, "wholesale_bill", user_id, bill_time)
+        deduct_stock(inventory_cache, item["product_id"], item["quantity"])
 
-    cur.close()
-    return total_amount
+    return total
 
 
-# ─── MAIN ─────────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────
+# INSERT RETAIL BILL
+# ─────────────────────────────────────────────
+
+def insert_retail_bill(cur, bill_time, products, retail_customers, payment_methods,
+                        inventory_cache, user_id, target):
+    if not products:
+        return
+
+    items = build_items_for_target(
+        products, target, "retail_price", inventory_cache, cur, user_id
+    )
+    if not items:
+        return
+
+    total = round_to_tens(sum(i["total_price"] for i in items))
+    if total <= 0:
+        return
+
+    payment_status, amount_paid = determine_payment(total)
+
+    # customer_id only needed when there's a due
+    if payment_status in ("partial", "unpaid") and retail_customers:
+        customer_id = random.choice(retail_customers)
+    else:
+        customer_id = None  # cash sale, fully paid
+
+    pay_method_id = random.choice(payment_methods)
+    bill_number   = next_bill_number(cur, "RB")
+
+    # subtotal = total (no extra tax/discount for simplicity)
+    cur.execute("""
+        INSERT INTO retail_bills
+          (bill_number, customer_id, bill_date, subtotal, tax_amount,
+           discount_amount, total_amount, amount_paid,
+           payment_method_id, payment_status, created_by)
+        VALUES (%s, %s, %s, %s, 0, 0, %s, %s, %s, %s, %s)
+        RETURNING retail_bill_id
+    """, (bill_number, customer_id, bill_time, total, total,
+          amount_paid, pay_method_id, payment_status, user_id))
+    bill_id = cur.fetchone()[0]
+
+    for item in items:
+        cur.execute("""
+            INSERT INTO retail_bill_items
+              (retail_bill_id, product_id, quantity, unit_price, total_price)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (bill_id, item["product_id"], item["quantity"],
+              item["unit_price"], item["total_price"]))
+        record_sale_transaction(cur, item["product_id"], item["quantity"],
+                                bill_id, "retail_bill", user_id, bill_time)
+        deduct_stock(inventory_cache, item["product_id"], item["quantity"])
+
+    return total
+
+
+# ─────────────────────────────────────────────
+# MAIN
+# ─────────────────────────────────────────────
 
 def main():
-    conn = connect()
+    conn = psycopg2.connect(**DB_CONFIG)
     conn.autocommit = False
+    cur = conn.cursor()
+
+    # Enforce IST in session
+    cur.execute("SET timezone = 'Asia/Kolkata'")
 
     print("Fetching master data...")
-    (retail_products, wholesale_products,
-     retail_customers, wholesale_customers,
-     payment_methods, users) = fetch_data(conn)
+    ws_products      = fetch_products(cur, "wholesale")
+    rt_products      = fetch_products(cur, "retail")
+    ws_customers     = fetch_customers(cur, "wholesale")
+    rt_customers     = fetch_customers(cur, "retail")
+    payment_methods  = fetch_payment_methods(cur)
+    inventory_cache  = fetch_inventory(cur)
+    user_id          = fetch_any_user(cur)
 
-    for label, lst in [
-        ("Retail products",    retail_products),
-        ("Wholesale products", wholesale_products),
-        ("Wholesale customers", wholesale_customers),
-        ("Users",              users),
-    ]:
-        if not lst:
-            print(f"ERROR: No {label} found. Aborting.")
-            conn.close(); return
+    if not ws_products:
+        print("ERROR: No wholesale/both products found. Please add products first.")
+        cur.close(); conn.close(); return
+    if not rt_products:
+        print("ERROR: No retail/both products found. Please add products first.")
+        cur.close(); conn.close(); return
+    if not payment_methods:
+        print("ERROR: No active payment methods found.")
+        cur.close(); conn.close(); return
+    if not user_id:
+        print("ERROR: No active users found.")
+        cur.close(); conn.close(); return
 
-    print(f"  Retail products    : {len(retail_products)}")
-    print(f"  Wholesale products : {len(wholesale_products)}")
-    print(f"  Retail customers   : {len(retail_customers)}")
-    print(f"  Wholesale customers: {len(wholesale_customers)}")
+    print(f"  Wholesale products : {len(ws_products)}")
+    print(f"  Retail products    : {len(rt_products)}")
+    print(f"  WS customers       : {len(ws_customers)}")
+    print(f"  RT customers       : {len(rt_customers)}")
     print(f"  Payment methods    : {len(payment_methods)}")
-    print(f"  Users              : {len(users)}")
+    print(f"  User for created_by: {user_id}")
 
-    if not retail_customers:
-        print("WARNING: No retail customers — partial/unpaid retail bills will be inserted as fully paid.")
+    all_dates = list(get_all_dates(START_DATE, END_DATE))
+    ws_high_days, rt_high_days = determine_high_days(all_dates)
 
-    start_date = date(2026, 1, 1)
-    end_date   = date(2026, 3, 14)
+    total_ws_revenue = 0
+    total_rt_revenue = 0
+    total_bills = 0
 
-    all_dates = []
-    d = start_date
-    while d <= end_date:
-        all_dates.append(d)
-        d += timedelta(days=1)
+    try:
+        for day in all_dates:
+            # ── WHOLESALE ──────────────────────────────
+            is_ws_high = day in ws_high_days
+            ws_target  = WS_HIGH_DAY if is_ws_high else random.randint(WS_NORMAL_MIN, WS_NORMAL_MAX)
 
-    # Pick 5 high-revenue days per calendar month
-    months = {}
-    for d in all_dates:
-        months.setdefault((d.year, d.month), []).append(d)
-
-    high_days = set()
-    for days in months.values():
-        high_days.update(random.sample(days, min(5, len(days))))
-
-    bill_counter = {"retail": 0, "wholesale": 0}
-
-    for current_date in all_dates:
-        is_high = current_date in high_days
-        bill_ts = datetime(current_date.year, current_date.month, current_date.day, 10, 0, 0)
-
-        # ── WHOLESALE ──────────────────────────────────────────────────────────
-        ws_target  = 50000 if is_high else random.randint(15000, 20000)
-        ws_revenue = 0
-        ws_count   = 0
-        for _ in range(50):
-            if ws_revenue >= ws_target:
-                break
-            try:
-                ws_revenue += create_wholesale_bill(
-                    conn, wholesale_products, wholesale_customers,
-                    payment_methods, users, bill_ts
+            ws_generated = 0
+            while ws_generated < ws_target:
+                remaining = ws_target - ws_generated
+                # Each bill covers a chunk of the target
+                bill_target = min(remaining, random.randint(5000, 15000))
+                bill_target = round_to_tens(bill_target)
+                bill_time   = rand_bill_time(day)
+                rev = insert_wholesale_bill(
+                    cur, bill_time, ws_products, ws_customers,
+                    payment_methods, inventory_cache, user_id, bill_target
                 )
-                bill_counter["wholesale"] += 1
-                ws_count += 1
-            except Exception as e:
-                conn.rollback()
-                print(f"  WS error {current_date}: {e}")
-                break
+                if rev:
+                    ws_generated   += rev
+                    total_ws_revenue += rev
+                    total_bills     += 1
+                else:
+                    break  # no products could be used
 
-        # ── RETAIL ─────────────────────────────────────────────────────────────
-        rt_target  = 10000 if is_high else random.randint(5000, 7000)
-        rt_revenue = 0
-        rt_count   = 0
-        for _ in range(50):
-            if rt_revenue >= rt_target:
-                break
-            try:
-                rt_revenue += create_retail_bill(
-                    conn, retail_products, retail_customers,
-                    payment_methods, users, bill_ts
+            # ── RETAIL ────────────────────────────────
+            is_rt_high = day in rt_high_days
+            rt_target  = RT_HIGH_DAY if is_rt_high else random.randint(RT_NORMAL_MIN, RT_NORMAL_MAX)
+
+            rt_generated = 0
+            while rt_generated < rt_target:
+                remaining   = rt_target - rt_generated
+                bill_target = min(remaining, random.randint(500, 2000))
+                bill_target = round_to_tens(bill_target)
+                bill_time   = rand_bill_time(day)
+                rev = insert_retail_bill(
+                    cur, bill_time, rt_products, rt_customers,
+                    payment_methods, inventory_cache, user_id, bill_target
                 )
-                bill_counter["retail"] += 1
-                rt_count += 1
-            except Exception as e:
-                conn.rollback()
-                print(f"  RT error {current_date}: {e}")
-                break
+                if rev:
+                    rt_generated   += rev
+                    total_rt_revenue += rev
+                    total_bills     += 1
+                else:
+                    break
+
+            if day.day % 5 == 0:
+                conn.commit()
+                print(f"  Committed through {day} | Bills so far: {total_bills}")
 
         conn.commit()
-        tag = "HIGH  " if is_high else "normal"
-        print(
-            f"  {current_date} [{tag}] | "
-            f"WS: ₹{ws_revenue:>8,} ({ws_count} bills) | "
-            f"RT: ₹{rt_revenue:>7,} ({rt_count} bills)"
-        )
+        print("\n✅ All done!")
+        print(f"   Total bills inserted : {total_bills}")
+        print(f"   Total WS revenue     : ₹{total_ws_revenue:,.0f}")
+        print(f"   Total RT revenue     : ₹{total_rt_revenue:,.0f}")
+        print(f"   Grand total revenue  : ₹{total_ws_revenue + total_rt_revenue:,.0f}")
 
-    print(f"\n✅ Done! Wholesale bills: {bill_counter['wholesale']}, Retail bills: {bill_counter['retail']}")
-    conn.close()
+    except Exception as e:
+        conn.rollback()
+        print(f"\n❌ Error — rolled back. Details:\n{e}")
+        import traceback; traceback.print_exc()
+
+    finally:
+        cur.close()
+        conn.close()
 
 
 if __name__ == "__main__":
