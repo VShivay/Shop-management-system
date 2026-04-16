@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
 const viewBillController = require('../controller/view_retail_bill');
-const allowed = ['shop owner', 'admin', 'staff', 'cashier'];
+const allowed = ['shop owner', 'admin'];
 
 
 // 1. Fetch Bills (with filters & pagination)

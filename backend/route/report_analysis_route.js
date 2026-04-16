@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const reportController = require('../controller/report_analysis');
 const auth = require('../middleware/auth'); // User supplied auth middleware
-const allowed = ['shop owner', 'admin', 'staff', 'cashier'];
+const allowed = ['shop owner', 'admin'];
 
 
 // Wholesale Routes

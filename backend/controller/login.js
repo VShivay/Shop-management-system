@@ -80,28 +80,64 @@ const login = async (req, res) => {
     }
 };
 // 2. "Me" Controller (Get Logged User Details)
+// 2. "Me" Controller (Get Logged User Details)
+// 2. "Me" Controller (Get Logged User Details)
 const me = async (req, res) => {
     try {
         // req.user comes from the auth middleware
         const userId = req.user.user_id;
 
-        // Join with roles table to get role name
-        const query = `
+        // 1. Fetch base user and role details (added login_id based on your schema alter)
+        const userQuery = `
             SELECT 
-                u.user_id, u.name, u.email, u.mobile, u.created_at, 
+                u.user_id, u.login_id, u.name, u.email, u.mobile, u.created_at, 
                 r.role_name 
             FROM users u
             JOIN roles r ON u.role_id = r.role_id
             WHERE u.user_id = $1
         `;
 
-        const result = await db.query(query, [userId]);
+        const userResult = await db.query(userQuery, [userId]);
 
-        if (result.rows.length === 0) {
+        if (userResult.rows.length === 0) {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        res.json(result.rows[0]);
+        let userData = userResult.rows[0];
+
+        // 2. If the user is an 'admin' or 'staff', fetch their full profile and transaction data
+        if (userData.role_name === 'admin' || userData.role_name === 'staff') {
+            
+            // Fetch Staff Profile
+            const profileQuery = `
+                SELECT * FROM staff_profiles 
+                WHERE user_id = $1
+            `;
+            const profileResult = await db.query(profileQuery, [userId]);
+
+            if (profileResult.rows.length > 0) {
+                userData.staff_profile = profileResult.rows[0];
+                const staffId = userData.staff_profile.staff_id;
+
+                // Fetch Staff Transactions associated with this profile (LATEST 10 ONLY)
+                const transactionQuery = `
+                    SELECT * FROM staff_transactions 
+                    WHERE staff_id = $1 
+                    ORDER BY transaction_date DESC, created_at DESC
+                    LIMIT 10
+                `;
+                const transactionResult = await db.query(transactionQuery, [staffId]);
+                
+                userData.transactions = transactionResult.rows;
+            } else {
+                // Failsafe in case a staff/admin doesn't have a profile record yet
+                userData.staff_profile = null;
+                userData.transactions = [];
+            }
+        }
+
+        // Return the final aggregated object
+        res.json(userData);
 
     } catch (err) {
         console.error(err);

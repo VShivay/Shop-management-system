@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const restockController = require('../controller/restock_product');
 const auth = require('../middleware/auth');
-const allowed = ['shop owner', 'admin', 'staff', 'cashier'];
+const allowed = ['shop owner', 'admin'];
 
 
 // GET /api/restock

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth'); // User authentication middleware
 const controller = require('../controller/customer_report_analysis');
-const allowed = ['shop owner', 'admin', 'staff', 'cashier'];
+const allowed = ['shop owner'];
 
 
 // Route for getting analysis (JSON) or PDF download

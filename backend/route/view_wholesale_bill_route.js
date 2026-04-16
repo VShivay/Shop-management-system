@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth'); // User provided middleware
 const controller = require('../controller/view_wholesale_bill');
-const allowed = ['shop owner', 'admin', 'staff', 'cashier'];
+const allowed = ['shop owner', 'admin'];
 
 
 // 1. Search Customers (for Debounce inputs)

@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
 const customerController = require('../controller/manage_customer');
-const allowed = ['shop owner', 'admin', 'staff', 'cashier'];
+const allowed = ['shop owner', 'admin'];
 
 
 // Read

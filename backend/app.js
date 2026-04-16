@@ -23,7 +23,7 @@ const report = require('./route/report_analysis_route');
 const CRA = require('./route/customer_report_analysis_route');
 const IRA = require('./route/inventory_report_analysis_route');
 const expenseRoutes = require('./route/manage_expenses_route');
-
+const staffRoutes = require('./route/manage_staff_route');
 const app = express();
 
 /**
@@ -70,6 +70,7 @@ app.use('/api/report-analysis', report);
 app.use('/api/CRA', CRA);
 app.use('/api/IRA', IRA);
 app.use('/api/expenses', expenseRoutes);
+app.use('/api', staffRoutes);
 
 // Global Error Handler
 app.use((err, req, res, next) => {

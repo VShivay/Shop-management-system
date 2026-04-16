@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const productController = require('../controller/manage_product');
 const auth = require('../middleware/auth');
-const allowed = ['shop owner', 'admin', 'staff', 'cashier'];
+const allowed = ['shop owner', 'admin'];
 
 // Route: GET /products
 // Description: Fetch all products with filters

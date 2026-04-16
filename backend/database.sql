@@ -3,10 +3,6 @@ ALTER DATABASE your_database_name SET timezone TO 'Asia/Kolkata';
 SET timezone = 'Asia/Kolkata';
 
 -- 1. ROLES
-CREATE TABLE roles (
-    role_id SERIAL PRIMARY KEY,
-    role_name VARCHAR(50) UNIQUE NOT NULL
-);
 
 -- 2. CATEGORIES
 CREATE TABLE categories (
@@ -34,18 +30,7 @@ CREATE TABLE expense_categories (
     category_name VARCHAR(100) UNIQUE NOT NULL
 );
 
--- 6. USERS
-CREATE TABLE users (
-    user_id SERIAL PRIMARY KEY,
-    role_id INT REFERENCES roles(role_id) ON DELETE RESTRICT,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    mobile VARCHAR(15) UNIQUE,
-    password_hash VARCHAR(255) NOT NULL,
-    is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
-);
+
 
 -- 7. SUPPLIERS
 CREATE TABLE suppliers (
@@ -501,3 +486,86 @@ CREATE TRIGGER trg_sync_payments_to_bills
 AFTER INSERT ON due_payment_history
 FOR EACH ROW
 EXECUTE FUNCTION update_bill_and_dues_func();
+CREATE TABLE roles (
+    role_id SERIAL PRIMARY KEY,
+    role_name VARCHAR(50) UNIQUE NOT NULL
+);
+
+-- 6. USERS
+CREATE TABLE users (
+    user_id SERIAL PRIMARY KEY,
+    role_id INT REFERENCES roles(role_id) ON DELETE RESTRICT,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    mobile VARCHAR(15) UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+ALTER TABLE users 
+ADD COLUMN login_id VARCHAR(50) UNIQUE NOT NULL;
+
+CREATE TABLE staff_profiles (
+    staff_id SERIAL PRIMARY KEY,
+    -- Links directly to the users table (UNIQUE ensures one profile per user)
+    user_id INT UNIQUE REFERENCES users(user_id) ON DELETE CASCADE, 
+    
+    -- Employment Details
+    employee_code VARCHAR(20) UNIQUE NOT NULL,
+    department VARCHAR(50),
+    designation VARCHAR(50) NOT NULL,
+    salary NUMERIC(10, 2), 
+    hire_date DATE NOT NULL DEFAULT CURRENT_DATE,
+    
+    -- Logistics & Operations
+    shift_timing VARCHAR(50), 
+    employment_type VARCHAR(20) DEFAULT 'Full-time', -- Full-time, Part-time, Contract
+    
+    -- Personal & Emergency Info
+    address TEXT,
+    emergency_contact_name VARCHAR(100),
+    emergency_contact_mobile VARCHAR(15),
+    
+    -- Tracking
+    employment_status VARCHAR(20) DEFAULT 'Active', -- Active, On Leave, Terminated
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE staff_transactions (
+    transaction_id SERIAL PRIMARY KEY,
+    staff_id INT REFERENCES staff_profiles(staff_id) ON DELETE CASCADE,
+    
+    -- Transaction Categorization
+    transaction_type VARCHAR(20) NOT NULL, -- 'Salary', 'Bonus', 'Advance', 'Deduction'
+    payment_mode VARCHAR(20) DEFAULT 'Cash', -- 'Cash', 'UPI', 'Cheque',"Bank transfar"
+    
+    -- Financial Details
+    amount NUMERIC(12, 2) NOT NULL, -- The specific amount for this entry
+    due_amount NUMERIC(12, 2) DEFAULT 0.00, -- Any remaining balance after this transaction
+    
+    -- Status and Dates
+    status VARCHAR(20) DEFAULT 'Completed', -- 'Pending', 'Completed', 'Cancelled'
+    transaction_date DATE NOT NULL DEFAULT CURRENT_DATE,
+    
+    -- Documentation
+    reference_no VARCHAR(100), -- Transaction ID from the bank or receipt number
+    notes TEXT, -- Specific details like "Performance bonus for March"
+    
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+ALTER TABLE staff_profiles 
+ADD COLUMN salary_cycle VARCHAR(20) DEFAULT 'Monthly' CHECK (salary_cycle IN ('Daily', 'Monthly'));
+CREATE TABLE staff_leaves (
+    leave_id SERIAL PRIMARY KEY,
+    staff_id INT REFERENCES staff_profiles(staff_id) ON DELETE CASCADE,
+    leave_date DATE NOT NULL,
+    leave_type VARCHAR(50) DEFAULT 'Full Day', -- 'Full Day', 'Half Day'
+    reason TEXT,
+    status VARCHAR(20) DEFAULT 'Approved', -- 'Pending', 'Approved', 'Rejected'
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    
+    -- Prevents duplicate leave entries for the same staff on the same date
+    CONSTRAINT unique_staff_date UNIQUE (staff_id, leave_date) 
+);
