@@ -188,10 +188,14 @@ exports.getBillDetails = async (req, res) => {
         const { id } = req.params;
 
         const billQuery = `
-            SELECT wb.*, c.customer_name, c.phone, c.address, u.name as created_by_name, pm.method_name
+            SELECT 
+                wb.*,
+                c.customer_name, c.phone, c.address,
+                u.name AS created_by_name,
+                pm.method_name AS payment_method
             FROM wholesale_bills wb
-            JOIN customers c ON wb.customer_id = c.customer_id
-            JOIN users u ON wb.created_by = u.user_id
+            JOIN  customers c         ON wb.customer_id        = c.customer_id
+            JOIN  users u             ON wb.created_by         = u.user_id
             LEFT JOIN payment_methods pm ON wb.payment_method_id = pm.payment_method_id
             WHERE wb.wholesale_bill_id = $1
         `;
@@ -228,10 +232,12 @@ exports.generatePdf = async (req, res) => {
             SELECT 
                 wb.*,
                 c.customer_name, c.address, c.phone, c.email,
-                u.name AS creator_name
+                u.name AS creator_name,
+                pm.method_name AS payment_method
             FROM wholesale_bills wb
-            JOIN customers c  ON wb.customer_id = c.customer_id
-            LEFT JOIN users u ON wb.created_by  = u.user_id
+            JOIN  customers c         ON wb.customer_id        = c.customer_id
+            LEFT JOIN users u         ON wb.created_by         = u.user_id
+            LEFT JOIN payment_methods pm ON wb.payment_method_id = pm.payment_method_id
             WHERE wb.wholesale_bill_id = $1
         `;
 
