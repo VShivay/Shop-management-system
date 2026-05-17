@@ -1,5 +1,8 @@
 // Adjust the path '../db' or '../config/db' depending on exactly where your db.js file lives
-const pool = require('../db');
+const db = require('../db');
+const pool = db.pool; // Extract the actual pg Pool instance so pool.connect() works
+const bcrypt = require('bcrypt'); // Required for password hashing in addStaff
+
 const staffController = {
     // 1. View all staff profiles alongside their base user details
     getAllStaff: async (req, res) => {
@@ -100,6 +103,7 @@ const staffController = {
             res.status(500).json({ error: 'Failed to retrieve staff transactions.' });
         }
     },
+
     // 1. Add New Staff (Creates User & Profile)
     addStaff: async (req, res) => {
         const client = await pool.connect();
