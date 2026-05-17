@@ -461,31 +461,7 @@ ADD COLUMN inventory_transaction_id INT REFERENCES inventory_transactions(transa
 
 
 
-CREATE TRIGGER trg_auto_create_wholesale_due
-AFTER INSERT ON wholesale_bills
-FOR EACH ROW
-EXECUTE FUNCTION auto_create_due_record_func();
 
-CREATE TRIGGER trg_auto_create_retail_due
-AFTER INSERT ON retail_bills
-FOR EACH ROW
-EXECUTE FUNCTION auto_create_due_record_func();
-
-CREATE TRIGGER trg_update_customer_balance
-AFTER INSERT OR UPDATE OR DELETE ON customer_dues
-FOR EACH ROW
-EXECUTE FUNCTION update_customer_balance_func();
-
-
-CREATE TRIGGER trg_process_inventory
-AFTER INSERT ON inventory_transactions
-FOR EACH ROW
-EXECUTE FUNCTION process_inventory_transaction_func();
-
-CREATE TRIGGER trg_sync_payments_to_bills
-AFTER INSERT ON due_payment_history
-FOR EACH ROW
-EXECUTE FUNCTION update_bill_and_dues_func();
 CREATE TABLE roles (
     role_id SERIAL PRIMARY KEY,
     role_name VARCHAR(50) UNIQUE NOT NULL
@@ -569,3 +545,28 @@ CREATE TABLE staff_leaves (
     -- Prevents duplicate leave entries for the same staff on the same date
     CONSTRAINT unique_staff_date UNIQUE (staff_id, leave_date) 
 );
+CREATE TRIGGER trg_auto_create_wholesale_due
+AFTER INSERT ON wholesale_bills
+FOR EACH ROW
+EXECUTE FUNCTION auto_create_due_record_func();
+
+CREATE TRIGGER trg_auto_create_retail_due
+AFTER INSERT ON retail_bills
+FOR EACH ROW
+EXECUTE FUNCTION auto_create_due_record_func();
+
+CREATE TRIGGER trg_update_customer_balance
+AFTER INSERT OR UPDATE OR DELETE ON customer_dues
+FOR EACH ROW
+EXECUTE FUNCTION update_customer_balance_func();
+
+
+CREATE TRIGGER trg_process_inventory
+AFTER INSERT ON inventory_transactions
+FOR EACH ROW
+EXECUTE FUNCTION process_inventory_transaction_func();
+
+CREATE TRIGGER trg_sync_payments_to_bills
+AFTER INSERT ON due_payment_history
+FOR EACH ROW
+EXECUTE FUNCTION update_bill_and_dues_func();
