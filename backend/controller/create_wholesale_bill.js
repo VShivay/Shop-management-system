@@ -27,31 +27,65 @@ exports.searchCustomers = async (req, res) => {
 };
 
 // 2. Search Products (Debounce API)
+// 2. Search Products (Debounce API)
 exports.searchProducts = async (req, res) => {
     try {
-        const { query } = req.query;
+        const { query, category_id, product_type_id, sales_channel } = req.query;
+        
         if (!query) return res.json([]);
 
-        const sql = `
+        // Base SQL Query with added JOINs and SELECT fields for Categories, Types, and Channel
+        let sql = `
             SELECT 
                 p.product_id, 
                 p.product_name, 
+                p.sales_channel,
+                c.category_name,
+                pt.type_name AS product_type,
                 COALESCE(i.available_quantity_in_hand, 0) AS available_quantity_in_hand, 
                 COALESCE(u.unit_name, 'pcs') AS unit_name, 
                 pr.wholesale_price, 
+                pr.retail_price,
                 pr.cost_price
             FROM products p
             LEFT JOIN inventory i ON p.product_id = i.product_id
             LEFT JOIN units u ON p.unit_id = u.unit_id
             LEFT JOIN prices pr ON p.product_id = pr.product_id AND pr.is_active = TRUE
+            LEFT JOIN categories c ON p.category_id = c.category_id
+            LEFT JOIN product_types pt ON p.product_type_id = pt.product_type_id
             WHERE (p.product_name ILIKE $1 OR CAST(p.product_id AS TEXT) = $1)
-            AND pr.wholesale_price IS NOT NULL
-            AND p.sales_channel IN ('Wholesale', 'Both')
             AND p.is_active = TRUE
-            LIMIT 10
         `;
-        const result = await db.query(sql, [`%${query}%`]);
+
+        const queryParams = [`%${query}%`];
+        let paramIndex = 2;
+
+        // Optional Filter: Category
+        if (category_id) {
+            sql += ` AND p.category_id = $${paramIndex}`;
+            queryParams.push(category_id);
+            paramIndex++;
+        }
+
+        // Optional Filter: Product Type
+        if (product_type_id) {
+            sql += ` AND p.product_type_id = $${paramIndex}`;
+            queryParams.push(product_type_id);
+            paramIndex++;
+        }
+
+        // Optional Filter: Sales Channel (Retail, Wholesale, or Both)
+        if (sales_channel) {
+            sql += ` AND p.sales_channel = $${paramIndex}`;
+            queryParams.push(sales_channel);
+            paramIndex++;
+        }
+
+        sql += ` LIMIT 10`;
+
+        const result = await db.query(sql, queryParams);
         res.json(result.rows);
+        
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Server error searching products' });

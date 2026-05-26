@@ -1,7 +1,7 @@
 // controller/manage_product.js
 const db = require('../db');
 const Joi = require('joi');
-const { formatInTimeZone } = require('date-fns-tz'); // <-- Added import
+const { formatInTimeZone } = require('date-fns-tz');
 
 // --- HELPER: IST Date Formatting ---
 const formatDateToIST = (dateString) => {
@@ -16,6 +16,7 @@ const formatDateToIST = (dateString) => {
 const filterSchema = Joi.object({
     name: Joi.string().trim().optional(),
     category_id: Joi.number().integer().optional(),
+    product_type_id: Joi.number().integer().optional(), // NEW: Added product_type_id filter
     unit_id: Joi.number().integer().optional(),
     is_active: Joi.boolean().optional(),
     sales_channel: Joi.string().valid('Retail', 'Wholesale', 'Both').optional(),
@@ -30,7 +31,7 @@ const idSchema = Joi.object({
 });
 
 /**
- * Fetch all products with filters (name, category, unit, active status, sales channel)
+ * Fetch all products with filters (name, category, type, unit, active status, sales channel)
  * Default Sort: Name Ascending
  */
 const getProducts = async (req, res) => {
@@ -41,7 +42,7 @@ const getProducts = async (req, res) => {
             return res.status(400).json({ error: error.details[0].message });
         }
 
-        const { name, category_id, unit_id, is_active, sales_channel, page, limit } = value;
+        const { name, category_id, product_type_id, unit_id, is_active, sales_channel, page, limit } = value;
         const offset = (page - 1) * limit;
 
         // 2. Build Base Conditions (Used for both Count and Data queries)
@@ -58,6 +59,13 @@ const getProducts = async (req, res) => {
         if (category_id) {
             whereClause += ` AND p.category_id = $${paramIndex}`;
             queryParams.push(category_id);
+            paramIndex++;
+        }
+
+        // NEW: Filter by product_type_id
+        if (product_type_id) {
+            whereClause += ` AND p.product_type_id = $${paramIndex}`;
+            queryParams.push(product_type_id);
             paramIndex++;
         }
 
@@ -83,11 +91,13 @@ const getProducts = async (req, res) => {
         const countQueryText = `SELECT COUNT(*) FROM products p ${whereClause}`;
         
         // 4. Data Query
-        // MODIFIED: Added LEFT JOIN for inventory 'i' and updated selected columns
+        // MODIFIED: Added LEFT JOIN for product_types and selected product type columns
         const dataQueryText = `
             SELECT 
                 p.product_id,
                 p.product_name,
+                p.product_type_id,
+                pt.type_name as product_type_name,
                 i.available_quantity_in_hand,
                 i.low_stock_threshold,
                 p.sales_channel,
@@ -99,6 +109,7 @@ const getProducts = async (req, res) => {
                 pr.cost_price
             FROM products p
             LEFT JOIN categories c ON p.category_id = c.category_id
+            LEFT JOIN product_types pt ON p.product_type_id = pt.product_type_id
             LEFT JOIN units u ON p.unit_id = u.unit_id
             LEFT JOIN prices pr ON p.product_id = pr.product_id AND pr.is_active = TRUE
             LEFT JOIN inventory i ON p.product_id = i.product_id
@@ -147,6 +158,7 @@ const getProductDetails = async (req, res) => {
         const productId = value.id;
 
         // 2. Query for Product Details + Last 5 Logs
+        // MODIFIED: Added product_types join and selection
         const queryText = `
             SELECT 
                 p.product_id,
@@ -159,6 +171,8 @@ const getProductDetails = async (req, res) => {
                 p.created_at,
                 c.category_name,
                 c.category_id,
+                p.product_type_id,
+                pt.type_name as product_type_name,
                 u.unit_name,
                 u.unit_id,
                 
@@ -200,6 +214,7 @@ const getProductDetails = async (req, res) => {
 
             FROM products p
             LEFT JOIN categories c ON p.category_id = c.category_id
+            LEFT JOIN product_types pt ON p.product_type_id = pt.product_type_id
             LEFT JOIN units u ON p.unit_id = u.unit_id
             LEFT JOIN prices pr ON p.product_id = pr.product_id AND pr.is_active = TRUE
             LEFT JOIN inventory i ON p.product_id = i.product_id
@@ -208,7 +223,7 @@ const getProductDetails = async (req, res) => {
             WHERE p.product_id = $1
             GROUP BY 
                 p.product_id, i.available_quantity_in_hand, i.low_stock_threshold, i.last_supplied_date,
-                c.category_name, c.category_id, u.unit_name, u.unit_id, 
+                c.category_name, c.category_id, p.product_type_id, pt.type_name, u.unit_name, u.unit_id, 
                 pr.retail_price, pr.wholesale_price, pr.cost_price, pr.effective_from;
         `;
 
@@ -246,8 +261,10 @@ const getProductDetails = async (req, res) => {
 const getProductDropdowns = async (req, res) => {
     try {
         // Run all queries in parallel using Promise.all
-        const [categoriesRes, unitsRes, suppliersRes] = await Promise.all([
+        // MODIFIED: Added query to fetch product_types
+        const [categoriesRes, typesRes, unitsRes, suppliersRes] = await Promise.all([
             db.query('SELECT category_id, category_name FROM categories ORDER BY category_name ASC'),
+            db.query('SELECT product_type_id, type_name FROM product_types ORDER BY type_name ASC'),
             db.query('SELECT unit_id, unit_name FROM units ORDER BY unit_name ASC'),
             db.query('SELECT supplier_id, supplier_name FROM suppliers WHERE is_active = TRUE ORDER BY supplier_name ASC')
         ]);
@@ -261,6 +278,7 @@ const getProductDropdowns = async (req, res) => {
 
         res.status(200).json({
             categories: categoriesRes.rows,
+            product_types: typesRes.rows, // NEW: Expose product types
             units: unitsRes.rows,
             suppliers: suppliersRes.rows,
             sales_channels: salesChannels
@@ -275,6 +293,7 @@ const getProductDropdowns = async (req, res) => {
 const productWriteSchema = Joi.object({
     product_name: Joi.string().trim().max(100).required(),
     category_id: Joi.number().integer().allow(null).optional(),
+    product_type_id: Joi.number().integer().allow(null).optional(), // NEW: Added product_type_id
     unit_id: Joi.number().integer().allow(null).optional(),
     sales_channel: Joi.string().valid('Retail', 'Wholesale', 'Both').default('Both'),
     low_stock_threshold: Joi.number().min(0).default(10),
@@ -319,8 +338,9 @@ const addProduct = async (req, res) => {
         const { error, value } = productWriteSchema.validate(req.body);
         if (error) return res.status(400).json({ error: error.details[0].message });
 
+        // MODIFIED: Destructure product_type_id
         const { 
-            product_name, category_id, unit_id, sales_channel, low_stock_threshold, is_active,
+            product_name, category_id, product_type_id, unit_id, sales_channel, low_stock_threshold, is_active,
             cost_price, retail_price, wholesale_price, suppliers 
         } = value;
 
@@ -329,14 +349,14 @@ const addProduct = async (req, res) => {
 
         await client.query('BEGIN');
 
-        // A. Insert Product
+        // A. Insert Product (MODIFIED: Included product_type_id)
         const productQuery = `
-            INSERT INTO products (product_name, category_id, unit_id, sales_channel, is_active)
-            VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO products (product_name, category_id, product_type_id, unit_id, sales_channel, is_active)
+            VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING product_id;
         `;
         const productRes = await client.query(productQuery, [
-            product_name, category_id, unit_id, sales_channel, is_active
+            product_name, category_id, product_type_id, unit_id, sales_channel, is_active
         ]);
         const newProductId = productRes.rows[0].product_id;
 
@@ -419,7 +439,6 @@ const updateProduct = async (req, res) => {
         const productId = req.params.id;
 
         // 1. Validate Input
-        // allowUnknown: true lets us ignore fields we don't want to update (like stock) or handle them separately
         const { error, value } = productWriteSchema.validate(req.body, { allowUnknown: true, stripUnknown: true }); 
         
         // Remove opening_stock from update logic to prevent accidental resets
@@ -427,22 +446,23 @@ const updateProduct = async (req, res) => {
         
         if (error) return res.status(400).json({ error: error.details[0].message });
 
+        // MODIFIED: Destructure product_type_id
         const { 
-            product_name, category_id, unit_id, sales_channel, low_stock_threshold, is_active,
+            product_name, category_id, product_type_id, unit_id, sales_channel, low_stock_threshold, is_active,
             cost_price, retail_price, wholesale_price, suppliers 
         } = value;
 
         await client.query('BEGIN');
 
-        // A. Update Basic Product Info (Removed low_stock_threshold)
+        // A. Update Basic Product Info (MODIFIED: Included product_type_id)
         const updateProductQuery = `
             UPDATE products 
-            SET product_name = $1, category_id = $2, unit_id = $3, 
-                sales_channel = $4, is_active = $5
-            WHERE product_id = $6;
+            SET product_name = $1, category_id = $2, product_type_id = $3, unit_id = $4, 
+                sales_channel = $5, is_active = $6
+            WHERE product_id = $7;
         `;
         const updateRes = await client.query(updateProductQuery, [
-            product_name, category_id, unit_id, sales_channel, is_active, productId
+            product_name, category_id, product_type_id, unit_id, sales_channel, is_active, productId
         ]);
 
         if (updateRes.rowCount === 0) {
@@ -450,7 +470,7 @@ const updateProduct = async (req, res) => {
             return res.status(404).json({ error: "Product not found" });
         }
 
-        // B. Update Inventory Configurations (New Step for low_stock_threshold)
+        // B. Update Inventory Configurations 
         if (low_stock_threshold !== undefined) {
             const updateInventoryQuery = `
                 UPDATE inventory

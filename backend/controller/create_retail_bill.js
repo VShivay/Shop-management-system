@@ -3,9 +3,12 @@ const Joi = require('joi');
 
 // --- Joi Validation Schemas ---
 const searchSchema = Joi.object({
-    query: Joi.string().min(1).required()
+    query: Joi.string().min(1).required(),
+    // NEW: Allow optional filters for the frontend
+    category_id: Joi.number().optional(),
+    product_type_id: Joi.number().optional(),
+    sales_channel: Joi.string().valid('Retail', 'Wholesale', 'Both').optional()
 });
-
 const createBillSchema = Joi.object({
     customer_id: Joi.number().allow(null).optional(),
     bill_date: Joi.date().default(() => new Date()),
@@ -26,17 +29,19 @@ const createBillSchema = Joi.object({
 // --- Helper Controllers ---
 exports.searchProducts = async (req, res) => {
     try {
-        const { error } = searchSchema.validate(req.query);
+        const { error, value } = searchSchema.validate(req.query);
         if (error) return res.status(400).json({ error: error.details[0].message });
 
-        const searchTerm = `%${req.query.query}%`;
-        
-        // FIXED: Switched to LEFT JOINs so products aren't hidden if they lack a unit or inventory row
-        // Added COALESCE to safely default null quantities to 0
-        const sql = `
+        const { query, category_id, product_type_id, sales_channel } = value;
+
+        // Base SQL Query with added JOINs for Categories and Product Types
+        let sql = `
             SELECT 
                 p.product_id, 
                 p.product_name, 
+                p.sales_channel,
+                c.category_name,
+                pt.type_name AS product_type,
                 COALESCE(i.available_quantity_in_hand, 0) AS available_quantity_in_hand, 
                 pr.retail_price, 
                 pr.cost_price, 
@@ -45,14 +50,43 @@ exports.searchProducts = async (req, res) => {
             LEFT JOIN inventory i ON p.product_id = i.product_id
             LEFT JOIN units u ON p.unit_id = u.unit_id
             LEFT JOIN prices pr ON p.product_id = pr.product_id AND pr.is_active = TRUE
+            LEFT JOIN categories c ON p.category_id = c.category_id
+            LEFT JOIN product_types pt ON p.product_type_id = pt.product_type_id
             WHERE p.is_active = TRUE 
-              AND p.sales_channel IN ('Retail', 'Both') 
               AND pr.retail_price IS NOT NULL -- Prevents wholesale-only items from breaking the retail UI
-              AND p.product_name ILIKE $1
-            LIMIT 10
+              AND (p.product_name ILIKE $1 OR CAST(p.product_id AS TEXT) = $1)
         `;
         
-        const result = await db.query(sql, [searchTerm]);
+        const queryParams = [`%${query}%`];
+        let paramIndex = 2;
+
+        // Optional Filter: Sales Channel
+        if (sales_channel) {
+            sql += ` AND p.sales_channel = $${paramIndex}`;
+            queryParams.push(sales_channel);
+            paramIndex++;
+        } else {
+            // Default restriction if no filter is applied: Retail items only
+            sql += ` AND p.sales_channel IN ('Retail', 'Both')`;
+        }
+
+        // Optional Filter: Category
+        if (category_id) {
+            sql += ` AND p.category_id = $${paramIndex}`;
+            queryParams.push(category_id);
+            paramIndex++;
+        }
+
+        // Optional Filter: Product Type
+        if (product_type_id) {
+            sql += ` AND p.product_type_id = $${paramIndex}`;
+            queryParams.push(product_type_id);
+            paramIndex++;
+        }
+
+        sql += ` LIMIT 10`;
+
+        const result = await db.query(sql, queryParams);
         res.json(result.rows);
     } catch (err) {
         console.error(err);
